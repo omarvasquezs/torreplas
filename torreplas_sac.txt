@@ -1,0 +1,279 @@
+​Sistema Integral de Gestión Comercial (SIGC)​
+
+​1. Introducción​
+​ ste​ ​documento​ ​define​ ​los​ ​requerimientos​ ​funcionales​ ​y​ ​no​ ​funcionales​ ​de​ ​un​ ​Sistema​
+E
+​Integral​ ​de​ ​Gestión​ ​(SIG)​ ​para​ ​la​ ​empresa​ ​TORREPLAS​ ​SAC​​,​ ​con​ ​el​ ​objetivo​ ​de​ ​optimizar​
+​operaciones,​ ​asegurar​ ​trazabilidad,​ ​mejorar​ ​el​ ​control​ ​administrativo​ ​y​ ​facilitar​ ​la​ ​toma​ ​de​
+​decisiones.​ ​Está​ ​dirigido​ ​al​ ​Departamento​ ​de​ ​Sistemas​ ​/​ ​TI​ ​para​ ​su​ ​análisis,​ ​diseño,​
+​desarrollo o adquisición.​
+
+​2. Objetivos del Sistema​
+​​
+●
+​●​
+​●​
+​●​
+
+​ entralizar la información de todas las áreas.​
+C
+​Permitir​​usuarios múltiples​​con roles y permisos.​
+​Integrar producción, logística, ventas, finanzas y RRHH.​
+​Generar reportes confiables en tiempo real.​
+
+​3. Alcance​
+​El sistema cubrirá las siguientes áreas:​
+​​
+●
+​●​
+​●​
+​●​
+​●​
+​●​
+​●​
+​●​
+​●​
+​●​
+​●​
+​●​
+​●​
+
+​ estión de usuarios y seguridad​
+G
+​Gestión de productos​
+​Inventarios y almacenes​
+​Compras y proveedores​
+​Ventas y clientes​
+​Facturación​
+​Bancos y caja​
+​Contabilidad​
+​Recursos Humanos (RRHH)​
+​Logística y distribución​
+​Dashboard ejecutivo​
+​Reportes​
+​Configuración general del sistema​
+
+​4. Requerimientos Funcionales​
+​4.1 Gestión de Usuarios y Seguridad​
+​​
+●
+​●​
+​●​
+​●​
+
+​ rear, editar y desactivar usuarios del sistema.​
+C
+​Asignar roles y perfiles de acceso.​
+​Definir permisos por módulo y acción.​
+​Autenticación mediante usuario y contraseña.​
+
+​​ G
+●
+​ estión de sesiones activas.​
+​●​ ​Registro de auditoría de accesos y acciones.​
+​●​ ​Restablecimiento de credenciales.​
+
+​4.2 Gestión de Productos​
+​​
+●
+​●​
+​●​
+​●​
+​●​
+​●​
+​●​
+
+​ egistrar productos comercializados.​
+R
+​Editar y desactivar productos.​
+​Clasificar productos por categoría y marca.​
+​Asociar productos a proveedores.​
+​Definir unidades de medida.​
+​Gestionar códigos internos y comerciales.​
+​Consultar historial básico de cambios.​
+
+​4.3 Inventarios y Almacenes​
+​​
+●
+​●​
+​●​
+​●​
+​●​
+​●​
+
+​ rear y administrar uno o más almacenes.​
+C
+​Registrar ingresos y salidas de inventario.​
+​Controlar stock disponible.​
+​Realizar transferencias entre almacenes.​
+​Generar kardex por producto.​
+​Configurar alertas por stock mínimo.​
+
+​4.4 Compras y Proveedores​
+​​
+●
+​●​
+​●​
+​●​
+​●​
+​●​
+
+​ egistrar y mantener proveedores.​
+R
+​Crear solicitudes de compra.​
+​Emitir órdenes de compra.​
+​Registrar recepción de mercadería.​
+​Asociar compras a proveedores.​
+​Consultar historial de compras.​
+
+​4.5 Ventas y Clientes​
+​​
+●
+​●​
+​●​
+​●​
+​●​
+​●​
+
+​ egistrar y mantener clientes.​
+R
+​Definir condiciones comerciales.​
+​Emitir cotizaciones.​
+​Registrar pedidos de venta.​
+​Gestionar ventas al contado y crédito.​
+​Consultar historial de ventas por cliente.​
+
+​4.6 Facturación​
+​​ E
+●
+​ mitir facturas y boletas.​
+​●​ ​Emitir notas de crédito y débito.​
+​●​ ​Integrar facturación electrónica según normativa local.​
+
+​●​ ​Consultar estados de comprobantes.​
+
+​4.7 Bancos y Caja​
+​​
+●
+​●​
+​●​
+​●​
+​●​
+
+​ egistrar ingresos y egresos de caja.​
+R
+​Apertura y cierre de caja.​
+​Registrar cuentas bancarias.​
+​Registrar movimientos bancarios.​
+​Realizar conciliaciones básicas.​
+
+​4.8 Contabilidad​
+​​
+●
+​●​
+​●​
+​●​
+
+​ dministrar plan contable.​
+A
+​Generar asientos contables automáticos.​
+​Registrar asientos manuales.​
+​Generar balances y estados financieros.​
+
+​4.9 Cuentas por Cobrar​
+​​
+●
+​●​
+​●​
+​●​
+
+​ egistrar créditos otorgados a clientes.​
+R
+​Controlar vencimientos.​
+​Registrar pagos y abonos.​
+​Consultar saldos pendientes.​
+
+​4.10 Cuentas por Pagar​
+​​
+●
+​●​
+​●​
+​●​
+
+​ egistrar obligaciones con proveedores.​
+R
+​Controlar vencimientos de pago.​
+​Registrar pagos realizados.​
+​Consultar saldos pendientes.​
+
+​4.11 Recursos Humanos (RRHH)​
+​​
+●
+​●​
+​●​
+​●​
+​●​
+
+​ egistrar colaboradores.​
+R
+​Mantener ficha del trabajador.​
+​Controlar asistencia.​
+​Registrar pagos y planillas.​
+​Gestionar documentación laboral.​
+
+​4.12 Logística y Distribución​
+​​
+●
+​●​
+​●​
+​●​
+
+​ rogramar despachos.​
+P
+​Asociar ventas a entregas.​
+​Registrar transportistas.​
+​Controlar estado de entregas.​
+
+​4.13 Dashboard Ejecutivo​
+​​
+●
+​●​
+​●​
+​●​
+
+​ isualizar indicadores clave de ventas.​
+V
+​Visualizar estado de inventarios.​
+​Visualizar flujo de caja.​
+​Acceso exclusivo para perfiles autorizados.​
+
+​4.14 Reportes​
+​​ G
+●
+​ enerar reportes por módulo.​
+​●​ ​Filtrar reportes por fecha y criterio.​
+​●​ ​Exportar reportes a Excel y PDF.​
+
+​4.15 Configuración General del Sistema​
+​​
+●
+​●​
+​●​
+​●​
+
+​ onfigurar parámetros generales.​
+C
+​Administrar monedas e impuestos.​
+​Gestionar unidades de medida.​
+​Configurar numeraciones y series.​
+
+​5. Consideraciones Finales​
+​ l​​presente​​documento​​define​​el​​alcance​​y​​los​​requerimientos​​funcionales​​del​​sistema​​para​
+E
+​TORREPLAS SAC​​, y servirá como referencia para su análisis, desarrollo o implementación.​
+​ l​ ​sistema​ ​contará​ ​con​ ​un​ ​período​ ​de​ ​garantía​​y​​soporte​​de​​un​​(1)​​año​​,​​durante​​el​​cual​​se​
+E
+​podrán​ ​realizar​ ​ajustes,​ ​mejoras​ ​y​ ​adiciones​ ​funcionales​ ​sin​ ​costo​ ​adicional​​,​​siempre​​que​
+​estén alineadas con los objetivos del sistema.​
+
+
