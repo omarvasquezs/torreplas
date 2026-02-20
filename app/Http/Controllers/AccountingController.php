@@ -6,6 +6,7 @@ use App\Models\AccountPlan;
 use App\Models\JournalEntry;
 use App\Models\JournalEntryLine;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
@@ -118,7 +119,7 @@ class AccountingController extends Controller
                 'description' => $data['description'],
                 'reference'   => $data['reference'] ?? null,
                 'status'      => $data['status'],
-                'user_id'     => auth()->id(),
+                'user_id'     => Auth::id(),
             ]);
             foreach ($data['lines'] as $line) {
                 $entry->lines()->create($line);
