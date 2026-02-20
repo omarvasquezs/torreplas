@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Employee;
 use App\Models\Attendance;
 use App\Models\Payroll;
+use App\Models\EmployeeDocument;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 class EmployeeController extends Controller
@@ -149,5 +151,42 @@ class EmployeeController extends Controller
         Payroll::create($data);
 
         return back()->with('success', 'Planilla registrada.');
+    }
+
+    // Documents
+    public function documents(Employee $employee)
+    {
+        $documents = $employee->documents()->orderByDesc('created_at')->get();
+        return Inertia::render('HR/Documents', [
+            'employee'  => $employee,
+            'documents' => $documents,
+        ]);
+    }
+
+    public function storeDocument(Request $request, Employee $employee)
+    {
+        $request->validate([
+            'name' => 'required|string|max:200',
+            'type' => 'required|in:contract,dni,certificate,other',
+            'file' => 'required|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:5120',
+        ]);
+
+        $path = $request->file('file')->store("employees/{$employee->id}", 'public');
+
+        $employee->documents()->create([
+            'name'          => $request->name,
+            'type'          => $request->type,
+            'path'          => $path,
+            'original_name' => $request->file('file')->getClientOriginalName(),
+        ]);
+
+        return back()->with('success', 'Documento subido.');
+    }
+
+    public function destroyDocument(Employee $employee, EmployeeDocument $document)
+    {
+        Storage::disk('public')->delete($document->path);
+        $document->delete();
+        return back()->with('success', 'Documento eliminado.');
     }
 }
