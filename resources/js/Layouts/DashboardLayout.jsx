@@ -19,6 +19,10 @@ import {
     UserCog,
     BarChart2,
     ChevronDown,
+    BookOpen,
+    AlignLeft,
+    PieChart,
+    Settings,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -67,10 +71,19 @@ const GROUPS = [
         ],
     },
     {
+        label: 'Contabilidad',
+        items: [
+            { name: 'Plan Contable', href: () => route('accounting.accounts'), icon: BookOpen,  match: 'accounting.accounts' },
+            { name: 'Asientos',      href: () => route('accounting.entries'),  icon: AlignLeft, match: 'accounting.entries'  },
+            { name: 'Balance',       href: () => route('accounting.balance'),  icon: PieChart,  match: 'accounting.balance'  },
+        ],
+    },
+    {
         label: 'Administración',
         items: [
-            { name: 'Reportes', href: () => route('reports.index'), icon: BarChart2, match: 'reports.*' },
-            { name: 'Usuarios', href: () => route('users.index'),   icon: UserCog,   match: 'users.*'   },
+            { name: 'Reportes',      href: () => route('reports.index'),   icon: BarChart2, match: 'reports.*'  },
+            { name: 'Usuarios',      href: () => route('users.index'),     icon: UserCog,   match: 'users.*'    },
+            { name: 'Configuración', href: () => route('settings.index'),  icon: Settings,  match: 'settings.*' },
         ],
     },
 ];
