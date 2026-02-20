@@ -69,16 +69,46 @@ Route::middleware('auth')->group(function () {
     Route::get('carriers',        [\App\Http\Controllers\DeliveryController::class, 'carriers'])->name('carriers.index');
     Route::post('carriers',       [\App\Http\Controllers\DeliveryController::class, 'storeCarrier'])->name('carriers.store');
 
-    // Reports
+    // Reports (with CSV export)
     Route::get('reports',                   [\App\Http\Controllers\ReportsController::class, 'index'])->name('reports.index');
     Route::get('reports/sales',             [\App\Http\Controllers\ReportsController::class, 'sales'])->name('reports.sales');
+    Route::get('reports/sales/export',      [\App\Http\Controllers\ReportsController::class, 'exportSales'])->name('reports.sales.export');
     Route::get('reports/purchases',         [\App\Http\Controllers\ReportsController::class, 'purchases'])->name('reports.purchases');
+    Route::get('reports/purchases/export',  [\App\Http\Controllers\ReportsController::class, 'exportPurchases'])->name('reports.purchases.export');
     Route::get('reports/inventory',         [\App\Http\Controllers\ReportsController::class, 'inventory'])->name('reports.inventory');
+    Route::get('reports/inventory/export',  [\App\Http\Controllers\ReportsController::class, 'exportInventory'])->name('reports.inventory.export');
     Route::get('reports/movements',         [\App\Http\Controllers\ReportsController::class, 'movements'])->name('reports.movements');
+    Route::get('reports/movements/export',  [\App\Http\Controllers\ReportsController::class, 'exportMovements'])->name('reports.movements.export');
 
     // Settings
     Route::get('settings',    [\App\Http\Controllers\SettingsController::class, 'index'])->name('settings.index');
     Route::post('settings',   [\App\Http\Controllers\SettingsController::class, 'update'])->name('settings.update');
+    Route::post('settings/series',        [\App\Http\Controllers\SettingsController::class, 'storeSeries'])->name('settings.series.store');
+    Route::delete('settings/series/{id}', [\App\Http\Controllers\SettingsController::class, 'destroySeries'])->name('settings.series.destroy');
+
+    // Accounting
+    Route::get('accounting',                            fn() => \Inertia\Inertia::render('Accounting/Index'))->name('accounting.index');
+    Route::get('accounting/accounts',                   [\App\Http\Controllers\AccountingController::class, 'accounts'])->name('accounting.accounts');
+    Route::post('accounting/accounts',                  [\App\Http\Controllers\AccountingController::class, 'storeAccount'])->name('accounting.accounts.store');
+    Route::put('accounting/accounts/{account}',         [\App\Http\Controllers\AccountingController::class, 'updateAccount'])->name('accounting.accounts.update');
+    Route::delete('accounting/accounts/{account}',      [\App\Http\Controllers\AccountingController::class, 'destroyAccount'])->name('accounting.accounts.destroy');
+    Route::get('accounting/entries',                    [\App\Http\Controllers\AccountingController::class, 'entries'])->name('accounting.entries');
+    Route::post('accounting/entries',                   [\App\Http\Controllers\AccountingController::class, 'storeEntry'])->name('accounting.entries.store');
+    Route::patch('accounting/entries/{entry}/status',   [\App\Http\Controllers\AccountingController::class, 'updateEntryStatus'])->name('accounting.entries.status');
+    Route::delete('accounting/entries/{entry}',         [\App\Http\Controllers\AccountingController::class, 'destroyEntry'])->name('accounting.entries.destroy');
+    Route::get('accounting/balance',                    [\App\Http\Controllers\AccountingController::class, 'balance'])->name('accounting.balance');
+
+    // Kardex
+    Route::get('products/{product}/kardex', [\App\Http\Controllers\ProductController::class, 'kardex'])->name('products.kardex');
+
+    // Employee Documents
+    Route::get('employees/{employee}/documents',                              [\App\Http\Controllers\EmployeeController::class, 'documents'])->name('employees.documents');
+    Route::post('employees/{employee}/documents',                             [\App\Http\Controllers\EmployeeController::class, 'storeDocument'])->name('employees.documents.store');
+    Route::delete('employees/{employee}/documents/{document}',                [\App\Http\Controllers\EmployeeController::class, 'destroyDocument'])->name('employees.documents.destroy');
+
+    // Bank Reconciliation
+    Route::get('bank-accounts/{bankAccount}/reconciliation',   [\App\Http\Controllers\CashController::class, 'reconciliation'])->name('bank.reconciliation');
+    Route::post('bank-transactions/{transaction}/reconcile',   [\App\Http\Controllers\CashController::class, 'toggleReconcile'])->name('bank.reconcile');
 
     // Users
     Route::resource('users', \App\Http\Controllers\UserController::class);
