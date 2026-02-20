@@ -6,6 +6,8 @@ use App\Models\Product;
 use App\Models\Category;
 use App\Models\Brand;
 use App\Models\Unit;
+use App\Models\Movement;
+use App\Models\Warehouse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Str;
@@ -96,5 +98,25 @@ class ProductController extends Controller
     {
         $product->delete();
         return redirect()->route('products.index')->with('success', 'Producto eliminado.');
+    }
+
+    public function kardex(Product $product)
+    {
+        $movements = Movement::with(['warehouse', 'user'])
+            ->where('product_id', $product->id)
+            ->orderBy('created_at')
+            ->get();
+
+        $stock = $product->warehouses->map(fn($w) => [
+            'id'    => $w->id,
+            'name'  => $w->name,
+            'stock' => $w->pivot->current_stock ?? 0,
+        ])->values();
+
+        return Inertia::render('Inventory/Kardex', [
+            'product'   => $product->load(['category', 'brand', 'unit']),
+            'movements' => $movements,
+            'stock'     => $stock,
+        ]);
     }
 }
