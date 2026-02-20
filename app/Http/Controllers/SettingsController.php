@@ -28,7 +28,7 @@ class SettingsController extends Controller
         $stored  = Setting::all_flat();
         $settings = array_merge($this->defaults, $stored);
 
-        $series = \DB::table('document_series')->orderBy('type')->get();
+        $series = DB::table('document_series')->orderBy('type')->get();
 
         return Inertia::render('Settings/Index', [
             'settings' => $settings,
@@ -77,7 +77,7 @@ class SettingsController extends Controller
             'type'   => 'required|string|max:50',
             'series' => 'required|string|max:4',
         ]);
-        \DB::table('document_series')->insert([
+        DB::table('document_series')->insert([
             'type'        => $data['type'],
             'series'      => strtoupper($data['series']),
             'next_number' => 1,
@@ -90,7 +90,7 @@ class SettingsController extends Controller
 
     public function destroySeries(int $id)
     {
-        \DB::table('document_series')->where('id', $id)->delete();
+        DB::table('document_series')->where('id', $id)->delete();
         return redirect()->back()->with('success', 'Serie eliminada.');
     }
 }
