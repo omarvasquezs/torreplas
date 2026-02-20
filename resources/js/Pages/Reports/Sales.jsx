@@ -1,7 +1,7 @@
 import { Head, Link, router } from '@inertiajs/react';
 import DashboardLayout from '@/Layouts/DashboardLayout';
 import { useState } from 'react';
-import { ArrowLeft, Download } from 'lucide-react';
+import { ArrowLeft, Download, Printer } from 'lucide-react';
 
 const STATUS_LABELS = { pending:'Pendiente', paid:'Pagado', cancelled:'Cancelado' };
 const STATUS_COLORS = { pending:'bg-yellow-500/20 text-yellow-400', paid:'bg-green-500/20 text-green-400', cancelled:'bg-red-500/20 text-red-400' };
@@ -26,10 +26,18 @@ export default function ReportsSales({ orders, summary, byClient, filters }) {
                         className="p-2 rounded-lg bg-gray-700 hover:bg-gray-600 text-white">
                         <ArrowLeft size={18} />
                     </Link>
-                    <div>
+                    <div className="flex-1">
                         <h1 className="text-2xl font-bold text-white">Reporte de Ventas</h1>
                         <p className="text-gray-400 text-sm">Análisis de ventas por período</p>
                     </div>
+                    <a href={`${route('reports.sales.export')}?from=${from}&to=${to}`}
+                        className="flex items-center gap-2 px-3 py-2 bg-green-600 hover:bg-green-500 text-white rounded-lg text-sm">
+                        <Download size={15}/> CSV
+                    </a>
+                    <button onClick={() => window.print()}
+                        className="flex items-center gap-2 px-3 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg text-sm">
+                        <Printer size={15}/> Imprimir
+                    </button>
                 </div>
 
                 {/* Filters */}

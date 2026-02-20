@@ -1,7 +1,7 @@
 import { Head, Link, router } from '@inertiajs/react';
 import DashboardLayout from '@/Layouts/DashboardLayout';
 import { useState } from 'react';
-import { ArrowLeft, ArrowUp, ArrowDown, RefreshCw } from 'lucide-react';
+import { ArrowLeft, ArrowUp, ArrowDown, RefreshCw, Download, Printer } from 'lucide-react';
 
 const TYPE_LABELS = { entrada:'Entrada', salida:'Salida', ajuste:'Ajuste', transferencia:'Transferencia' };
 const TYPE_COLORS = {
@@ -32,10 +32,18 @@ export default function ReportsMovements({ movements, filters, warehouses, produ
                         className="p-2 rounded-lg bg-gray-700 hover:bg-gray-600 text-white">
                         <ArrowLeft size={18} />
                     </Link>
-                    <div>
+                    <div className="flex-1">
                         <h1 className="text-2xl font-bold text-white">Reporte de Movimientos</h1>
                         <p className="text-gray-400 text-sm">Entradas y salidas de inventario</p>
                     </div>
+                    <a href={`${route('reports.movements.export')}?from=${from}&to=${to}&type=${type}&warehouse_id=${warehouseId}&product_id=${productId}`}
+                        className="flex items-center gap-2 px-3 py-2 bg-green-600 hover:bg-green-500 text-white rounded-lg text-sm">
+                        <Download size={15}/> CSV
+                    </a>
+                    <button onClick={() => window.print()}
+                        className="flex items-center gap-2 px-3 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg text-sm">
+                        <Printer size={15}/> Imprimir
+                    </button>
                 </div>
 
                 {/* Filters */}

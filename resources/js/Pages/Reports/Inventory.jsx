@@ -1,7 +1,7 @@
 import { Head, Link, router } from '@inertiajs/react';
 import DashboardLayout from '@/Layouts/DashboardLayout';
 import { useState } from 'react';
-import { ArrowLeft, AlertTriangle } from 'lucide-react';
+import { ArrowLeft, AlertTriangle, Download, Printer } from 'lucide-react';
 
 function fmt(n) { return Number(n ?? 0).toLocaleString('es-PE', { minimumFractionDigits:2 }); }
 
@@ -22,10 +22,18 @@ export default function ReportsInventory({ products, summary, filters }) {
                         className="p-2 rounded-lg bg-gray-700 hover:bg-gray-600 text-white">
                         <ArrowLeft size={18} />
                     </Link>
-                    <div>
+                    <div className="flex-1">
                         <h1 className="text-2xl font-bold text-white">Reporte de Inventario</h1>
                         <p className="text-gray-400 text-sm">Stock actual por producto</p>
                     </div>
+                    <a href={`${route('reports.inventory.export')}?search=${search}&low_stock=${lowStock ? 1 : 0}`}
+                        className="flex items-center gap-2 px-3 py-2 bg-green-600 hover:bg-green-500 text-white rounded-lg text-sm">
+                        <Download size={15}/> CSV
+                    </a>
+                    <button onClick={() => window.print()}
+                        className="flex items-center gap-2 px-3 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg text-sm">
+                        <Printer size={15}/> Imprimir
+                    </button>
                 </div>
 
                 <div className="bg-gray-800/50 border border-gray-700/50 rounded-xl p-4 flex flex-wrap gap-3 items-end">
