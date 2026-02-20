@@ -24,4 +24,9 @@ class PurchaseOrder extends Model
     {
         return $this->hasMany(PurchaseItem::class);
     }
+
+    public function payments()
+    {
+        return $this->morphMany(Payment::class, 'payable');
+    }
 }

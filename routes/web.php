@@ -4,26 +4,85 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::get('/', function () {
-    return redirect()->route('login');
-});
+Route::get('/', fn() => redirect()->route('login'));
 
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+// Dashboard
+Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'index'])
+    ->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+
+    // Profile
+    Route::get('/profile',    [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile',  [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
+    // Products
     Route::resource('products', \App\Http\Controllers\ProductController::class);
+
+    // Clients
     Route::resource('clients', \App\Http\Controllers\ClientController::class);
+
+    // Suppliers
+    Route::resource('suppliers', \App\Http\Controllers\SupplierController::class);
+
+    // Orders / Sales
     Route::resource('orders', \App\Http\Controllers\OrderController::class);
-    Route::get('inventory', [\App\Http\Controllers\WarehouseController::class, 'index'])->name('inventory.index');
-    Route::get('finance', [\App\Http\Controllers\FinanceController::class, 'index'])->name('finance.index');
+
+    // Purchases
     Route::resource('purchases', \App\Http\Controllers\PurchaseController::class);
-    Route::get('settings', [\App\Http\Controllers\SettingsController::class, 'index'])->name('settings.index');
+
+    // Invoices / Billing
+    Route::resource('invoices', \App\Http\Controllers\InvoiceController::class);
+
+    // Inventory & Warehouses
+    Route::get('inventory',             [\App\Http\Controllers\WarehouseController::class, 'index'])->name('inventory.index');
+    Route::post('warehouses',           [\App\Http\Controllers\WarehouseController::class, 'store'])->name('warehouses.store');
+    Route::put('warehouses/{warehouse}',[\App\Http\Controllers\WarehouseController::class, 'update'])->name('warehouses.update');
+    Route::delete('warehouses/{warehouse}', [\App\Http\Controllers\WarehouseController::class, 'destroy'])->name('warehouses.destroy');
+    Route::get('inventory/movements',   [\App\Http\Controllers\WarehouseController::class, 'movements'])->name('inventory.movements');
+    Route::post('inventory/movements',  [\App\Http\Controllers\WarehouseController::class, 'storeMovement'])->name('inventory.movements.store');
+    Route::post('inventory/transfer',   [\App\Http\Controllers\WarehouseController::class, 'transfer'])->name('inventory.transfer');
+
+    // Cash & Finance
+    Route::get('cash',                                      [\App\Http\Controllers\CashController::class, 'index'])->name('cash.index');
+    Route::post('cash/{cashRegister}/open',                [\App\Http\Controllers\CashController::class, 'open'])->name('cash.open');
+    Route::post('cash/{cashRegister}/close',               [\App\Http\Controllers\CashController::class, 'close'])->name('cash.close');
+    Route::get('cash/{cashRegister}',                       [\App\Http\Controllers\CashController::class, 'show'])->name('cash.show');
+    Route::post('cash/{cashRegister}/movements',            [\App\Http\Controllers\CashController::class, 'storeMovement'])->name('cash.movements.store');
+    Route::post('bank-accounts',                            [\App\Http\Controllers\CashController::class, 'storeBank'])->name('bank.store');
+    Route::post('bank-accounts/{bankAccount}/transactions', [\App\Http\Controllers\CashController::class, 'storeBankTransaction'])->name('bank.transactions.store');
+
+    // Accounts Receivable / Payable
+    Route::get('accounts/receivable',                               [\App\Http\Controllers\AccountsController::class, 'receivable'])->name('accounts.receivable');
+    Route::post('accounts/receivable/{order}/payment',              [\App\Http\Controllers\AccountsController::class, 'storeReceivablePayment'])->name('accounts.receivable.payment');
+    Route::get('accounts/payable',                                  [\App\Http\Controllers\AccountsController::class, 'payable'])->name('accounts.payable');
+    Route::post('accounts/payable/{purchase}/payment',              [\App\Http\Controllers\AccountsController::class, 'storePayablePayment'])->name('accounts.payable.payment');
+
+    // Human Resources
+    Route::resource('employees', \App\Http\Controllers\EmployeeController::class);
+    Route::get('employees/{employee}/payrolls',     [\App\Http\Controllers\EmployeeController::class, 'payrolls'])->name('employees.payrolls');
+    Route::post('employees/{employee}/payrolls',    [\App\Http\Controllers\EmployeeController::class, 'storePayroll'])->name('employees.payrolls.store');
+
+    // Logistics
+    Route::resource('deliveries', \App\Http\Controllers\DeliveryController::class);
+    Route::get('carriers',        [\App\Http\Controllers\DeliveryController::class, 'carriers'])->name('carriers.index');
+    Route::post('carriers',       [\App\Http\Controllers\DeliveryController::class, 'storeCarrier'])->name('carriers.store');
+
+    // Reports
+    Route::get('reports',                   [\App\Http\Controllers\ReportsController::class, 'index'])->name('reports.index');
+    Route::get('reports/sales',             [\App\Http\Controllers\ReportsController::class, 'sales'])->name('reports.sales');
+    Route::get('reports/purchases',         [\App\Http\Controllers\ReportsController::class, 'purchases'])->name('reports.purchases');
+    Route::get('reports/inventory',         [\App\Http\Controllers\ReportsController::class, 'inventory'])->name('reports.inventory');
+    Route::get('reports/movements',         [\App\Http\Controllers\ReportsController::class, 'movements'])->name('reports.movements');
+
+    // Settings
+    Route::get('settings',    [\App\Http\Controllers\SettingsController::class, 'index'])->name('settings.index');
+    Route::post('settings',   [\App\Http\Controllers\SettingsController::class, 'update'])->name('settings.update');
+
+    // Users
+    Route::resource('users', \App\Http\Controllers\UserController::class);
 });
 
 require __DIR__ . '/auth.php';
+
