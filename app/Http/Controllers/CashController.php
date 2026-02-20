@@ -136,4 +136,33 @@ class CashController extends Controller
 
         return back()->with('success', 'Movimiento bancario registrado.');
     }
+
+    public function reconciliation(BankAccount $bankAccount)
+    {
+        $bankAccount->load(['transactions' => fn($q) => $q->orderByDesc('transaction_date')]);
+        $bankAccounts = BankAccount::orderBy('name')->get(['id','bank','name','current_balance']);
+
+        $reconciled    = $bankAccount->transactions->where('reconciled', true);
+        $unreconciled  = $bankAccount->transactions->where('reconciled', false);
+        $summary = [
+            'reconciled_count'   => $reconciled->count(),
+            'unreconciled_count' => $unreconciled->count(),
+            'reconciled_amount'  => $reconciled->sum(fn($t) => $t->type === 'IN' ? $t->amount : -$t->amount),
+        ];
+
+        return Inertia::render('Cash/Reconciliation', [
+            'bankAccount'  => $bankAccount,
+            'bankAccounts' => $bankAccounts,
+            'summary'      => $summary,
+        ]);
+    }
+
+    public function toggleReconcile(BankTransaction $transaction)
+    {
+        $transaction->update([
+            'reconciled'    => !$transaction->reconciled,
+            'reconciled_at' => $transaction->reconciled ? null : now()->toDateString(),
+        ]);
+        return back()->with('success', 'Estado de conciliación actualizado.');
+    }
 }
