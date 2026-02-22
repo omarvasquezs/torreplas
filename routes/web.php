@@ -112,6 +112,13 @@ Route::middleware('auth')->group(function () {
 
     // Users
     Route::resource('users', \App\Http\Controllers\UserController::class);
+
+    // Rentals (Alquileres) — admin only
+    Route::resource('rentals', \App\Http\Controllers\RentalController::class);
+    Route::post('rentals/{rental}/generate-payment',     [\App\Http\Controllers\RentalController::class, 'generatePayment'])->name('rentals.generate-payment');
+    Route::post('rentals/bulk-generate',                 [\App\Http\Controllers\RentalController::class, 'bulkGenerate'])->name('rentals.bulk-generate');
+    Route::post('rental-payments/{payment}/register',    [\App\Http\Controllers\RentalController::class, 'registerPayment'])->name('rentals.payments.register');
+    Route::post('rental-payments/{payment}/revert',      [\App\Http\Controllers\RentalController::class, 'revertPayment'])->name('rentals.payments.revert');
 });
 
 require __DIR__ . '/auth.php';

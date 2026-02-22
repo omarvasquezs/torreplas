@@ -23,6 +23,7 @@ import {
     AlignLeft,
     PieChart,
     Settings,
+    KeyRound,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -36,9 +37,10 @@ const GROUPS = [
     {
         label: 'Ventas',
         items: [
-            { name: 'Pedidos',    href: () => route('orders.index'),   icon: ShoppingCart,    match: 'orders.*'      },
-            { name: 'Clientes',   href: () => route('clients.index'),  icon: Users,           match: 'clients.*'     },
-            { name: 'Facturación',href: () => route('invoices.index'), icon: FileText,        match: 'invoices.*'    },
+            { name: 'Pedidos',     href: () => route('orders.index'),   icon: ShoppingCart, match: 'orders.*'   },
+            { name: 'Clientes',    href: () => route('clients.index'),  icon: Users,        match: 'clients.*'  },
+            { name: 'Facturación', href: () => route('invoices.index'), icon: FileText,     match: 'invoices.*' },
+            { name: 'Alquileres',  href: () => route('rentals.index'),  icon: KeyRound,     match: 'rentals.*', adminOnly: true },
         ],
     },
     {
@@ -88,9 +90,14 @@ const GROUPS = [
     },
 ];
 
-function NavGroup({ group, setSidebarOpen }) {
+function NavGroup({ group, auth, setSidebarOpen }) {
     const [open, setOpen] = useState(true);
-    const isAnyActive = group.items.some(item => {
+    const isAdmin = auth?.user?.role?.name === 'admin';
+
+    const visibleItems = group.items.filter(item => !item.adminOnly || isAdmin);
+    if (visibleItems.length === 0) return null;
+
+    const isAnyActive = visibleItems.some(item => {
         try { return route().current(item.match); } catch { return false; }
     });
 
@@ -103,7 +110,7 @@ function NavGroup({ group, setSidebarOpen }) {
             </button>
             {open && (
                 <ul className="space-y-0.5 mt-0.5">
-                    {group.items.map(item => {
+                    {visibleItems.map(item => {
                         let current = false;
                         let href = '#';
                         try { current = route().current(item.match); } catch {}
@@ -159,7 +166,7 @@ export default function DashboardLayout({ children }) {
 
                 <nav className="flex-1 overflow-y-auto px-3 py-3 space-y-4">
                     {GROUPS.map(group => (
-                        <NavGroup key={group.label} group={group} setSidebarOpen={setSidebarOpen} />
+                        <NavGroup key={group.label} group={group} auth={auth} setSidebarOpen={setSidebarOpen} />
                     ))}
                 </nav>
 
