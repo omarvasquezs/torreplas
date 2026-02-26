@@ -15,7 +15,7 @@ const CONTRACT_COLORS = {
     ended:     'bg-gray-500/20 text-gray-600',
 };
 
-export default function RentalShow({ rental, overdue }) {
+export default function RentalShow({ rental, overdue, nextReceiptNumber }) {
     const [showPayModal, setShowPayModal] = useState(false);
     const [payingPayment, setPayingPayment] = useState(null);
     const [payForm, setPayForm] = useState({ paid_date: new Date().toISOString().slice(0,10), payment_method: 'efectivo', reference: '', notes: '' });
@@ -210,7 +210,7 @@ export default function RentalShow({ rental, overdue }) {
                                 <div className="text-right">
                                     <span className="text-white font-bold text-sm">N°</span>
                                     <div className="bg-white text-gray-800 font-bold text-base px-3 py-1 rounded mt-1 min-w-[64px] text-center">
-                                        {String(payingPayment.id).padStart(4, '0')}
+                                        {payingPayment.receipt_number ?? nextReceiptNumber}
                                     </div>
                                 </div>
                             </div>

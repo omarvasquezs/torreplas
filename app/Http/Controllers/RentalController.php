@@ -7,6 +7,7 @@ use App\Models\Rental;
 use App\Models\RentalPayment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Carbon\Carbon;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -69,9 +70,19 @@ class RentalController extends Controller
 
         $overdue = $rental->payments->where('status', 'overdue')->count();
 
+        $lastReceipt = RentalPayment::query()
+            ->whereNotNull('receipt_number')
+            ->orderByDesc('id')
+            ->value('receipt_number');
+
+        $nextReceiptNumber = is_numeric($lastReceipt)
+            ? str_pad((string) (((int) $lastReceipt) + 1), 8, '0', STR_PAD_LEFT)
+            : '00000001';
+
         return Inertia::render('Rentals/Show', [
             'rental'  => $rental,
             'overdue' => $overdue,
+            'nextReceiptNumber' => $nextReceiptNumber,
         ]);
     }
 
@@ -138,7 +149,29 @@ class RentalController extends Controller
             'notes'          => 'nullable|string|max:300',
         ]);
 
-        $payment->update([...$data, 'status' => 'paid']);
+        DB::transaction(function () use ($payment, $data) {
+            $receiptNumber = $payment->receipt_number;
+
+            if (!$receiptNumber) {
+                $lastReceipt = RentalPayment::query()
+                    ->whereNotNull('receipt_number')
+                    ->orderByDesc('id')
+                    ->lockForUpdate()
+                    ->first();
+
+                $nextReceipt = $lastReceipt && is_numeric($lastReceipt->receipt_number)
+                    ? ((int) $lastReceipt->receipt_number) + 1
+                    : 1;
+
+                $receiptNumber = str_pad((string) $nextReceipt, 8, '0', STR_PAD_LEFT);
+            }
+
+            $payment->update([
+                ...$data,
+                'status' => 'paid',
+                'receipt_number' => $receiptNumber,
+            ]);
+        });
 
         return redirect()->back()->with('success', 'Pago registrado correctamente.');
     }

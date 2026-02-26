@@ -7,6 +7,7 @@ use App\Models\Client;
 use App\Models\Order;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\DB;
 
 class InvoiceController extends Controller
 {
@@ -31,12 +32,19 @@ class InvoiceController extends Controller
 
     public function create()
     {
+        $series = DB::table('document_series')
+            ->where('is_active', true)
+            ->orderBy('type')
+            ->orderBy('series')
+            ->get(['type', 'series', 'next_number']);
+
         return Inertia::render('Invoices/Form', [
             'clients' => Client::where('is_active', true)->orderBy('name')->get(),
             'orders'  => Order::with('client')
                 ->whereIn('status', ['approved', 'delivered'])
                 ->whereDoesntHave('invoice')
                 ->get(),
+            'series' => $series,
         ]);
     }
 
@@ -47,12 +55,58 @@ class InvoiceController extends Controller
             'client_id'    => 'required|exists:clients,id',
             'type'         => 'required|in:factura,boleta,nota_credito,nota_debito',
             'serie'        => 'required|string|max:10',
-            'number'       => 'required|string|max:20',
             'issue_date'   => 'required|date',
             'total_amount' => 'required|numeric|min:0',
         ]);
 
-        Invoice::create(array_merge($data, ['status' => 'generated']));
+        $serie = strtoupper(trim($data['serie']));
+
+        DB::transaction(function () use ($data, $serie) {
+            $seriesRow = DB::table('document_series')
+                ->where('type', $data['type'])
+                ->where('series', $serie)
+                ->lockForUpdate()
+                ->first();
+
+            if ($seriesRow) {
+                $nextNumber = (int) $seriesRow->next_number;
+
+                DB::table('document_series')
+                    ->where('id', $seriesRow->id)
+                    ->update([
+                        'next_number' => $nextNumber + 1,
+                        'updated_at' => now(),
+                    ]);
+            } else {
+                $lastInvoiceNumber = Invoice::query()
+                    ->where('type', $data['type'])
+                    ->where('serie', $serie)
+                    ->lockForUpdate()
+                    ->max('number');
+
+                $nextNumber = is_numeric($lastInvoiceNumber) ? ((int) $lastInvoiceNumber) + 1 : 1;
+
+                DB::table('document_series')->insert([
+                    'type' => $data['type'],
+                    'series' => $serie,
+                    'next_number' => $nextNumber + 1,
+                    'is_active' => true,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            }
+
+            Invoice::create([
+                'order_id' => $data['order_id'] ?: null,
+                'client_id' => $data['client_id'],
+                'type' => $data['type'],
+                'serie' => $serie,
+                'number' => str_pad((string) $nextNumber, 8, '0', STR_PAD_LEFT),
+                'issue_date' => $data['issue_date'],
+                'total_amount' => $data['total_amount'],
+                'status' => 'generated',
+            ]);
+        });
 
         return redirect()->route('invoices.index')->with('success', 'Comprobante registrado.');
     }

@@ -10,7 +10,7 @@ class RentalPayment extends Model
 {
     protected $fillable = [
         'rental_id', 'period', 'due_date', 'paid_date',
-        'amount', 'status', 'payment_method', 'reference', 'notes',
+        'amount', 'status', 'payment_method', 'reference', 'notes', 'receipt_number',
     ];
 
     protected $casts = [

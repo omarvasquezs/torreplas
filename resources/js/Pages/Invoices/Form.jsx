@@ -1,17 +1,43 @@
 import { Head, Link, useForm } from '@inertiajs/react';
+import { useEffect, useMemo } from 'react';
 import DashboardLayout from '@/Layouts/DashboardLayout';
 import { ArrowLeft, Save } from 'lucide-react';
 
-export default function InvoicesForm({ clients, orders }) {
+export default function InvoicesForm({ clients, orders, series = [] }) {
+    const defaultSeriesByType = useMemo(() => {
+        const map = {};
+        series.forEach((row) => {
+            if (!map[row.type]) map[row.type] = row.series;
+        });
+        return map;
+    }, [series]);
+
     const { data, setData, post, processing, errors } = useForm({
         client_id:    '',
         order_id:     '',
         type:         'factura',
-        serie:        'F001',
-        number:       '',
+        serie:        defaultSeriesByType.factura ?? 'F001',
         issue_date:   new Date().toISOString().slice(0, 10),
         total_amount: '',
     });
+
+    const seriesOptions = useMemo(
+        () => series.filter((row) => row.type === data.type),
+        [series, data.type]
+    );
+
+    const suggestedNumber = useMemo(() => {
+        const selected = series.find((row) => row.type === data.type && row.series === data.serie);
+        const next = selected?.next_number ?? 1;
+        return String(next).padStart(8, '0');
+    }, [series, data.type, data.serie]);
+
+    useEffect(() => {
+        if (seriesOptions.length === 0) return;
+        if (!seriesOptions.some((row) => row.series === data.serie)) {
+            setData('serie', seriesOptions[0].series);
+        }
+    }, [seriesOptions, data.serie, setData]);
 
     function submit(e) {
         e.preventDefault();
@@ -36,13 +62,13 @@ export default function InvoicesForm({ clients, orders }) {
                     <Link href={route('invoices.index')} className="p-2 rounded-lg hover:bg-gray-100 text-gray-600 transition">
                         <ArrowLeft size={18} />
                     </Link>
-                    <h1 className="text-2xl font-bold text-white">Nuevo Comprobante</h1>
+                    <h1 className="text-2xl font-bold text-gray-900">Nuevo Comprobante</h1>
                 </div>
 
                 <form onSubmit={submit} className="space-y-5">
                     <section className="bg-white rounded-xl border border-gray-200 p-5 space-y-4">
-                        <h2 className="text-white font-semibold">Datos del Comprobante</h2>
-                        <div className="grid grid-cols-2 gap-4">
+                        <h2 className="text-gray-900 font-semibold">Datos del Comprobante</h2>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label className="block text-sm text-gray-600 mb-1">Tipo</label>
                                 <select value={data.type} onChange={e => setData('type', e.target.value)}
@@ -61,15 +87,18 @@ export default function InvoicesForm({ clients, orders }) {
                             </div>
                             <div>
                                 <label className="block text-sm text-gray-600 mb-1">Serie</label>
-                                <input type="text" value={data.serie} onChange={e => setData('serie', e.target.value)} placeholder="F001"
-                                    className="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+                                <select value={data.serie} onChange={e => setData('serie', e.target.value)}
+                                    className="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                    {(seriesOptions.length > 0 ? seriesOptions : [{ series: data.serie }]).map((row) => (
+                                        <option key={row.series} value={row.series}>{row.series}</option>
+                                    ))}
+                                </select>
                                 {errors.serie && <p className="text-red-400 text-xs mt-1">{errors.serie}</p>}
                             </div>
                             <div>
                                 <label className="block text-sm text-gray-600 mb-1">Número</label>
-                                <input type="text" value={data.number} onChange={e => setData('number', e.target.value)} placeholder="00000001"
-                                    className="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" />
-                                {errors.number && <p className="text-red-400 text-xs mt-1">{errors.number}</p>}
+                                <input type="text" value={suggestedNumber} readOnly
+                                    className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-gray-700 text-sm focus:outline-none" />
                             </div>
                         </div>
 
