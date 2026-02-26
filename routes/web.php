@@ -68,6 +68,8 @@ Route::middleware('auth')->group(function () {
     Route::resource('deliveries', \App\Http\Controllers\DeliveryController::class);
     Route::get('carriers',        [\App\Http\Controllers\DeliveryController::class, 'carriers'])->name('carriers.index');
     Route::post('carriers',       [\App\Http\Controllers\DeliveryController::class, 'storeCarrier'])->name('carriers.store');
+    Route::get('dispatch-guides', [\App\Http\Controllers\DispatchGuideController::class, 'index'])->name('dispatch-guides.index');
+    Route::post('dispatch-guides', [\App\Http\Controllers\DispatchGuideController::class, 'store'])->name('dispatch-guides.store');
 
     // Reports (with CSV export)
     Route::get('reports',                   [\App\Http\Controllers\ReportsController::class, 'index'])->name('reports.index');
