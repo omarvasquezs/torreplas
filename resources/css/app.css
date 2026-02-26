@@ -68,6 +68,30 @@
 		background-color: #f9fafb !important;
 	}
 
+	@media (max-width: 1024px) {
+		.intranet-light .max-w-2xl,
+		.intranet-light .max-w-3xl,
+		.intranet-light .max-w-4xl,
+		.intranet-light .max-w-5xl,
+		.intranet-light .max-w-6xl,
+		.intranet-light .max-w-7xl {
+			max-width: 100%;
+		}
+
+		.intranet-light .overflow-hidden {
+			overflow-x: auto;
+			-webkit-overflow-scrolling: touch;
+		}
+
+		.intranet-light .overflow-hidden table {
+			min-width: 720px;
+		}
+
+		.intranet-light main .grid.grid-cols-2 {
+			grid-template-columns: minmax(0, 1fr);
+		}
+	}
+
 	.intranet-light .bg-indigo-600,
 	.intranet-light .bg-indigo-700,
 	.intranet-light .bg-green-600,

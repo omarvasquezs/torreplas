@@ -146,21 +146,21 @@ export default function DashboardLayout({ children }) {
             {/* Mobile Sidebar Overlay */}
             {sidebarOpen && (
                 <div
-                    className="fixed inset-0 z-40 bg-white/80 backdrop-blur-sm lg:hidden"
+                    className="fixed inset-0 z-40 bg-white/80 backdrop-blur-sm xl:hidden"
                     onClick={() => setSidebarOpen(false)}
                 />
             )}
 
             {/* Sidebar */}
             <aside className={cn(
-                "fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-gray-200 transition-transform duration-300 lg:translate-x-0 flex flex-col",
+                "fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-gray-200 transition-transform duration-300 xl:translate-x-0 flex flex-col",
                 sidebarOpen ? "translate-x-0" : "-translate-x-full"
             )}>
                 <div className="flex h-14 items-center justify-between px-4 border-b border-gray-200 shrink-0">
                     <span className="text-xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
                         TORREPLAS
                     </span>
-                    <button onClick={() => setSidebarOpen(false)} className="lg:hidden text-gray-600 hover:text-gray-900">
+                    <button onClick={() => setSidebarOpen(false)} className="xl:hidden text-gray-600 hover:text-gray-900">
                         <X size={20} />
                     </button>
                 </div>
@@ -194,16 +194,16 @@ export default function DashboardLayout({ children }) {
             </aside>
 
             {/* Main Content */}
-            <div className="lg:pl-64 flex flex-col min-h-screen bg-gray-100">
+            <div className="xl:pl-64 flex flex-col min-h-screen bg-gray-100">
                 {/* Topbar (Mobile) */}
-                <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b border-gray-200 bg-white/95 backdrop-blur-md px-4 lg:hidden">
+                <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b border-gray-200 bg-white/95 backdrop-blur-md px-4 xl:hidden">
                     <button onClick={() => setSidebarOpen(true)} className="text-gray-600 hover:text-gray-900">
                         <Menu size={22} />
                     </button>
                     <span className="font-bold text-gray-900">Torreplas</span>
                 </header>
 
-                <main className="flex-1 p-4 lg:p-6">
+                <main className="flex-1 p-3 md:p-4 xl:p-6">
                     <div className="max-w-7xl mx-auto space-y-6">
                         {children}
                     </div>
