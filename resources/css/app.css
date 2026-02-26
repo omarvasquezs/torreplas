@@ -15,6 +15,7 @@
 @layer components {
 	.intranet-light {
 		color: #111827;
+		color-scheme: light;
 	}
 
 	.intranet-light .text-white {
@@ -28,6 +29,43 @@
 
 	.intranet-light [class*="border-gray-200"] {
 		border-color: #e5e7eb;
+	}
+
+	.intranet-light input,
+	.intranet-light select,
+	.intranet-light textarea {
+		background-color: #ffffff !important;
+		color: #111827 !important;
+		border-color: #d1d5db !important;
+	}
+
+	.intranet-light input::placeholder,
+	.intranet-light textarea::placeholder {
+		color: #9ca3af !important;
+	}
+
+	.intranet-light [class*="dark:bg-slate-"],
+	.intranet-light [class*="dark:bg-zinc-"],
+	.intranet-light [class*="dark:bg-gray-"],
+	.intranet-light [class*="dark:bg-black"] {
+		background-color: #ffffff !important;
+	}
+
+	.intranet-light [class*="dark:border-slate-"],
+	.intranet-light [class*="dark:border-zinc-"],
+	.intranet-light [class*="dark:border-gray-"] {
+		border-color: #e5e7eb !important;
+	}
+
+	.intranet-light [class*="dark:text-white"],
+	.intranet-light [class*="dark:text-gray-"] {
+		color: #111827 !important;
+	}
+
+	.intranet-light [class*="dark:hover:bg-slate-"]:hover,
+	.intranet-light [class*="dark:hover:bg-zinc-"]:hover,
+	.intranet-light [class*="dark:hover:bg-gray-"]:hover {
+		background-color: #f9fafb !important;
 	}
 
 	.intranet-light .bg-indigo-600,
