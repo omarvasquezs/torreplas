@@ -117,6 +117,7 @@ Route::middleware('auth')->group(function () {
 
     // Rentals (Alquileres) — admin only
     Route::resource('rentals', \App\Http\Controllers\RentalController::class);
+    Route::get('rentals/{rental}/receipt-pdf',          [\App\Http\Controllers\RentalController::class, 'downloadReceipt'])->name('rentals.receipt.pdf');
     Route::post('rentals/{rental}/generate-payment',     [\App\Http\Controllers\RentalController::class, 'generatePayment'])->name('rentals.generate-payment');
     Route::post('rentals/bulk-generate',                 [\App\Http\Controllers\RentalController::class, 'bulkGenerate'])->name('rentals.bulk-generate');
     Route::post('rental-payments/{payment}/register',    [\App\Http\Controllers\RentalController::class, 'registerPayment'])->name('rentals.payments.register');

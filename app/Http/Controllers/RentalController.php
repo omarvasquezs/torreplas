@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Carbon\Carbon;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class RentalController extends Controller
 {
@@ -147,5 +148,21 @@ class RentalController extends Controller
     {
         $payment->update(['status' => 'pending', 'paid_date' => null, 'payment_method' => null, 'reference' => null]);
         return redirect()->back()->with('success', 'Pago revertido.');
+    }
+
+    /** Download rental receipt/summary PDF */
+    public function downloadReceipt(Rental $rental)
+    {
+        $rental->load(['client', 'user', 'payments' => fn($q) => $q->orderByDesc('due_date')]);
+
+        $latestPayment = $rental->payments->first();
+
+        $pdf = Pdf::loadView('pdf.rental-receipt', [
+            'rental' => $rental,
+            'latestPayment' => $latestPayment,
+            'generatedAt' => now(),
+        ])->setPaper('a4');
+
+        return $pdf->download('comprobante_alquiler_' . $rental->id . '.pdf');
     }
 }
