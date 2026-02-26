@@ -12,7 +12,7 @@ export default function Index({ warehouses, products }) {
 
             <div className="mb-6">
                 <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Inventario</h1>
-                <p className="text-gray-500 dark:text-gray-400">Control de stock por almacén.</p>
+                <p className="text-gray-500 dark:text-gray-600">Control de stock por almacén.</p>
             </div>
 
             {/* Warehouses Cards */}
@@ -21,7 +21,7 @@ export default function Index({ warehouses, products }) {
                     <div key={wh.id} className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700 flex items-start justify-between">
                         <div>
                             <h3 className="font-bold text-lg text-gray-900 dark:text-white">{wh.name}</h3>
-                            <p className="text-sm text-gray-400 mt-1">{wh.address || 'Sin dirección'}</p>
+                            <p className="text-sm text-gray-600 mt-1">{wh.address || 'Sin dirección'}</p>
                             <div className="mt-4 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300">
                                 {wh.products_count} Items
                             </div>
@@ -39,7 +39,7 @@ export default function Index({ warehouses, products }) {
                     <h3 className="font-semibold text-gray-900 dark:text-white">Stock General</h3>
                 </div>
                 <div className="overflow-x-auto">
-                    <table className="w-full text-left text-sm text-gray-600 dark:text-gray-400">
+                    <table className="w-full text-left text-sm text-gray-600 dark:text-gray-600">
                         <thead className="bg-gray-50 dark:bg-slate-700/50 uppercase text-xs font-semibold text-gray-900 dark:text-white">
                             <tr>
                                 <th className="px-6 py-4">Producto</th>
@@ -68,7 +68,7 @@ export default function Index({ warehouses, products }) {
                                                     {parseFloat(stock) > 0 ? (
                                                         <span className="font-bold text-gray-800 dark:text-gray-200">{parseFloat(stock)}</span>
                                                     ) : (
-                                                        <span className="text-gray-300">-</span>
+                                                        <span className="text-gray-700">-</span>
                                                     )}
                                                 </td>
                                             );

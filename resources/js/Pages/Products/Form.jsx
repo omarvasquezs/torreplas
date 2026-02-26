@@ -56,7 +56,7 @@ export default function Form({ products, categories, brands, units, product }) {
                             </div>
 
                             <div className="col-span-1 md:col-span-2">
-                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nombre del Producto</label>
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-700 mb-1">Nombre del Producto</label>
                                 <input
                                     type="text"
                                     value={data.name}
@@ -68,7 +68,7 @@ export default function Form({ products, categories, brands, units, product }) {
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Código Interno</label>
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-700 mb-1">Código Interno</label>
                                 <input
                                     type="text"
                                     value={data.code}
@@ -79,7 +79,7 @@ export default function Form({ products, categories, brands, units, product }) {
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Código de Barras</label>
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-700 mb-1">Código de Barras</label>
                                 <input
                                     type="text"
                                     value={data.barcode}
@@ -94,7 +94,7 @@ export default function Form({ products, categories, brands, units, product }) {
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Categoría</label>
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-700 mb-1">Categoría</label>
                                 <select
                                     value={data.category_id}
                                     onChange={(e) => setData('category_id', e.target.value)}
@@ -108,7 +108,7 @@ export default function Form({ products, categories, brands, units, product }) {
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Marca</label>
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-700 mb-1">Marca</label>
                                 <select
                                     value={data.brand_id}
                                     onChange={(e) => setData('brand_id', e.target.value)}
@@ -122,7 +122,7 @@ export default function Form({ products, categories, brands, units, product }) {
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Unidad de Medida</label>
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-700 mb-1">Unidad de Medida</label>
                                 <select
                                     value={data.unit_id}
                                     onChange={(e) => setData('unit_id', e.target.value)}
@@ -141,7 +141,7 @@ export default function Form({ products, categories, brands, units, product }) {
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Precio de Venta</label>
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-700 mb-1">Precio de Venta</label>
                                 <div className="relative rounded-md shadow-sm">
                                     <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                                         <span className="text-gray-500 sm:text-sm">S/</span>
@@ -159,7 +159,7 @@ export default function Form({ products, categories, brands, units, product }) {
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Costo Unitario</label>
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-700 mb-1">Costo Unitario</label>
                                 <div className="relative rounded-md shadow-sm">
                                     <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                                         <span className="text-gray-500 sm:text-sm">S/</span>
@@ -176,7 +176,7 @@ export default function Form({ products, categories, brands, units, product }) {
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Stock Mínimo</label>
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-700 mb-1">Stock Mínimo</label>
                                 <input
                                     type="number"
                                     value={data.min_stock}
@@ -186,7 +186,7 @@ export default function Form({ products, categories, brands, units, product }) {
                             </div>
 
                             <div className="col-span-1 md:col-span-2">
-                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Descripción</label>
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-700 mb-1">Descripción</label>
                                 <textarea
                                     rows={3}
                                     value={data.description}
@@ -200,7 +200,7 @@ export default function Form({ products, categories, brands, units, product }) {
                         <div className="flex items-center justify-end gap-3 mt-8 pt-4 border-t border-gray-200 dark:border-slate-700">
                             <Link
                                 href={route('products.index')}
-                                className="px-5 py-2.5 rounded-xl border border-gray-300 text-gray-700 hover:bg-gray-50 dark:border-slate-600 dark:text-gray-300 dark:hover:bg-slate-700 font-medium transition-colors"
+                                className="px-5 py-2.5 rounded-xl border border-gray-300 text-gray-700 hover:bg-gray-50 dark:border-slate-600 dark:text-gray-700 dark:hover:bg-slate-700 font-medium transition-colors"
                             >
                                 Cancelar
                             </Link>

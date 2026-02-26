@@ -31,7 +31,7 @@ export default function Index({ orders, filters }) {
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
                     <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Pedidos de Venta</h1>
-                    <p className="text-gray-500 dark:text-gray-400">Administre las órdenes de venta y facturación.</p>
+                    <p className="text-gray-500 dark:text-gray-600">Administre las órdenes de venta y facturación.</p>
                 </div>
                 <Link
                     href={route('orders.create')}
@@ -45,7 +45,7 @@ export default function Index({ orders, filters }) {
             {/* Filters */}
             <div className="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700">
                 <form onSubmit={handleSearch} className="relative max-w-sm">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-600" size={18} />
                     <input
                         type="text"
                         value={data.search}
@@ -59,7 +59,7 @@ export default function Index({ orders, filters }) {
             {/* Table */}
             <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700 overflow-hidden">
                 <div className="overflow-x-auto">
-                    <table className="w-full text-left text-sm text-gray-600 dark:text-gray-400">
+                    <table className="w-full text-left text-sm text-gray-600 dark:text-gray-600">
                         <thead className="bg-gray-50 dark:bg-slate-700/50 uppercase text-xs font-semibold text-gray-900 dark:text-white">
                             <tr>
                                 <th className="px-6 py-4">Código</th>
@@ -99,7 +99,7 @@ export default function Index({ orders, filters }) {
                                                 >
                                                     <Eye size={16} />
                                                 </Link> */}
-                                                <button className="p-2 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-lg text-gray-400 cursor-not-allowed">
+                                                <button className="p-2 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-lg text-gray-600 cursor-not-allowed">
                                                     <Eye size={16} />
                                                 </button>
                                             </div>

@@ -29,39 +29,39 @@ export default function ReportsMovements({ movements, filters, warehouses, produ
             <div className="space-y-6">
                 <div className="flex items-center gap-3">
                     <Link href={route('reports.index')}
-                        className="p-2 rounded-lg bg-gray-700 hover:bg-gray-600 text-white">
+                        className="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700">
                         <ArrowLeft size={18} />
                     </Link>
                     <div className="flex-1">
                         <h1 className="text-2xl font-bold text-white">Reporte de Movimientos</h1>
-                        <p className="text-gray-400 text-sm">Entradas y salidas de inventario</p>
+                        <p className="text-gray-600 text-sm">Entradas y salidas de inventario</p>
                     </div>
                     <a href={`${route('reports.movements.export')}?from=${from}&to=${to}&type=${type}&warehouse_id=${warehouseId}&product_id=${productId}`}
                         className="flex items-center gap-2 px-3 py-2 bg-green-600 hover:bg-green-500 text-white rounded-lg text-sm">
                         <Download size={15}/> CSV
                     </a>
                     <button onClick={() => window.print()}
-                        className="flex items-center gap-2 px-3 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg text-sm">
+                        className="flex items-center gap-2 px-3 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm">
                         <Printer size={15}/> Imprimir
                     </button>
                 </div>
 
                 {/* Filters */}
-                <div className="bg-gray-800/50 border border-gray-700/50 rounded-xl p-4 flex flex-wrap gap-3 items-end">
+                <div className="bg-white border border-gray-200 rounded-xl p-4 flex flex-wrap gap-3 items-end">
                     <div>
-                        <label className="block text-gray-400 text-xs mb-1">Desde</label>
+                        <label className="block text-gray-600 text-xs mb-1">Desde</label>
                         <input type="date" value={from} onChange={e => setFrom(e.target.value)}
-                            className="bg-gray-700/50 border border-gray-600 text-white rounded-lg px-3 py-2 text-sm" />
+                            className="bg-gray-100 border border-gray-200 text-gray-900 rounded-lg px-3 py-2 text-sm" />
                     </div>
                     <div>
-                        <label className="block text-gray-400 text-xs mb-1">Hasta</label>
+                        <label className="block text-gray-600 text-xs mb-1">Hasta</label>
                         <input type="date" value={to} onChange={e => setTo(e.target.value)}
-                            className="bg-gray-700/50 border border-gray-600 text-white rounded-lg px-3 py-2 text-sm" />
+                            className="bg-gray-100 border border-gray-200 text-gray-900 rounded-lg px-3 py-2 text-sm" />
                     </div>
                     <div>
-                        <label className="block text-gray-400 text-xs mb-1">Tipo</label>
+                        <label className="block text-gray-600 text-xs mb-1">Tipo</label>
                         <select value={type} onChange={e => setType(e.target.value)}
-                            className="bg-gray-700/50 border border-gray-600 text-white rounded-lg px-3 py-2 text-sm">
+                            className="bg-gray-100 border border-gray-200 text-gray-900 rounded-lg px-3 py-2 text-sm">
                             <option value="">Todos</option>
                             <option value="entrada">Entrada</option>
                             <option value="salida">Salida</option>
@@ -71,9 +71,9 @@ export default function ReportsMovements({ movements, filters, warehouses, produ
                     </div>
                     {warehouses?.length > 0 && (
                         <div>
-                            <label className="block text-gray-400 text-xs mb-1">Almacén</label>
+                            <label className="block text-gray-600 text-xs mb-1">Almacén</label>
                             <select value={warehouseId} onChange={e => setWarehouse(e.target.value)}
-                                className="bg-gray-700/50 border border-gray-600 text-white rounded-lg px-3 py-2 text-sm">
+                                className="bg-gray-100 border border-gray-200 text-gray-900 rounded-lg px-3 py-2 text-sm">
                                 <option value="">Todos</option>
                                 {warehouses.map(w => <option key={w.id} value={w.id}>{w.name}</option>)}
                             </select>
@@ -81,9 +81,9 @@ export default function ReportsMovements({ movements, filters, warehouses, produ
                     )}
                     {products?.length > 0 && (
                         <div>
-                            <label className="block text-gray-400 text-xs mb-1">Producto</label>
+                            <label className="block text-gray-600 text-xs mb-1">Producto</label>
                             <select value={productId} onChange={e => setProduct(e.target.value)}
-                                className="bg-gray-700/50 border border-gray-600 text-white rounded-lg px-3 py-2 text-sm">
+                                className="bg-gray-100 border border-gray-200 text-gray-900 rounded-lg px-3 py-2 text-sm">
                                 <option value="">Todos</option>
                                 {products.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
                             </select>
@@ -95,15 +95,15 @@ export default function ReportsMovements({ movements, filters, warehouses, produ
                     </button>
                 </div>
 
-                <div className="bg-gray-800/50 border border-gray-700/50 rounded-xl overflow-hidden">
-                    <div className="p-4 border-b border-gray-700/50 flex items-center justify-between">
+                <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+                    <div className="p-4 border-b border-gray-200 flex items-center justify-between">
                         <h2 className="text-white font-semibold">Movimientos</h2>
-                        <span className="text-gray-400 text-sm">{movements?.total ?? 0} registros</span>
+                        <span className="text-gray-600 text-sm">{movements?.total ?? 0} registros</span>
                     </div>
                     <div className="overflow-x-auto">
                         <table className="w-full text-sm">
                             <thead>
-                                <tr className="border-b border-gray-700/50 text-gray-400">
+                                <tr className="border-b border-gray-200 text-gray-600">
                                     <th className="text-left p-3">Fecha</th>
                                     <th className="text-left p-3">Tipo</th>
                                     <th className="text-left p-3">Producto</th>
@@ -115,21 +115,21 @@ export default function ReportsMovements({ movements, filters, warehouses, produ
                             </thead>
                             <tbody>
                                 {movements?.data?.length ? movements.data.map(m => (
-                                    <tr key={m.id} className="border-b border-gray-700/30 hover:bg-gray-700/20">
-                                        <td className="p-3 text-gray-400 text-xs">{m.created_at?.split('T')[0]}</td>
+                                    <tr key={m.id} className="border-b border-gray-200 hover:bg-gray-50">
+                                        <td className="p-3 text-gray-600 text-xs">{m.created_at?.split('T')[0]}</td>
                                         <td className="p-3">
-                                            <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs ${TYPE_COLORS[m.type] ?? 'bg-gray-500/20 text-gray-400'}`}>
+                                            <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs ${TYPE_COLORS[m.type] ?? 'bg-gray-500/20 text-gray-600'}`}>
                                                 {TYPE_ICONS[m.type]}
                                                 {TYPE_LABELS[m.type] ?? m.type}
                                             </span>
                                         </td>
-                                        <td className="p-3 text-gray-300">{m.product?.name ?? '—'}</td>
-                                        <td className="p-3 text-gray-400">{m.warehouse?.name ?? '—'}</td>
-                                        <td className={`p-3 text-right font-bold ${m.type === 'entrada' ? 'text-green-400' : m.type === 'salida' ? 'text-red-400' : 'text-gray-300'}`}>
+                                        <td className="p-3 text-gray-700">{m.product?.name ?? '—'}</td>
+                                        <td className="p-3 text-gray-600">{m.warehouse?.name ?? '—'}</td>
+                                        <td className={`p-3 text-right font-bold ${m.type === 'entrada' ? 'text-green-400' : m.type === 'salida' ? 'text-red-400' : 'text-gray-700'}`}>
                                             {m.type === 'entrada' ? '+' : m.type === 'salida' ? '-' : ''}{m.quantity}
                                         </td>
-                                        <td className="p-3 text-gray-400 text-xs">{m.reason ?? '—'}</td>
-                                        <td className="p-3 text-gray-400 text-xs">{m.user?.name ?? '—'}</td>
+                                        <td className="p-3 text-gray-600 text-xs">{m.reason ?? '—'}</td>
+                                        <td className="p-3 text-gray-600 text-xs">{m.user?.name ?? '—'}</td>
                                     </tr>
                                 )) : (
                                     <tr><td colSpan={7} className="p-8 text-center text-gray-500">Sin resultados</td></tr>
@@ -143,7 +143,7 @@ export default function ReportsMovements({ movements, filters, warehouses, produ
                                 <button key={i} disabled={!l.url}
                                     onClick={() => l.url && router.get(l.url)}
                                     dangerouslySetInnerHTML={{ __html: l.label }}
-                                    className={`px-3 py-1 rounded text-sm ${l.active ? 'bg-indigo-600 text-white' : 'bg-gray-700 text-gray-300 hover:bg-gray-600 disabled:opacity-40'}`} />
+                                    className={`px-3 py-1 rounded text-sm ${l.active ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-600 disabled:opacity-40'}`} />
                             ))}
                         </div>
                     )}

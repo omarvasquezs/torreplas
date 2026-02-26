@@ -40,7 +40,7 @@ export default function ReportsIndex() {
             <div className="space-y-6">
                 <div>
                     <h1 className="text-2xl font-bold text-white">Reportes</h1>
-                    <p className="text-gray-400 text-sm mt-1">Genera reportes detallados por módulo</p>
+                    <p className="text-gray-600 text-sm mt-1">Genera reportes detallados por módulo</p>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -52,7 +52,7 @@ export default function ReportsIndex() {
                             </div>
                             <div className="flex-1">
                                 <h2 className="text-white font-semibold">{r.title}</h2>
-                                <p className="text-gray-400 text-sm mt-0.5">{r.desc}</p>
+                                <p className="text-gray-600 text-sm mt-0.5">{r.desc}</p>
                             </div>
                             <ArrowRight size={18} className="text-gray-500" />
                         </Link>

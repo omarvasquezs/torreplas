@@ -49,6 +49,7 @@ const GROUPS = [
             { name: 'Productos',  href: () => route('products.index'), icon: Package,         match: 'products.*'    },
             { name: 'Almacenes',  href: () => route('inventory.index'),icon: Boxes,           match: 'inventory.*'   },
             { name: 'Logística',  href: () => route('deliveries.index'),icon: Truck,          match: 'deliveries.*'  },
+            { name: 'Guías de Remisión', href: () => route('dispatch-guides.index'), icon: FileText, match: 'dispatch-guides.*' },
         ],
     },
     {
@@ -104,7 +105,7 @@ function NavGroup({ group, auth, setSidebarOpen }) {
     return (
         <div>
             <button onClick={() => setOpen(v => !v)}
-                className="flex items-center justify-between w-full px-3 py-1.5 text-xs font-semibold text-gray-500 uppercase tracking-widest hover:text-gray-300">
+                className="flex items-center justify-between w-full px-3 py-1.5 text-xs font-semibold text-gray-500 uppercase tracking-widest hover:text-gray-700">
                 <span>{group.label}</span>
                 <ChevronDown size={12} className={`transition-transform ${open ? '' : '-rotate-90'}`} />
             </button>
@@ -122,7 +123,7 @@ function NavGroup({ group, auth, setSidebarOpen }) {
                                         "flex items-center gap-3 px-3 py-2 rounded-lg transition-all text-sm group",
                                         current
                                             ? "bg-indigo-600 text-white shadow-lg shadow-indigo-600/20"
-                                            : "text-gray-400 hover:bg-gray-700/60 hover:text-white"
+                                            : "text-gray-600 hover:bg-gray-100/60 hover:text-gray-900"
                                     )}>
                                     <item.icon size={16} />
                                     <span className="font-medium">{item.name}</span>
@@ -141,25 +142,25 @@ export default function DashboardLayout({ children }) {
     const [sidebarOpen, setSidebarOpen] = useState(false);
 
     return (
-        <div className="min-h-screen bg-gray-950">
+        <div className="intranet-light min-h-screen bg-gray-100 text-gray-900">
             {/* Mobile Sidebar Overlay */}
             {sidebarOpen && (
                 <div
-                    className="fixed inset-0 z-40 bg-gray-900/50 backdrop-blur-sm lg:hidden"
+                    className="fixed inset-0 z-40 bg-white/80 backdrop-blur-sm lg:hidden"
                     onClick={() => setSidebarOpen(false)}
                 />
             )}
 
             {/* Sidebar */}
             <aside className={cn(
-                "fixed inset-y-0 left-0 z-50 w-64 bg-gray-900 border-r border-gray-700/50 transition-transform duration-300 lg:translate-x-0 flex flex-col",
+                "fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-gray-200 transition-transform duration-300 lg:translate-x-0 flex flex-col",
                 sidebarOpen ? "translate-x-0" : "-translate-x-full"
             )}>
-                <div className="flex h-14 items-center justify-between px-4 border-b border-gray-700/50 shrink-0">
+                <div className="flex h-14 items-center justify-between px-4 border-b border-gray-200 shrink-0">
                     <span className="text-xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
                         TORREPLAS
                     </span>
-                    <button onClick={() => setSidebarOpen(false)} className="lg:hidden text-gray-400 hover:text-white">
+                    <button onClick={() => setSidebarOpen(false)} className="lg:hidden text-gray-600 hover:text-gray-900">
                         <X size={20} />
                     </button>
                 </div>
@@ -170,21 +171,21 @@ export default function DashboardLayout({ children }) {
                     ))}
                 </nav>
 
-                <div className="border-t border-gray-700/50 p-3 shrink-0">
-                    <div className="flex items-center gap-3 px-2 py-2 rounded-lg bg-gray-800/50 mb-2">
+                <div className="border-t border-gray-200 p-3 shrink-0">
+                    <div className="flex items-center gap-3 px-2 py-2 rounded-lg bg-white mb-2">
                         <div className="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center text-white text-sm font-bold shrink-0">
                             {auth.user.name.charAt(0).toUpperCase()}
                         </div>
                         <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium text-white truncate">{auth.user.name}</p>
-                            <p className="text-xs text-gray-400 truncate">{auth.user.email}</p>
+                            <p className="text-sm font-medium text-gray-900 truncate">{auth.user.name}</p>
+                            <p className="text-xs text-gray-600 truncate">{auth.user.email}</p>
                         </div>
                     </div>
                     <Link
                         href={route('logout')}
                         method="post"
                         as="button"
-                        className="flex w-full items-center gap-3 px-3 py-2 text-red-400 hover:bg-red-500/10 rounded-lg transition-colors text-sm"
+                        className="flex w-full items-center gap-3 px-3 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors text-sm"
                     >
                         <LogOut size={16} />
                         Cerrar Sesión
@@ -193,13 +194,13 @@ export default function DashboardLayout({ children }) {
             </aside>
 
             {/* Main Content */}
-            <div className="lg:pl-64 flex flex-col min-h-screen bg-gray-950">
+            <div className="lg:pl-64 flex flex-col min-h-screen bg-gray-100">
                 {/* Topbar (Mobile) */}
-                <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b border-gray-700/50 bg-gray-900/80 backdrop-blur-md px-4 lg:hidden">
-                    <button onClick={() => setSidebarOpen(true)} className="text-gray-400 hover:text-white">
+                <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b border-gray-200 bg-white/95 backdrop-blur-md px-4 lg:hidden">
+                    <button onClick={() => setSidebarOpen(true)} className="text-gray-600 hover:text-gray-900">
                         <Menu size={22} />
                     </button>
-                    <span className="font-bold text-white">Torreplas</span>
+                    <span className="font-bold text-gray-900">Torreplas</span>
                 </header>
 
                 <main className="flex-1 p-4 lg:p-6">

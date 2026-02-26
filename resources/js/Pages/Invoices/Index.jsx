@@ -39,7 +39,7 @@ export default function InvoicesIndex({ invoices, filters }) {
                 <div className="flex items-center justify-between">
                     <div>
                         <h1 className="text-2xl font-bold text-white">Facturación</h1>
-                        <p className="text-gray-400 text-sm mt-1">Comprobantes de pago</p>
+                        <p className="text-gray-600 text-sm mt-1">Comprobantes de pago</p>
                     </div>
                     <Link href={route('invoices.create')} className="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition text-sm font-medium">
                         <Plus size={16} /> Nuevo Comprobante
@@ -48,28 +48,28 @@ export default function InvoicesIndex({ invoices, filters }) {
 
                 <form onSubmit={handleSearch} className="flex gap-2 flex-wrap">
                     <div className="relative flex-1 max-w-xs">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-600" size={16} />
                         <input
                             type="text" placeholder="Serie, número, cliente..."
                             value={search} onChange={e => setSearch(e.target.value)}
-                            className="w-full pl-9 pr-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                            className="w-full pl-9 pr-4 py-2 bg-white border border-gray-200 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
                         />
                     </div>
                     <select value={type} onChange={e => setType(e.target.value)}
-                        className="px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        className="px-3 py-2 bg-white border border-gray-200 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
                         <option value="">Todos los tipos</option>
                         <option value="factura">Factura</option>
                         <option value="boleta">Boleta</option>
                         <option value="nota_credito">Nota Crédito</option>
                         <option value="nota_debito">Nota Débito</option>
                     </select>
-                    <button type="submit" className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg text-sm">Buscar</button>
+                    <button type="submit" className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm">Buscar</button>
                 </form>
 
-                <div className="bg-gray-800/50 rounded-xl border border-gray-700/50 overflow-hidden">
+                <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
                     <table className="w-full text-sm">
-                        <thead className="bg-gray-900/50">
-                            <tr className="text-gray-400 text-left">
+                        <thead className="bg-white/80">
+                            <tr className="text-gray-600 text-left">
                                 <th className="px-4 py-3 font-medium">Comprobante</th>
                                 <th className="px-4 py-3 font-medium">Tipo</th>
                                 <th className="px-4 py-3 font-medium">Cliente</th>
@@ -86,16 +86,16 @@ export default function InvoicesIndex({ invoices, filters }) {
                             {invoices.data.map(inv => {
                                 const st = STATUS_LABELS[inv.status] || STATUS_LABELS.generated;
                                 return (
-                                    <tr key={inv.id} className="hover:bg-gray-700/30 transition">
+                                    <tr key={inv.id} className="hover:bg-gray-100/30 transition">
                                         <td className="px-4 py-3">
                                             <div className="flex items-center gap-2">
                                                 <FileText size={14} className="text-indigo-400" />
                                                 <span className="font-mono text-white">{inv.serie}-{inv.number}</span>
                                             </div>
                                         </td>
-                                        <td className="px-4 py-3 text-gray-300">{TYPE_LABELS[inv.type] || inv.type}</td>
-                                        <td className="px-4 py-3 text-gray-300">{inv.client?.name || '—'}</td>
-                                        <td className="px-4 py-3 text-gray-400">{inv.issue_date}</td>
+                                        <td className="px-4 py-3 text-gray-700">{TYPE_LABELS[inv.type] || inv.type}</td>
+                                        <td className="px-4 py-3 text-gray-700">{inv.client?.name || '—'}</td>
+                                        <td className="px-4 py-3 text-gray-600">{inv.issue_date}</td>
                                         <td className="px-4 py-3 text-white font-medium">
                                             S/ {parseFloat(inv.total_amount).toFixed(2)}
                                         </td>
@@ -118,10 +118,10 @@ export default function InvoicesIndex({ invoices, filters }) {
                         </tbody>
                     </table>
                     {invoices.links && (
-                        <div className="px-4 py-3 border-t border-gray-700/50 flex gap-1">
+                        <div className="px-4 py-3 border-t border-gray-200 flex gap-1">
                             {invoices.links.map((link, i) => (
                                 <Link key={i} href={link.url || '#'}
-                                    className={`px-3 py-1 rounded text-xs ${link.active ? 'bg-indigo-600 text-white' : 'bg-gray-700 text-gray-400 hover:bg-gray-600'} ${!link.url ? 'opacity-40 pointer-events-none' : ''}`}
+                                    className={`px-3 py-1 rounded text-xs ${link.active ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-600'} ${!link.url ? 'opacity-40 pointer-events-none' : ''}`}
                                     dangerouslySetInnerHTML={{ __html: link.label }} />
                             ))}
                         </div>

@@ -21,7 +21,7 @@ export default function Index({ clients, filters }) {
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
                     <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Clientes</h1>
-                    <p className="text-gray-500 dark:text-gray-400">Gestione su cartera de clientes y créditos.</p>
+                    <p className="text-gray-500 dark:text-gray-600">Gestione su cartera de clientes y créditos.</p>
                 </div>
                 <Link
                     href={route('clients.create')}
@@ -35,7 +35,7 @@ export default function Index({ clients, filters }) {
             {/* Filters */}
             <div className="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700">
                 <form onSubmit={handleSearch} className="relative max-w-sm">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-600" size={18} />
                     <input
                         type="text"
                         value={data.search}
@@ -49,7 +49,7 @@ export default function Index({ clients, filters }) {
             {/* Table */}
             <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700 overflow-hidden">
                 <div className="overflow-x-auto">
-                    <table className="w-full text-left text-sm text-gray-600 dark:text-gray-400">
+                    <table className="w-full text-left text-sm text-gray-600 dark:text-gray-600">
                         <thead className="bg-gray-50 dark:bg-slate-700/50 uppercase text-xs font-semibold text-gray-900 dark:text-white">
                             <tr>
                                 <th className="px-6 py-4">Cliente / Razón Social</th>
@@ -74,14 +74,14 @@ export default function Index({ clients, filters }) {
                                             </div>
                                         </td>
                                         <td className="px-6 py-4">
-                                            <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-600">
+                                            <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-100 dark:text-gray-700 border border-gray-200 dark:border-gray-200">
                                                 {client.document_type}: {client.document_number}
                                             </span>
                                         </td>
                                         <td className="px-6 py-4">
                                             <div className="flex flex-col">
                                                 <span>{client.phone || '-'}</span>
-                                                <span className="text-xs text-gray-400">{client.email}</span>
+                                                <span className="text-xs text-gray-600">{client.email}</span>
                                             </div>
                                         </td>
                                         <td className="px-6 py-4 text-center">
@@ -90,7 +90,7 @@ export default function Index({ clients, filters }) {
                                                     S/ {parseFloat(client.credit_limit).toFixed(2)}
                                                 </span>
                                             ) : (
-                                                <span className="text-gray-400">-</span>
+                                                <span className="text-gray-600">-</span>
                                             )}
                                         </td>
                                         <td className="px-6 py-4">
@@ -135,14 +135,14 @@ export default function Index({ clients, filters }) {
                                         href={link.url}
                                         className={`px-3 py-1 text-sm rounded-md transition-colors ${link.active
                                                 ? 'bg-blue-600 text-white'
-                                                : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-slate-700'
+                                                : 'text-gray-600 dark:text-gray-600 hover:bg-gray-100 dark:hover:bg-slate-700'
                                             }`}
                                         dangerouslySetInnerHTML={{ __html: link.label }}
                                     />
                                 ) : (
                                     <span
                                         key={i}
-                                        className="px-3 py-1 text-sm text-gray-400"
+                                        className="px-3 py-1 text-sm text-gray-600"
                                         dangerouslySetInnerHTML={{ __html: link.label }}
                                     />
                                 )

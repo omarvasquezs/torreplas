@@ -36,10 +36,10 @@ export default function Kardex({ product, movements, stock }) {
                 {/* Header */}
                 <div className="flex items-start gap-4">
                     <Link href={route('products.index')}
-                        className="p-2 rounded-lg bg-gray-700 hover:bg-gray-600 text-white mt-1"><ArrowLeft size={18}/></Link>
+                        className="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700 mt-1"><ArrowLeft size={18}/></Link>
                     <div className="flex-1">
                         <h1 className="text-2xl font-bold text-white">{product.name}</h1>
-                        <div className="flex flex-wrap gap-3 mt-2 text-sm text-gray-400">
+                        <div className="flex flex-wrap gap-3 mt-2 text-sm text-gray-600">
                             <span>SKU: <span className="text-indigo-400 font-mono">{product.sku ?? '—'}</span></span>
                             <span>Categoría: <span className="text-white">{product.category?.name ?? '—'}</span></span>
                             <span>Marca: <span className="text-white">{product.brand?.name ?? '—'}</span></span>
@@ -52,10 +52,10 @@ export default function Kardex({ product, movements, stock }) {
                 {stock?.length > 0 && (
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                         {stock.map(w => (
-                            <div key={w.id} className="bg-gray-800/50 border border-gray-700/50 rounded-xl p-4">
+                            <div key={w.id} className="bg-white border border-gray-200 rounded-xl p-4">
                                 <div className="flex items-center gap-2 mb-2">
                                     <Package size={16} className="text-indigo-400"/>
-                                    <span className="text-gray-400 text-xs">{w.name}</span>
+                                    <span className="text-gray-600 text-xs">{w.name}</span>
                                 </div>
                                 <p className="text-2xl font-bold text-white">{fmt(w.stock)}</p>
                                 <p className="text-gray-500 text-xs">{product.unit?.abbreviation ?? 'und'}</p>
@@ -80,7 +80,7 @@ export default function Kardex({ product, movements, stock }) {
                         </div>
                         <p className="text-xl font-bold text-white mt-1">{fmt(totalOut)}</p>
                     </div>
-                    <div className="bg-gray-800/50 border border-gray-700/50 rounded-xl p-4">
+                    <div className="bg-white border border-gray-200 rounded-xl p-4">
                         <div className="flex items-center gap-2">
                             <Package size={16} className="text-indigo-400"/>
                             <span className="text-indigo-400 text-xs">Stock Total</span>
@@ -90,14 +90,14 @@ export default function Kardex({ product, movements, stock }) {
                 </div>
 
                 {/* Movements table */}
-                <div className="bg-gray-800/50 border border-gray-700/50 rounded-xl overflow-hidden">
-                    <div className="px-4 py-3 border-b border-gray-700/50">
+                <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+                    <div className="px-4 py-3 border-b border-gray-200">
                         <h2 className="text-white font-semibold text-sm">Historial de movimientos</h2>
                     </div>
                     <div className="overflow-x-auto">
                         <table className="w-full text-sm">
                             <thead>
-                                <tr className="border-b border-gray-700/50 text-gray-400">
+                                <tr className="border-b border-gray-200 text-gray-600">
                                     <th className="text-left p-3">Fecha</th>
                                     <th className="text-left p-3">Tipo</th>
                                     <th className="text-left p-3">Motivo</th>
@@ -111,16 +111,16 @@ export default function Kardex({ product, movements, stock }) {
                                 {rows.length ? rows.map(m => {
                                     const isIn = m.type === 'entrada' || m.type === 'transferencia_in';
                                     return (
-                                        <tr key={m.id} className="border-b border-gray-700/30 hover:bg-gray-700/20">
-                                            <td className="p-3 text-gray-400 text-xs">{m.created_at?.split('T')[0]}</td>
+                                        <tr key={m.id} className="border-b border-gray-200 hover:bg-gray-50">
+                                            <td className="p-3 text-gray-600 text-xs">{m.created_at?.split('T')[0]}</td>
                                             <td className="p-3">
-                                                <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${TYPE_COLORS[m.type] ?? 'bg-gray-500/20 text-gray-400'}`}>
+                                                <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${TYPE_COLORS[m.type] ?? 'bg-gray-500/20 text-gray-600'}`}>
                                                     {TYPE_LABELS[m.type] ?? m.type}
                                                 </span>
                                             </td>
-                                            <td className="p-3 text-gray-300 text-xs">{m.reason ?? '—'}</td>
-                                            <td className="p-3 text-gray-400 text-xs">{m.warehouse?.name ?? '—'}</td>
-                                            <td className="p-3 text-gray-400 text-xs">{m.user?.name ?? '—'}</td>
+                                            <td className="p-3 text-gray-700 text-xs">{m.reason ?? '—'}</td>
+                                            <td className="p-3 text-gray-600 text-xs">{m.warehouse?.name ?? '—'}</td>
+                                            <td className="p-3 text-gray-600 text-xs">{m.user?.name ?? '—'}</td>
                                             <td className={`p-3 text-right font-mono text-sm font-bold ${isIn ? 'text-green-400' : 'text-red-400'}`}>
                                                 {isIn ? '+' : '-'}{fmt(Math.abs(m.quantity))}
                                             </td>

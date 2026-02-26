@@ -28,7 +28,7 @@ export default function LogisticsShow({ delivery }) {
             <Head title={`Despacho ${delivery.code}`} />
             <div className="max-w-3xl space-y-6">
                 <div className="flex items-center gap-3">
-                    <Link href={route('deliveries.index')} className="p-2 rounded-lg hover:bg-gray-700 text-gray-400 transition">
+                    <Link href={route('deliveries.index')} className="p-2 rounded-lg hover:bg-gray-100 text-gray-600 transition">
                         <ArrowLeft size={18} />
                     </Link>
                     <div>
@@ -40,7 +40,7 @@ export default function LogisticsShow({ delivery }) {
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
-                    <div className="bg-gray-800/50 rounded-xl border border-gray-700/50 p-4 space-y-3">
+                    <div className="bg-white rounded-xl border border-gray-200 p-4 space-y-3">
                         <h2 className="text-white font-semibold text-sm">Detalles</h2>
                         {[
                             ['Fecha programada', delivery.scheduled_date],
@@ -48,24 +48,24 @@ export default function LogisticsShow({ delivery }) {
                             ['Transportista', delivery.carrier?.name || '—'],
                         ].map(([k, v]) => (
                             <div key={k} className="flex justify-between text-sm">
-                                <span className="text-gray-400">{k}</span>
+                                <span className="text-gray-600">{k}</span>
                                 <span className="text-white">{v}</span>
                             </div>
                         ))}
                         <div className="flex gap-2 items-start text-sm">
-                            <MapPin size={14} className="text-gray-400 mt-0.5 flex-shrink-0" />
-                            <span className="text-gray-300">{delivery.destination_address}</span>
+                            <MapPin size={14} className="text-gray-600 mt-0.5 flex-shrink-0" />
+                            <span className="text-gray-700">{delivery.destination_address}</span>
                         </div>
                     </div>
 
                     {delivery.order && (
-                        <div className="bg-gray-800/50 rounded-xl border border-gray-700/50 p-4 space-y-3">
+                        <div className="bg-white rounded-xl border border-gray-200 p-4 space-y-3">
                             <h2 className="text-white font-semibold text-sm">Pedido Asociado</h2>
                             <p className="text-white font-mono">{delivery.order.code}</p>
-                            <p className="text-gray-400 text-sm">{delivery.order.client?.name}</p>
-                            <div className="border-t border-gray-700/50 pt-2 space-y-1">
+                            <p className="text-gray-600 text-sm">{delivery.order.client?.name}</p>
+                            <div className="border-t border-gray-200 pt-2 space-y-1">
                                 {delivery.order.items?.map(item => (
-                                    <div key={item.id} className="flex justify-between text-xs text-gray-400">
+                                    <div key={item.id} className="flex justify-between text-xs text-gray-600">
                                         <span>{item.product?.name}</span>
                                         <span>x{item.quantity}</span>
                                     </div>
@@ -76,13 +76,13 @@ export default function LogisticsShow({ delivery }) {
                 </div>
 
                 {/* Update status */}
-                <form onSubmit={update} className="bg-gray-800/50 rounded-xl border border-gray-700/50 p-4 space-y-4">
+                <form onSubmit={update} className="bg-white rounded-xl border border-gray-200 p-4 space-y-4">
                     <h2 className="text-white font-semibold">Actualizar Estado</h2>
                     <div className="grid grid-cols-2 gap-4">
                         <div>
-                            <label className="block text-sm text-gray-400 mb-1">Estado</label>
+                            <label className="block text-sm text-gray-600 mb-1">Estado</label>
                             <select value={data.status} onChange={e => setData('status', e.target.value)}
-                                className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white text-sm focus:outline-none">
+                                className="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg text-white text-sm focus:outline-none">
                                 <option value="pending">Pendiente</option>
                                 <option value="in_transit">En tránsito</option>
                                 <option value="delivered">Entregado</option>
@@ -91,16 +91,16 @@ export default function LogisticsShow({ delivery }) {
                         </div>
                         {data.status === 'delivered' && (
                             <div>
-                                <label className="block text-sm text-gray-400 mb-1">Fecha/hora entrega</label>
+                                <label className="block text-sm text-gray-600 mb-1">Fecha/hora entrega</label>
                                 <input type="datetime-local" value={data.delivered_at} onChange={e => setData('delivered_at', e.target.value)}
-                                    className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white text-sm focus:outline-none" />
+                                    className="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg text-white text-sm focus:outline-none" />
                             </div>
                         )}
                     </div>
                     <div>
-                        <label className="block text-sm text-gray-400 mb-1">Notas</label>
+                        <label className="block text-sm text-gray-600 mb-1">Notas</label>
                         <textarea value={data.notes} onChange={e => setData('notes', e.target.value)} rows={2}
-                            className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white text-sm focus:outline-none resize-none" />
+                            className="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg text-white text-sm focus:outline-none resize-none" />
                     </div>
                     <button type="submit" disabled={processing}
                         className="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white rounded-lg text-sm font-medium transition">

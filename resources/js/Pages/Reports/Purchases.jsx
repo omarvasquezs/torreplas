@@ -22,33 +22,33 @@ export default function ReportsPurchases({ orders, summary, filters }) {
             <div className="space-y-6">
                 <div className="flex items-center gap-3">
                     <Link href={route('reports.index')}
-                        className="p-2 rounded-lg bg-gray-700 hover:bg-gray-600 text-white">
+                        className="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700">
                         <ArrowLeft size={18} />
                     </Link>
                     <div className="flex-1">
                         <h1 className="text-2xl font-bold text-white">Reporte de Compras</h1>
-                        <p className="text-gray-400 text-sm">Órdenes de compra por período</p>
+                        <p className="text-gray-600 text-sm">Órdenes de compra por período</p>
                     </div>
                     <a href={`${route('reports.purchases.export')}?from=${from}&to=${to}`}
                         className="flex items-center gap-2 px-3 py-2 bg-green-600 hover:bg-green-500 text-white rounded-lg text-sm">
                         <Download size={15}/> CSV
                     </a>
                     <button onClick={() => window.print()}
-                        className="flex items-center gap-2 px-3 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg text-sm">
+                        className="flex items-center gap-2 px-3 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm">
                         <Printer size={15}/> Imprimir
                     </button>
                 </div>
 
-                <div className="bg-gray-800/50 border border-gray-700/50 rounded-xl p-4 flex flex-wrap gap-3 items-end">
+                <div className="bg-white border border-gray-200 rounded-xl p-4 flex flex-wrap gap-3 items-end">
                     <div>
-                        <label className="block text-gray-400 text-xs mb-1">Desde</label>
+                        <label className="block text-gray-600 text-xs mb-1">Desde</label>
                         <input type="date" value={from} onChange={e => setFrom(e.target.value)}
-                            className="bg-gray-700/50 border border-gray-600 text-white rounded-lg px-3 py-2 text-sm" />
+                            className="bg-gray-100 border border-gray-200 text-gray-900 rounded-lg px-3 py-2 text-sm" />
                     </div>
                     <div>
-                        <label className="block text-gray-400 text-xs mb-1">Hasta</label>
+                        <label className="block text-gray-600 text-xs mb-1">Hasta</label>
                         <input type="date" value={to} onChange={e => setTo(e.target.value)}
-                            className="bg-gray-700/50 border border-gray-600 text-white rounded-lg px-3 py-2 text-sm" />
+                            className="bg-gray-100 border border-gray-200 text-gray-900 rounded-lg px-3 py-2 text-sm" />
                     </div>
                     <button onClick={apply}
                         className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-sm font-medium">
@@ -62,22 +62,22 @@ export default function ReportsPurchases({ orders, summary, filters }) {
                         { label:'Órdenes',        value: summary?.count ?? 0,          color:'text-indigo-400' },
                         { label:'Recibido',       value:`S/ ${fmt(summary?.received)}`,color:'text-green-400'  },
                     ].map(c => (
-                        <div key={c.label} className="bg-gray-800/50 border border-gray-700/50 rounded-xl p-4">
-                            <p className="text-gray-400 text-xs">{c.label}</p>
+                        <div key={c.label} className="bg-white border border-gray-200 rounded-xl p-4">
+                            <p className="text-gray-600 text-xs">{c.label}</p>
                             <p className={`text-xl font-bold mt-1 ${c.color}`}>{c.value}</p>
                         </div>
                     ))}
                 </div>
 
-                <div className="bg-gray-800/50 border border-gray-700/50 rounded-xl overflow-hidden">
-                    <div className="p-4 border-b border-gray-700/50 flex items-center justify-between">
+                <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+                    <div className="p-4 border-b border-gray-200 flex items-center justify-between">
                         <h2 className="text-white font-semibold">Detalle de Órdenes de Compra</h2>
-                        <span className="text-gray-400 text-sm">{orders?.total ?? 0} resultados</span>
+                        <span className="text-gray-600 text-sm">{orders?.total ?? 0} resultados</span>
                     </div>
                     <div className="overflow-x-auto">
                         <table className="w-full text-sm">
                             <thead>
-                                <tr className="border-b border-gray-700/50 text-gray-400">
+                                <tr className="border-b border-gray-200 text-gray-600">
                                     <th className="text-left p-3">N° OC</th>
                                     <th className="text-left p-3">Proveedor</th>
                                     <th className="text-left p-3">Fecha</th>
@@ -87,13 +87,13 @@ export default function ReportsPurchases({ orders, summary, filters }) {
                             </thead>
                             <tbody>
                                 {orders?.data?.length ? orders.data.map(o => (
-                                    <tr key={o.id} className="border-b border-gray-700/30 hover:bg-gray-700/20">
+                                    <tr key={o.id} className="border-b border-gray-200 hover:bg-gray-50">
                                         <td className="p-3 text-indigo-400">#{o.id}</td>
-                                        <td className="p-3 text-gray-300">{o.supplier?.name ?? '—'}</td>
-                                        <td className="p-3 text-gray-300">{o.created_at?.split('T')[0]}</td>
+                                        <td className="p-3 text-gray-700">{o.supplier?.name ?? '—'}</td>
+                                        <td className="p-3 text-gray-700">{o.created_at?.split('T')[0]}</td>
                                         <td className="p-3 text-right font-mono text-white">S/ {fmt(o.total)}</td>
                                         <td className="p-3">
-                                            <span className={`px-2 py-0.5 rounded-full text-xs ${STATUS_COLORS[o.status] ?? 'bg-gray-500/20 text-gray-400'}`}>
+                                            <span className={`px-2 py-0.5 rounded-full text-xs ${STATUS_COLORS[o.status] ?? 'bg-gray-500/20 text-gray-600'}`}>
                                                 {STATUS_LABELS[o.status] ?? o.status}
                                             </span>
                                         </td>
@@ -110,7 +110,7 @@ export default function ReportsPurchases({ orders, summary, filters }) {
                                 <button key={i} disabled={!l.url}
                                     onClick={() => l.url && router.get(l.url)}
                                     dangerouslySetInnerHTML={{ __html: l.label }}
-                                    className={`px-3 py-1 rounded text-sm ${l.active ? 'bg-indigo-600 text-white' : 'bg-gray-700 text-gray-300 hover:bg-gray-600 disabled:opacity-40'}`} />
+                                    className={`px-3 py-1 rounded text-sm ${l.active ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-600 disabled:opacity-40'}`} />
                             ))}
                         </div>
                     )}

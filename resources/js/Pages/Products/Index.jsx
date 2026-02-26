@@ -21,7 +21,7 @@ export default function Index({ products, filters }) {
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
                     <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Productos</h1>
-                    <p className="text-gray-500 dark:text-gray-400">Gestione el catálogo de productos.</p>
+                    <p className="text-gray-500 dark:text-gray-600">Gestione el catálogo de productos.</p>
                 </div>
                 <Link
                     href={route('products.create')}
@@ -35,7 +35,7 @@ export default function Index({ products, filters }) {
             {/* Filters */}
             <div className="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700">
                 <form onSubmit={handleSearch} className="relative max-w-sm">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-600" size={18} />
                     <input
                         type="text"
                         value={data.search}
@@ -49,7 +49,7 @@ export default function Index({ products, filters }) {
             {/* Table */}
             <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700 overflow-hidden">
                 <div className="overflow-x-auto">
-                    <table className="w-full text-left text-sm text-gray-600 dark:text-gray-400">
+                    <table className="w-full text-left text-sm text-gray-600 dark:text-gray-600">
                         <thead className="bg-gray-50 dark:bg-slate-700/50 uppercase text-xs font-semibold text-gray-900 dark:text-white">
                             <tr>
                                 <th className="px-6 py-4">Producto</th>
@@ -127,14 +127,14 @@ export default function Index({ products, filters }) {
                                         href={link.url}
                                         className={`px-3 py-1 text-sm rounded-md transition-colors ${link.active
                                                 ? 'bg-blue-600 text-white'
-                                                : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-slate-700'
+                                                : 'text-gray-600 dark:text-gray-600 hover:bg-gray-100 dark:hover:bg-slate-700'
                                             }`}
                                         dangerouslySetInnerHTML={{ __html: link.label }}
                                     />
                                 ) : (
                                     <span
                                         key={i}
-                                        className="px-3 py-1 text-sm text-gray-400"
+                                        className="px-3 py-1 text-sm text-gray-600"
                                         dangerouslySetInnerHTML={{ __html: link.label }}
                                     />
                                 )

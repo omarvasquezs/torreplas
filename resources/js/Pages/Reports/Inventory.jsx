@@ -19,31 +19,31 @@ export default function ReportsInventory({ products, summary, filters }) {
             <div className="space-y-6">
                 <div className="flex items-center gap-3">
                     <Link href={route('reports.index')}
-                        className="p-2 rounded-lg bg-gray-700 hover:bg-gray-600 text-white">
+                        className="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700">
                         <ArrowLeft size={18} />
                     </Link>
                     <div className="flex-1">
                         <h1 className="text-2xl font-bold text-white">Reporte de Inventario</h1>
-                        <p className="text-gray-400 text-sm">Stock actual por producto</p>
+                        <p className="text-gray-600 text-sm">Stock actual por producto</p>
                     </div>
                     <a href={`${route('reports.inventory.export')}?search=${search}&low_stock=${lowStock ? 1 : 0}`}
                         className="flex items-center gap-2 px-3 py-2 bg-green-600 hover:bg-green-500 text-white rounded-lg text-sm">
                         <Download size={15}/> CSV
                     </a>
                     <button onClick={() => window.print()}
-                        className="flex items-center gap-2 px-3 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg text-sm">
+                        className="flex items-center gap-2 px-3 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm">
                         <Printer size={15}/> Imprimir
                     </button>
                 </div>
 
-                <div className="bg-gray-800/50 border border-gray-700/50 rounded-xl p-4 flex flex-wrap gap-3 items-end">
+                <div className="bg-white border border-gray-200 rounded-xl p-4 flex flex-wrap gap-3 items-end">
                     <div className="flex-1 min-w-40">
-                        <label className="block text-gray-400 text-xs mb-1">Buscar producto</label>
+                        <label className="block text-gray-600 text-xs mb-1">Buscar producto</label>
                         <input type="text" value={search} onChange={e => setSearch(e.target.value)}
                             placeholder="Nombre, SKU..."
-                            className="w-full bg-gray-700/50 border border-gray-600 text-white rounded-lg px-3 py-2 text-sm" />
+                            className="w-full bg-gray-100 border border-gray-200 text-gray-900 rounded-lg px-3 py-2 text-sm" />
                     </div>
-                    <label className="flex items-center gap-2 text-sm text-gray-300 cursor-pointer pb-2">
+                    <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer pb-2">
                         <input type="checkbox" checked={lowStock} onChange={e => setLowStock(e.target.checked)}
                             className="rounded" />
                         Solo stock bajo
@@ -61,22 +61,22 @@ export default function ReportsInventory({ products, summary, filters }) {
                         { label:'Valor Total',      value:`S/ ${fmt(summary?.total_value)}`,         color:'text-green-400'    },
                         { label:'Valor Stock Bajo', value:`S/ ${fmt(summary?.low_stock_value)}`,     color:'text-yellow-400'   },
                     ].map(c => (
-                        <div key={c.label} className="bg-gray-800/50 border border-gray-700/50 rounded-xl p-4">
-                            <p className="text-gray-400 text-xs">{c.label}</p>
+                        <div key={c.label} className="bg-white border border-gray-200 rounded-xl p-4">
+                            <p className="text-gray-600 text-xs">{c.label}</p>
                             <p className={`text-xl font-bold mt-1 ${c.color}`}>{c.value}</p>
                         </div>
                     ))}
                 </div>
 
-                <div className="bg-gray-800/50 border border-gray-700/50 rounded-xl overflow-hidden">
-                    <div className="p-4 border-b border-gray-700/50 flex items-center justify-between">
+                <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+                    <div className="p-4 border-b border-gray-200 flex items-center justify-between">
                         <h2 className="text-white font-semibold">Productos</h2>
-                        <span className="text-gray-400 text-sm">{products?.total ?? 0} productos</span>
+                        <span className="text-gray-600 text-sm">{products?.total ?? 0} productos</span>
                     </div>
                     <div className="overflow-x-auto">
                         <table className="w-full text-sm">
                             <thead>
-                                <tr className="border-b border-gray-700/50 text-gray-400">
+                                <tr className="border-b border-gray-200 text-gray-600">
                                     <th className="text-left p-3">Producto</th>
                                     <th className="text-left p-3">SKU</th>
                                     <th className="text-left p-3">Categoría</th>
@@ -89,15 +89,15 @@ export default function ReportsInventory({ products, summary, filters }) {
                                 {products?.data?.length ? products.data.map(p => {
                                     const isLow = p.stock <= p.min_stock;
                                     return (
-                                        <tr key={p.id} className={`border-b border-gray-700/30 hover:bg-gray-700/20 ${isLow ? 'bg-red-900/10' : ''}`}>
-                                            <td className="p-3 text-gray-300 flex items-center gap-2">
+                                        <tr key={p.id} className={`border-b border-gray-200 hover:bg-gray-50 ${isLow ? 'bg-red-900/10' : ''}`}>
+                                            <td className="p-3 text-gray-700 flex items-center gap-2">
                                                 {isLow && <AlertTriangle size={14} className="text-red-400 shrink-0" />}
                                                 {p.name}
                                             </td>
-                                            <td className="p-3 text-gray-400 font-mono text-xs">{p.sku ?? '—'}</td>
-                                            <td className="p-3 text-gray-400">{p.category?.name ?? '—'}</td>
+                                            <td className="p-3 text-gray-600 font-mono text-xs">{p.sku ?? '—'}</td>
+                                            <td className="p-3 text-gray-600">{p.category?.name ?? '—'}</td>
                                             <td className={`p-3 text-right font-bold ${isLow ? 'text-red-400' : 'text-white'}`}>{p.stock}</td>
-                                            <td className="p-3 text-right text-gray-400">{p.min_stock ?? 0}</td>
+                                            <td className="p-3 text-right text-gray-600">{p.min_stock ?? 0}</td>
                                             <td className="p-3 text-right font-mono text-white">S/ {fmt(p.price)}</td>
                                         </tr>
                                     );
@@ -113,7 +113,7 @@ export default function ReportsInventory({ products, summary, filters }) {
                                 <button key={i} disabled={!l.url}
                                     onClick={() => l.url && router.get(l.url)}
                                     dangerouslySetInnerHTML={{ __html: l.label }}
-                                    className={`px-3 py-1 rounded text-sm ${l.active ? 'bg-indigo-600 text-white' : 'bg-gray-700 text-gray-300 hover:bg-gray-600 disabled:opacity-40'}`} />
+                                    className={`px-3 py-1 rounded text-sm ${l.active ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-600 disabled:opacity-40'}`} />
                             ))}
                         </div>
                     )}

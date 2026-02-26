@@ -40,11 +40,11 @@ export default function SettingsIndex({ settings = {}, series = [] }) {
 
                 <div>
                     <h1 className="text-2xl font-bold text-white">Configuración</h1>
-                    <p className="text-gray-400 text-sm mt-1">Parámetros generales del sistema</p>
+                    <p className="text-gray-600 text-sm mt-1">Parámetros generales del sistema</p>
                 </div>
 
                 <form onSubmit={saveSettings} className="space-y-6">
-                    <div className="bg-gray-800/50 border border-gray-700/50 rounded-xl p-5">
+                    <div className="bg-white border border-gray-200 rounded-xl p-5">
                         <h2 className="text-white font-semibold text-sm mb-4">Datos de la Empresa</h2>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             {[
@@ -55,48 +55,48 @@ export default function SettingsIndex({ settings = {}, series = [] }) {
                                 { key:'company_email',   label:'Email',           type:'email' },
                             ].map(f => (
                                 <div key={f.key} className={f.key === 'company_address' ? 'md:col-span-2' : ''}>
-                                    <label className="block text-gray-400 text-xs mb-1">{f.label}</label>
+                                    <label className="block text-gray-600 text-xs mb-1">{f.label}</label>
                                     <input
                                         type={f.type}
                                         value={data[f.key] ?? ''}
                                         onChange={e => setData(f.key, e.target.value)}
-                                        className="w-full bg-gray-700/50 border border-gray-600 text-white rounded-lg px-3 py-2 text-sm"
+                                        className="w-full bg-gray-100 border border-gray-200 text-gray-900 rounded-lg px-3 py-2 text-sm"
                                     />
                                 </div>
                             ))}
                         </div>
                     </div>
 
-                    <div className="bg-gray-800/50 border border-gray-700/50 rounded-xl p-5">
+                    <div className="bg-white border border-gray-200 rounded-xl p-5">
                         <h2 className="text-white font-semibold text-sm mb-4">Configuración Financiera</h2>
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                             <div>
-                                <label className="block text-gray-400 text-xs mb-1">IGV / Impuesto (%)</label>
+                                <label className="block text-gray-600 text-xs mb-1">IGV / Impuesto (%)</label>
                                 <input type="number" step="0.01" min="0" max="100"
                                     value={data.tax_rate ?? '18'}
                                     onChange={e => setData('tax_rate', e.target.value)}
-                                    className="w-full bg-gray-700/50 border border-gray-600 text-white rounded-lg px-3 py-2 text-sm font-mono" />
+                                    className="w-full bg-gray-100 border border-gray-200 text-gray-900 rounded-lg px-3 py-2 text-sm font-mono" />
                             </div>
                             <div>
-                                <label className="block text-gray-400 text-xs mb-1">Moneda</label>
+                                <label className="block text-gray-600 text-xs mb-1">Moneda</label>
                                 <select value={data.currency ?? 'PEN'} onChange={e => setData('currency', e.target.value)}
-                                    className="w-full bg-gray-700/50 border border-gray-600 text-white rounded-lg px-3 py-2 text-sm">
+                                    className="w-full bg-gray-100 border border-gray-200 text-gray-900 rounded-lg px-3 py-2 text-sm">
                                     <option value="PEN">Soles (PEN)</option>
                                     <option value="USD">Dólares (USD)</option>
                                     <option value="EUR">Euros (EUR)</option>
                                 </select>
                             </div>
                             <div>
-                                <label className="block text-gray-400 text-xs mb-1">Símbolo</label>
+                                <label className="block text-gray-600 text-xs mb-1">Símbolo</label>
                                 <input type="text" maxLength={4}
                                     value={data.currency_symbol ?? 'S/'}
                                     onChange={e => setData('currency_symbol', e.target.value)}
-                                    className="w-full bg-gray-700/50 border border-gray-600 text-white rounded-lg px-3 py-2 text-sm" />
+                                    className="w-full bg-gray-100 border border-gray-200 text-gray-900 rounded-lg px-3 py-2 text-sm" />
                             </div>
                             <div>
-                                <label className="block text-gray-400 text-xs mb-1">Zona horaria</label>
+                                <label className="block text-gray-600 text-xs mb-1">Zona horaria</label>
                                 <select value={data.timezone ?? 'America/Lima'} onChange={e => setData('timezone', e.target.value)}
-                                    className="w-full bg-gray-700/50 border border-gray-600 text-white rounded-lg px-3 py-2 text-sm">
+                                    className="w-full bg-gray-100 border border-gray-200 text-gray-900 rounded-lg px-3 py-2 text-sm">
                                     <option value="America/Lima">America/Lima</option>
                                     <option value="America/Bogota">America/Bogota</option>
                                     <option value="America/New_York">America/New York</option>
@@ -106,11 +106,11 @@ export default function SettingsIndex({ settings = {}, series = [] }) {
                         </div>
                     </div>
 
-                    <div className="bg-gray-800/50 border border-gray-700/50 rounded-xl p-5">
+                    <div className="bg-white border border-gray-200 rounded-xl p-5">
                         <h2 className="text-white font-semibold text-sm mb-4">Notas en Comprobantes</h2>
                         <textarea value={data.invoice_note ?? ''} onChange={e => setData('invoice_note', e.target.value)}
                             rows={3} placeholder="Texto al pie de facturas y boletas..."
-                            className="w-full bg-gray-700/50 border border-gray-600 text-white rounded-lg px-3 py-2 text-sm resize-none" />
+                            className="w-full bg-gray-100 border border-gray-200 text-gray-900 rounded-lg px-3 py-2 text-sm resize-none" />
                     </div>
 
                     <div className="flex items-center justify-between">
@@ -123,28 +123,28 @@ export default function SettingsIndex({ settings = {}, series = [] }) {
                 </form>
 
                 {/* Series */}
-                <div className="bg-gray-800/50 border border-gray-700/50 rounded-xl overflow-hidden">
-                    <div className="px-5 py-4 border-b border-gray-700/50">
+                <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+                    <div className="px-5 py-4 border-b border-gray-200">
                         <h2 className="text-white font-semibold text-sm">Series de Comprobantes</h2>
                     </div>
-                    <form onSubmit={addSeries} className="p-4 border-b border-gray-700/50 flex flex-wrap gap-3 items-end">
+                    <form onSubmit={addSeries} className="p-4 border-b border-gray-200 flex flex-wrap gap-3 items-end">
                         <div>
-                            <label className="block text-gray-400 text-xs mb-1">Tipo</label>
+                            <label className="block text-gray-600 text-xs mb-1">Tipo</label>
                             <select value={addForm.data.type} onChange={e => addForm.setData('type', e.target.value)}
-                                className="bg-gray-700/50 border border-gray-600 text-white rounded-lg px-3 py-2 text-sm">
+                                className="bg-gray-100 border border-gray-200 text-gray-900 rounded-lg px-3 py-2 text-sm">
                                 {SERIES_TYPES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
                             </select>
                         </div>
                         <div>
-                            <label className="block text-gray-400 text-xs mb-1">Serie</label>
+                            <label className="block text-gray-600 text-xs mb-1">Serie</label>
                             <input value={addForm.data.series} onChange={e => addForm.setData('series', e.target.value)}
-                                className="w-24 bg-gray-700/50 border border-gray-600 text-white rounded-lg px-3 py-2 text-sm font-mono"
+                                className="w-24 bg-gray-100 border border-gray-200 text-gray-900 rounded-lg px-3 py-2 text-sm font-mono"
                                 required placeholder="F001" />
                         </div>
                         <div>
-                            <label className="block text-gray-400 text-xs mb-1">Próximo N°</label>
+                            <label className="block text-gray-600 text-xs mb-1">Próximo N°</label>
                             <input type="number" min="1" value={addForm.data.next_number} onChange={e => addForm.setData('next_number', e.target.value)}
-                                className="w-24 bg-gray-700/50 border border-gray-600 text-white rounded-lg px-3 py-2 text-sm font-mono" required />
+                                className="w-24 bg-gray-100 border border-gray-200 text-gray-900 rounded-lg px-3 py-2 text-sm font-mono" required />
                         </div>
                         <button type="submit" disabled={addForm.processing}
                             className="flex items-center gap-1.5 px-4 py-2 bg-green-600 hover:bg-green-500 disabled:opacity-50 text-white rounded-lg text-sm font-medium">
@@ -153,7 +153,7 @@ export default function SettingsIndex({ settings = {}, series = [] }) {
                     </form>
                     <table className="w-full text-sm">
                         <thead>
-                            <tr className="border-b border-gray-700/50 text-gray-400">
+                            <tr className="border-b border-gray-200 text-gray-600">
                                 <th className="text-left p-3">Tipo</th>
                                 <th className="text-left p-3">Serie</th>
                                 <th className="text-right p-3">Próximo N°</th>
@@ -162,8 +162,8 @@ export default function SettingsIndex({ settings = {}, series = [] }) {
                         </thead>
                         <tbody>
                             {series?.length ? series.map(s => (
-                                <tr key={s.id} className="border-b border-gray-700/30 hover:bg-gray-700/20">
-                                    <td className="p-3 text-gray-300">{SERIES_TYPES.find(t => t.value === s.type)?.label ?? s.type}</td>
+                                <tr key={s.id} className="border-b border-gray-200 hover:bg-gray-50">
+                                    <td className="p-3 text-gray-700">{SERIES_TYPES.find(t => t.value === s.type)?.label ?? s.type}</td>
                                     <td className="p-3 font-mono text-indigo-400">{s.series}</td>
                                     <td className="p-3 text-right font-mono text-white">{String(s.next_number).padStart(8, '0')}</td>
                                     <td className="p-3 text-right">

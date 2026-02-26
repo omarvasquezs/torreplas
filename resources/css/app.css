@@ -1,3 +1,56 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+	html,
+	body,
+	#app {
+		height: 100%;
+		margin: 0;
+		padding: 0;
+	}
+}
+
+@layer components {
+	.intranet-light {
+		color: #111827;
+	}
+
+	.intranet-light .text-white {
+		color: #111827 !important;
+	}
+
+	.intranet-light [class*="bg-gray-100"],
+	.intranet-light [class*="bg-white"] {
+		background-color: #ffffff;
+	}
+
+	.intranet-light [class*="border-gray-200"] {
+		border-color: #e5e7eb;
+	}
+
+	.intranet-light .bg-indigo-600,
+	.intranet-light .bg-indigo-700,
+	.intranet-light .bg-green-600,
+	.intranet-light .bg-red-600,
+	.intranet-light .bg-yellow-500,
+	.intranet-light .bg-emerald-600,
+	.intranet-light .bg-blue-600,
+	.intranet-light .bg-purple-600,
+	.intranet-light .bg-\[\#e05a5a\] {
+		color: #ffffff !important;
+	}
+
+	.intranet-light .bg-indigo-600 *,
+	.intranet-light .bg-indigo-700 *,
+	.intranet-light .bg-green-600 *,
+	.intranet-light .bg-red-600 *,
+	.intranet-light .bg-yellow-500 *,
+	.intranet-light .bg-emerald-600 *,
+	.intranet-light .bg-blue-600 *,
+	.intranet-light .bg-purple-600 *,
+	.intranet-light .bg-\[\#e05a5a\] * {
+		color: #ffffff !important;
+	}
+}

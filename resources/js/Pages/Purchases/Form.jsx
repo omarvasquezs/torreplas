@@ -79,7 +79,7 @@ export default function Form({ suppliers, products }) {
                             <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4 border-b pb-2">Información del Proveedor</h3>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Proveedor</label>
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-700 mb-1">Proveedor</label>
                                     <select
                                         value={data.supplier_id}
                                         onChange={(e) => setData('supplier_id', e.target.value)}
@@ -93,7 +93,7 @@ export default function Form({ suppliers, products }) {
                                     {errors.supplier_id && <p className="text-red-500 text-xs mt-1">{errors.supplier_id}</p>}
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Fecha Emisión</label>
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-700 mb-1">Fecha Emisión</label>
                                     <input
                                         type="date"
                                         value={data.date_issue}
@@ -180,7 +180,7 @@ export default function Form({ suppliers, products }) {
                                 </button>
                                 <Link
                                     href={route('purchases.index')}
-                                    className="block w-full text-center py-2.5 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-slate-700 rounded-xl border border-transparent hover:border-gray-200 dark:hover:border-slate-600 transition-all font-medium"
+                                    className="block w-full text-center py-2.5 text-gray-600 dark:text-gray-600 hover:bg-gray-50 dark:hover:bg-slate-700 rounded-xl border border-transparent hover:border-gray-200 dark:hover:border-slate-600 transition-all font-medium"
                                 >
                                     Cancelar
                                 </Link>

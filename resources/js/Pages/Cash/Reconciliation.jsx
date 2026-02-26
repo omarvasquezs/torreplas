@@ -17,9 +17,9 @@ export default function Reconciliation({ bankAccount, bankAccounts, summary }) {
     function TxRow({ tx }) {
         const isIn = tx.type === 'deposit' || tx.type === 'ingreso';
         return (
-            <tr className="border-b border-gray-700/30 hover:bg-gray-700/20">
-                <td className="p-3 text-gray-400 text-xs">{tx.transaction_date?.split('T')[0]}</td>
-                <td className="p-3 text-gray-300 text-sm">{tx.description}</td>
+            <tr className="border-b border-gray-200 hover:bg-gray-50">
+                <td className="p-3 text-gray-600 text-xs">{tx.transaction_date?.split('T')[0]}</td>
+                <td className="p-3 text-gray-700 text-sm">{tx.description}</td>
                 <td className="p-3">
                     <span className={`px-2 py-0.5 rounded-full text-xs ${isIn ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>
                         {tx.type ?? 'movimiento'}
@@ -30,7 +30,7 @@ export default function Reconciliation({ bankAccount, bankAccounts, summary }) {
                 </td>
                 <td className="p-3 text-center">
                     <button onClick={() => toggle(tx)} title={tx.reconciled ? 'Desmarcar' : 'Conciliar'}
-                        className={`w-7 h-7 flex items-center justify-center rounded-full transition ${tx.reconciled ? 'bg-green-500/20 text-green-400 hover:bg-red-500/20 hover:text-red-400' : 'bg-gray-700 text-gray-400 hover:bg-green-500/20 hover:text-green-400'}`}>
+                        className={`w-7 h-7 flex items-center justify-center rounded-full transition ${tx.reconciled ? 'bg-green-500/20 text-green-400 hover:bg-red-500/20 hover:text-red-400' : 'bg-gray-100 text-gray-600 hover:bg-green-500/20 hover:text-green-400'}`}>
                         {tx.reconciled ? <CheckCircle size={16}/> : <Circle size={16}/>}
                     </button>
                 </td>
@@ -48,7 +48,7 @@ export default function Reconciliation({ bankAccount, bankAccounts, summary }) {
                     <p className="text-gray-500 text-xs uppercase tracking-wider px-1 mb-3">Cuentas</p>
                     {bankAccounts?.map(ba => (
                         <Link key={ba.id} href={route('bank.reconciliation', ba.id)}
-                            className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition ${ba.id === bankAccount?.id ? 'bg-indigo-600 text-white' : 'text-gray-400 hover:bg-gray-700/50 hover:text-white'}`}>
+                            className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition ${ba.id === bankAccount?.id ? 'bg-indigo-600 text-white' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'}`}>
                             <CreditCard size={15}/>
                             <div className="min-w-0">
                                 <p className="truncate font-medium">{ba.alias ?? ba.bank_name}</p>
@@ -63,7 +63,7 @@ export default function Reconciliation({ bankAccount, bankAccounts, summary }) {
                     <div className="flex items-center gap-3">
                         <div className="flex-1">
                             <h1 className="text-2xl font-bold text-white">Conciliación Bancaria</h1>
-                            {bankAccount && <p className="text-gray-400 text-sm">{bankAccount.alias ?? bankAccount.bank_name} — {bankAccount.account_number}</p>}
+                            {bankAccount && <p className="text-gray-600 text-sm">{bankAccount.alias ?? bankAccount.bank_name} — {bankAccount.account_number}</p>}
                         </div>
                     </div>
 
@@ -78,21 +78,21 @@ export default function Reconciliation({ bankAccount, bankAccounts, summary }) {
                             <p className="text-yellow-400 text-xs mb-1">Pendientes</p>
                             <p className="text-2xl font-bold text-white">{summary?.unreconciled_count ?? 0}</p>
                         </div>
-                        <div className="bg-gray-800/50 border border-gray-700/50 rounded-xl p-4">
-                            <p className="text-gray-400 text-xs mb-1">Total transacciones</p>
+                        <div className="bg-white border border-gray-200 rounded-xl p-4">
+                            <p className="text-gray-600 text-xs mb-1">Total transacciones</p>
                             <p className="text-2xl font-bold text-white">{(summary?.reconciled_count ?? 0) + (summary?.unreconciled_count ?? 0)}</p>
                         </div>
                     </div>
 
                     {/* Pending */}
-                    <div className="bg-gray-800/50 border border-gray-700/50 rounded-xl overflow-hidden">
-                        <div className="px-4 py-3 border-b border-gray-700/50 flex items-center justify-between">
+                    <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+                        <div className="px-4 py-3 border-b border-gray-200 flex items-center justify-between">
                             <h2 className="text-white font-semibold text-sm">Transacciones pendientes</h2>
                             <span className="bg-yellow-500/20 text-yellow-400 text-xs px-2 py-0.5 rounded-full">{pending.length}</span>
                         </div>
                         <table className="w-full text-sm">
                             <thead>
-                                <tr className="border-b border-gray-700/50 text-gray-400">
+                                <tr className="border-b border-gray-200 text-gray-600">
                                     <th className="text-left p-3">Fecha</th>
                                     <th className="text-left p-3">Descripción</th>
                                     <th className="text-left p-3">Tipo</th>
@@ -109,14 +109,14 @@ export default function Reconciliation({ bankAccount, bankAccounts, summary }) {
 
                     {/* Reconciled */}
                     {reconciled.length > 0 && (
-                        <div className="bg-gray-800/50 border border-gray-700/50 rounded-xl overflow-hidden">
-                            <div className="px-4 py-3 border-b border-gray-700/50 flex items-center justify-between">
+                        <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+                            <div className="px-4 py-3 border-b border-gray-200 flex items-center justify-between">
                                 <h2 className="text-white font-semibold text-sm">Conciliados</h2>
                                 <span className="bg-green-500/20 text-green-400 text-xs px-2 py-0.5 rounded-full">{reconciled.length}</span>
                             </div>
                             <table className="w-full text-sm">
                                 <thead>
-                                    <tr className="border-b border-gray-700/50 text-gray-400">
+                                    <tr className="border-b border-gray-200 text-gray-600">
                                         <th className="text-left p-3">Fecha</th>
                                         <th className="text-left p-3">Descripción</th>
                                         <th className="text-left p-3">Tipo</th>

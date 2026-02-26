@@ -20,7 +20,7 @@ export default function Index({ purchases, filters }) {
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
                     <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Compras</h1>
-                    <p className="text-gray-500 dark:text-gray-400">Gestione sus órdenes de compra a proveedores.</p>
+                    <p className="text-gray-500 dark:text-gray-600">Gestione sus órdenes de compra a proveedores.</p>
                 </div>
                 <Link
                     href={route('purchases.create')}
@@ -34,7 +34,7 @@ export default function Index({ purchases, filters }) {
             {/* Filters */}
             <div className="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700 mt-6">
                 <form onSubmit={handleSearch} className="relative max-w-sm">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-600" size={18} />
                     <input
                         type="text"
                         value={data.search}
@@ -47,7 +47,7 @@ export default function Index({ purchases, filters }) {
 
             <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700 overflow-hidden mt-6">
                 <div className="overflow-x-auto">
-                    <table className="w-full text-left text-sm text-gray-600 dark:text-gray-400">
+                    <table className="w-full text-left text-sm text-gray-600 dark:text-gray-600">
                         <thead className="bg-gray-50 dark:bg-slate-700/50 uppercase text-xs font-semibold text-gray-900 dark:text-white">
                             <tr>
                                 <th className="px-6 py-4">Código</th>

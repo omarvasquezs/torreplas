@@ -35,43 +35,43 @@ function EntryModal({ accounts, onClose }) {
 
     return (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4 overflow-y-auto">
-            <div className="bg-gray-800 border border-gray-700 rounded-xl w-full max-w-3xl my-4">
-                <div className="flex items-center justify-between p-4 border-b border-gray-700">
+            <div className="bg-white border border-gray-200 rounded-xl w-full max-w-3xl my-4">
+                <div className="flex items-center justify-between p-4 border-b border-gray-200">
                     <h3 className="text-white font-semibold">Nuevo Asiento Contable</h3>
-                    <button onClick={onClose}><X size={18} className="text-gray-400 hover:text-white"/></button>
+                    <button onClick={onClose}><X size={18} className="text-gray-600 hover:text-gray-900"/></button>
                 </div>
                 <form onSubmit={submit} className="p-4 space-y-4">
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                         <div className="col-span-2">
-                            <label className="block text-gray-400 text-xs mb-1">Descripción <span className="text-red-400">*</span></label>
+                            <label className="block text-gray-600 text-xs mb-1">Descripción <span className="text-red-400">*</span></label>
                             <input value={data.description} onChange={e => setData('description', e.target.value)}
-                                className="w-full bg-gray-700/50 border border-gray-600 text-white rounded-lg px-3 py-2 text-sm" required />
+                                className="w-full bg-gray-100 border border-gray-200 text-gray-900 rounded-lg px-3 py-2 text-sm" required />
                         </div>
                         <div>
-                            <label className="block text-gray-400 text-xs mb-1">Fecha <span className="text-red-400">*</span></label>
+                            <label className="block text-gray-600 text-xs mb-1">Fecha <span className="text-red-400">*</span></label>
                             <input type="date" value={data.date} onChange={e => setData('date', e.target.value)}
-                                className="w-full bg-gray-700/50 border border-gray-600 text-white rounded-lg px-3 py-2 text-sm" required />
+                                className="w-full bg-gray-100 border border-gray-200 text-gray-900 rounded-lg px-3 py-2 text-sm" required />
                         </div>
                         <div>
-                            <label className="block text-gray-400 text-xs mb-1">Referencia</label>
+                            <label className="block text-gray-600 text-xs mb-1">Referencia</label>
                             <input value={data.reference} onChange={e => setData('reference', e.target.value)}
-                                className="w-full bg-gray-700/50 border border-gray-600 text-white rounded-lg px-3 py-2 text-sm" />
+                                className="w-full bg-gray-100 border border-gray-200 text-gray-900 rounded-lg px-3 py-2 text-sm" />
                         </div>
                     </div>
 
                     {/* Lines */}
                     <div>
                         <div className="flex items-center justify-between mb-2">
-                            <label className="text-gray-400 text-xs">Líneas</label>
+                            <label className="text-gray-600 text-xs">Líneas</label>
                             <button type="button" onClick={addLine}
                                 className="flex items-center gap-1 text-xs text-indigo-400 hover:text-indigo-300">
                                 <Plus size={12}/> Agregar línea
                             </button>
                         </div>
-                        <div className="rounded-lg border border-gray-700 overflow-hidden">
+                        <div className="rounded-lg border border-gray-200 overflow-hidden">
                             <table className="w-full text-xs">
-                                <thead className="bg-gray-700/50">
-                                    <tr className="text-gray-400">
+                                <thead className="bg-gray-100">
+                                    <tr className="text-gray-600">
                                         <th className="text-left p-2">Cuenta</th>
                                         <th className="text-left p-2">Descripción</th>
                                         <th className="text-right p-2 w-24">Débito</th>
@@ -81,25 +81,25 @@ function EntryModal({ accounts, onClose }) {
                                 </thead>
                                 <tbody>
                                     {data.lines.map((line, i) => (
-                                        <tr key={i} className="border-t border-gray-700/50">
+                                        <tr key={i} className="border-t border-gray-200">
                                             <td className="p-1">
                                                 <select value={line.account_plan_id} onChange={e => setLine(i, 'account_plan_id', e.target.value)}
-                                                    className="w-full bg-gray-700/50 border border-gray-600 text-white rounded px-2 py-1.5 text-xs">
+                                                    className="w-full bg-gray-100 border border-gray-200 text-gray-900 rounded px-2 py-1.5 text-xs">
                                                     <option value="">— Seleccionar —</option>
                                                     {accounts.map(a => <option key={a.id} value={a.id}>{a.code} — {a.name}</option>)}
                                                 </select>
                                             </td>
                                             <td className="p-1">
                                                 <input value={line.description} onChange={e => setLine(i, 'description', e.target.value)}
-                                                    className="w-full bg-gray-700/50 border border-gray-600 text-white rounded px-2 py-1.5 text-xs" />
+                                                    className="w-full bg-gray-100 border border-gray-200 text-gray-900 rounded px-2 py-1.5 text-xs" />
                                             </td>
                                             <td className="p-1">
                                                 <input type="number" step="0.01" min="0" value={line.debit} onChange={e => setLine(i, 'debit', e.target.value)}
-                                                    className="w-full bg-gray-700/50 border border-gray-600 text-white rounded px-2 py-1.5 text-xs text-right font-mono" />
+                                                    className="w-full bg-gray-100 border border-gray-200 text-gray-900 rounded px-2 py-1.5 text-xs text-right font-mono" />
                                             </td>
                                             <td className="p-1">
                                                 <input type="number" step="0.01" min="0" value={line.credit} onChange={e => setLine(i, 'credit', e.target.value)}
-                                                    className="w-full bg-gray-700/50 border border-gray-600 text-white rounded px-2 py-1.5 text-xs text-right font-mono" />
+                                                    className="w-full bg-gray-100 border border-gray-200 text-gray-900 rounded px-2 py-1.5 text-xs text-right font-mono" />
                                             </td>
                                             <td className="p-1 text-center">
                                                 {data.lines.length > 2 && (
@@ -111,9 +111,9 @@ function EntryModal({ accounts, onClose }) {
                                         </tr>
                                     ))}
                                 </tbody>
-                                <tfoot className="bg-gray-700/30 border-t border-gray-700/50">
+                                <tfoot className="bg-gray-100/30 border-t border-gray-200">
                                     <tr>
-                                        <td colSpan={2} className="p-2 text-gray-400">Total</td>
+                                        <td colSpan={2} className="p-2 text-gray-600">Total</td>
                                         <td className="p-2 text-right font-mono font-bold text-white">{fmt(totalDebit)}</td>
                                         <td className="p-2 text-right font-mono font-bold text-white">{fmt(totalCredit)}</td>
                                         <td></td>
@@ -128,13 +128,13 @@ function EntryModal({ accounts, onClose }) {
                     </div>
 
                     <div className="flex items-center justify-between pt-2">
-                        <label className="flex items-center gap-2 text-sm text-gray-300 cursor-pointer">
+                        <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
                             <input type="checkbox" checked={data.status === 'posted'} onChange={e => setData('status', e.target.checked ? 'posted' : 'draft')} />
                             Contabilizar inmediatamente
                         </label>
                         <div className="flex gap-2">
                             <button type="button" onClick={onClose}
-                                className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg text-sm">Cancelar</button>
+                                className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm">Cancelar</button>
                             <button type="submit" disabled={processing || !balanced}
                                 className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white rounded-lg text-sm font-medium">
                                 Guardar
@@ -171,10 +171,10 @@ export default function AccountingEntries({ entries, accounts, filters }) {
             <div className="space-y-6">
                 <div className="flex items-center gap-3">
                     <Link href={route('accounting.accounts')}
-                        className="p-2 rounded-lg bg-gray-700 hover:bg-gray-600 text-white"><ArrowLeft size={18}/></Link>
+                        className="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700"><ArrowLeft size={18}/></Link>
                     <div className="flex-1">
                         <h1 className="text-2xl font-bold text-white">Asientos Contables</h1>
-                        <p className="text-gray-400 text-sm">{entries?.total ?? 0} asientos</p>
+                        <p className="text-gray-600 text-sm">{entries?.total ?? 0} asientos</p>
                     </div>
                     <button onClick={() => setShowModal(true)}
                         className="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-sm font-medium">
@@ -182,21 +182,21 @@ export default function AccountingEntries({ entries, accounts, filters }) {
                     </button>
                 </div>
 
-                <div className="bg-gray-800/50 border border-gray-700/50 rounded-xl p-3 flex flex-wrap gap-3 items-end">
+                <div className="bg-white border border-gray-200 rounded-xl p-3 flex flex-wrap gap-3 items-end">
                     <div>
-                        <label className="block text-gray-400 text-xs mb-1">Desde</label>
+                        <label className="block text-gray-600 text-xs mb-1">Desde</label>
                         <input type="date" value={from} onChange={e => setFrom(e.target.value)}
-                            className="bg-gray-700/50 border border-gray-600 text-white rounded-lg px-3 py-2 text-sm"/>
+                            className="bg-gray-100 border border-gray-200 text-gray-900 rounded-lg px-3 py-2 text-sm"/>
                     </div>
                     <div>
-                        <label className="block text-gray-400 text-xs mb-1">Hasta</label>
+                        <label className="block text-gray-600 text-xs mb-1">Hasta</label>
                         <input type="date" value={to} onChange={e => setTo(e.target.value)}
-                            className="bg-gray-700/50 border border-gray-600 text-white rounded-lg px-3 py-2 text-sm"/>
+                            className="bg-gray-100 border border-gray-200 text-gray-900 rounded-lg px-3 py-2 text-sm"/>
                     </div>
                     <div>
-                        <label className="block text-gray-400 text-xs mb-1">Estado</label>
+                        <label className="block text-gray-600 text-xs mb-1">Estado</label>
                         <select value={status} onChange={e => setSt(e.target.value)}
-                            className="bg-gray-700/50 border border-gray-600 text-white rounded-lg px-3 py-2 text-sm">
+                            className="bg-gray-100 border border-gray-200 text-gray-900 rounded-lg px-3 py-2 text-sm">
                             <option value="">Todos</option>
                             <option value="draft">Borrador</option>
                             <option value="posted">Contabilizado</option>
@@ -205,11 +205,11 @@ export default function AccountingEntries({ entries, accounts, filters }) {
                     <button onClick={apply} className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-sm font-medium">Filtrar</button>
                 </div>
 
-                <div className="bg-gray-800/50 border border-gray-700/50 rounded-xl overflow-hidden">
+                <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
                     <div className="overflow-x-auto">
                         <table className="w-full text-sm">
                             <thead>
-                                <tr className="border-b border-gray-700/50 text-gray-400">
+                                <tr className="border-b border-gray-200 text-gray-600">
                                     <th className="text-left p-3">Fecha</th>
                                     <th className="text-left p-3">Descripción</th>
                                     <th className="text-left p-3">Referencia</th>
@@ -222,10 +222,10 @@ export default function AccountingEntries({ entries, accounts, filters }) {
                                 {entries?.data?.length ? entries.data.map(e => {
                                     const td = e.lines?.reduce((s, l) => s + parseFloat(l.debit  || 0), 0) ?? 0;
                                     return (
-                                        <tr key={e.id} className="border-b border-gray-700/30 hover:bg-gray-700/20">
-                                            <td className="p-3 text-gray-400 text-xs">{e.date?.split('T')[0]}</td>
-                                            <td className="p-3 text-gray-300">{e.description}</td>
-                                            <td className="p-3 text-gray-400 text-xs">{e.reference ?? '—'}</td>
+                                        <tr key={e.id} className="border-b border-gray-200 hover:bg-gray-50">
+                                            <td className="p-3 text-gray-600 text-xs">{e.date?.split('T')[0]}</td>
+                                            <td className="p-3 text-gray-700">{e.description}</td>
+                                            <td className="p-3 text-gray-600 text-xs">{e.reference ?? '—'}</td>
                                             <td className="p-3 text-right font-mono text-white">S/ {fmt(td)}</td>
                                             <td className="p-3">
                                                 <span className={`px-2 py-0.5 rounded-full text-xs ${e.status === 'posted' ? 'bg-green-500/20 text-green-400' : 'bg-yellow-500/20 text-yellow-400'}`}>
@@ -257,7 +257,7 @@ export default function AccountingEntries({ entries, accounts, filters }) {
                             {entries.links.map((l, i) => (
                                 <button key={i} disabled={!l.url} onClick={() => l.url && router.get(l.url)}
                                     dangerouslySetInnerHTML={{ __html: l.label }}
-                                    className={`px-3 py-1 rounded text-sm ${l.active ? 'bg-indigo-600 text-white' : 'bg-gray-700 text-gray-300 hover:bg-gray-600 disabled:opacity-40'}`}/>
+                                    className={`px-3 py-1 rounded text-sm ${l.active ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-600 disabled:opacity-40'}`}/>
                             ))}
                         </div>
                     )}

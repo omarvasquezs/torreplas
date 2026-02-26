@@ -22,28 +22,28 @@ export default function AccountingBalance({ accounts, summary, filters }) {
             <div className="space-y-6">
                 <div className="flex items-center gap-3">
                     <Link href={route('accounting.entries')}
-                        className="p-2 rounded-lg bg-gray-700 hover:bg-gray-600 text-white"><ArrowLeft size={18}/></Link>
+                        className="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700"><ArrowLeft size={18}/></Link>
                     <div>
                         <h1 className="text-2xl font-bold text-white">Balance de Cuentas</h1>
-                        <p className="text-gray-400 text-sm">Saldos acumulados de asientos contabilizados</p>
+                        <p className="text-gray-600 text-sm">Saldos acumulados de asientos contabilizados</p>
                     </div>
                     <button onClick={() => window.print()}
-                        className="ml-auto px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg text-sm">
+                        className="ml-auto px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm">
                         Imprimir / PDF
                     </button>
                 </div>
 
                 {/* Date filter */}
-                <div className="bg-gray-800/50 border border-gray-700/50 rounded-xl p-3 flex flex-wrap gap-3 items-end">
+                <div className="bg-white border border-gray-200 rounded-xl p-3 flex flex-wrap gap-3 items-end">
                     <div>
-                        <label className="block text-gray-400 text-xs mb-1">Período desde</label>
+                        <label className="block text-gray-600 text-xs mb-1">Período desde</label>
                         <input type="date" value={from} onChange={e => setFrom(e.target.value)}
-                            className="bg-gray-700/50 border border-gray-600 text-white rounded-lg px-3 py-2 text-sm"/>
+                            className="bg-gray-100 border border-gray-200 text-gray-900 rounded-lg px-3 py-2 text-sm"/>
                     </div>
                     <div>
-                        <label className="block text-gray-400 text-xs mb-1">Hasta</label>
+                        <label className="block text-gray-600 text-xs mb-1">Hasta</label>
                         <input type="date" value={to} onChange={e => setTo(e.target.value)}
-                            className="bg-gray-700/50 border border-gray-600 text-white rounded-lg px-3 py-2 text-sm"/>
+                            className="bg-gray-100 border border-gray-200 text-gray-900 rounded-lg px-3 py-2 text-sm"/>
                     </div>
                     <button onClick={apply} className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-sm font-medium">Aplicar</button>
                 </div>
@@ -68,14 +68,14 @@ export default function AccountingBalance({ accounts, summary, filters }) {
                         const typeAccounts = accounts.filter(a => a.type === type);
                         if (!typeAccounts.length) return null;
                         return (
-                            <div key={type} className="bg-gray-800/50 border border-gray-700/50 rounded-xl overflow-hidden">
-                                <div className={`px-4 py-3 border-b border-gray-700/50 flex justify-between items-center`}>
+                            <div key={type} className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+                                <div className={`px-4 py-3 border-b border-gray-200 flex justify-between items-center`}>
                                     <h2 className={`font-semibold text-sm ${TYPE_BG[type].split(' ')[2]}`}>{TYPE_LABELS[type]}</h2>
-                                    <span className="text-gray-400 text-xs">{typeAccounts.length} cuentas</span>
+                                    <span className="text-gray-600 text-xs">{typeAccounts.length} cuentas</span>
                                 </div>
                                 <table className="w-full text-xs">
                                     <thead>
-                                        <tr className="border-b border-gray-700/30 text-gray-500">
+                                        <tr className="border-b border-gray-200 text-gray-500">
                                             <th className="text-left px-4 py-2">Código</th>
                                             <th className="text-left px-4 py-2">Cuenta</th>
                                             <th className="text-right px-4 py-2">Saldo</th>
@@ -83,9 +83,9 @@ export default function AccountingBalance({ accounts, summary, filters }) {
                                     </thead>
                                     <tbody>
                                         {typeAccounts.map(a => (
-                                            <tr key={a.id} className="border-b border-gray-700/20 hover:bg-gray-700/20">
+                                            <tr key={a.id} className="border-b border-gray-200/20 hover:bg-gray-50">
                                                 <td className="px-4 py-2 font-mono text-indigo-400">{a.code}</td>
-                                                <td className="px-4 py-2 text-gray-300">{a.name}</td>
+                                                <td className="px-4 py-2 text-gray-700">{a.name}</td>
                                                 <td className="px-4 py-2 text-right font-mono text-white">S/ {fmt(a.balance)}</td>
                                             </tr>
                                         ))}

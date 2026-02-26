@@ -51,7 +51,7 @@ export default function Form({ client }) {
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Tipo Documento</label>
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-700 mb-1">Tipo Documento</label>
                                 <select
                                     value={data.document_type}
                                     onChange={(e) => setData('document_type', e.target.value)}
@@ -65,7 +65,7 @@ export default function Form({ client }) {
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Número Documento</label>
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-700 mb-1">Número Documento</label>
                                 <input
                                     type="text"
                                     value={data.document_number}
@@ -76,7 +76,7 @@ export default function Form({ client }) {
                             </div>
 
                             <div className="col-span-1 md:col-span-2">
-                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Razón Social / Nombre Completo</label>
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-700 mb-1">Razón Social / Nombre Completo</label>
                                 <input
                                     type="text"
                                     value={data.name}
@@ -91,7 +91,7 @@ export default function Form({ client }) {
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Correo Electrónico</label>
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-700 mb-1">Correo Electrónico</label>
                                 <input
                                     type="email"
                                     value={data.email}
@@ -102,7 +102,7 @@ export default function Form({ client }) {
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Teléfono</label>
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-700 mb-1">Teléfono</label>
                                 <input
                                     type="text"
                                     value={data.phone}
@@ -112,7 +112,7 @@ export default function Form({ client }) {
                             </div>
 
                             <div className="col-span-1 md:col-span-2">
-                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Dirección Fiscal / Entrega</label>
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-700 mb-1">Dirección Fiscal / Entrega</label>
                                 <input
                                     type="text"
                                     value={data.address}
@@ -126,7 +126,7 @@ export default function Form({ client }) {
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Días de Crédito</label>
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-700 mb-1">Días de Crédito</label>
                                 <input
                                     type="number"
                                     value={data.credit_days}
@@ -137,7 +137,7 @@ export default function Form({ client }) {
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Límite de Crédito</label>
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-700 mb-1">Límite de Crédito</label>
                                 <div className="relative rounded-md shadow-sm">
                                     <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                                         <span className="text-gray-500 sm:text-sm">S/</span>
@@ -157,7 +157,7 @@ export default function Form({ client }) {
                         <div className="flex items-center justify-end gap-3 mt-8 pt-4 border-t border-gray-200 dark:border-slate-700">
                             <Link
                                 href={route('clients.index')}
-                                className="px-5 py-2.5 rounded-xl border border-gray-300 text-gray-700 hover:bg-gray-50 dark:border-slate-600 dark:text-gray-300 dark:hover:bg-slate-700 font-medium transition-colors"
+                                className="px-5 py-2.5 rounded-xl border border-gray-300 text-gray-700 hover:bg-gray-50 dark:border-slate-600 dark:text-gray-700 dark:hover:bg-slate-700 font-medium transition-colors"
                             >
                                 Cancelar
                             </Link>

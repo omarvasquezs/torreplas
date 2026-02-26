@@ -89,7 +89,7 @@ export default function Form({ clients, products }) {
                             <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4 border-b pb-2">Datos del Cliente</h3>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Cliente</label>
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-700 mb-1">Cliente</label>
                                     <select
                                         value={data.client_id}
                                         onChange={(e) => setData('client_id', e.target.value)}
@@ -103,7 +103,7 @@ export default function Form({ clients, products }) {
                                     {errors.client_id && <p className="text-red-500 text-xs mt-1">{errors.client_id}</p>}
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Fecha Emisión</label>
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-700 mb-1">Fecha Emisión</label>
                                     <input
                                         type="date"
                                         value={data.date_issue}
@@ -190,11 +190,11 @@ export default function Form({ clients, products }) {
                             </h3>
 
                             <div className="space-y-3 pt-4 border-t border-gray-100 dark:border-slate-700">
-                                <div className="flex justify-between text-gray-600 dark:text-gray-400">
+                                <div className="flex justify-between text-gray-600 dark:text-gray-600">
                                     <span>Subtotal</span>
                                     <span>S/ {(calculateTotal() / 1.18).toFixed(2)}</span>
                                 </div>
-                                <div className="flex justify-between text-gray-600 dark:text-gray-400">
+                                <div className="flex justify-between text-gray-600 dark:text-gray-600">
                                     <span>IGV (18%)</span>
                                     <span>S/ {(calculateTotal() - (calculateTotal() / 1.18)).toFixed(2)}</span>
                                 </div>
@@ -215,7 +215,7 @@ export default function Form({ clients, products }) {
                                 </button>
                                 <Link
                                     href={route('orders.index')}
-                                    className="block w-full text-center py-2.5 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-slate-700 rounded-xl border border-transparent hover:border-gray-200 dark:hover:border-slate-600 transition-all font-medium"
+                                    className="block w-full text-center py-2.5 text-gray-600 dark:text-gray-600 hover:bg-gray-50 dark:hover:bg-slate-700 rounded-xl border border-transparent hover:border-gray-200 dark:hover:border-slate-600 transition-all font-medium"
                                 >
                                     Cancelar
                                 </Link>

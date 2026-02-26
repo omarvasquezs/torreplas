@@ -23,7 +23,7 @@ function PayrollModal({ employee, onClose }) {
 
     return (
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-            <div className="bg-gray-800 rounded-xl border border-gray-700 p-6 w-96 space-y-4">
+            <div className="bg-white rounded-xl border border-gray-200 p-6 w-96 space-y-4">
                 <h2 className="text-white font-bold text-lg">Generar Planilla</h2>
                 <form onSubmit={submit} className="space-y-3">
                     {[
@@ -34,14 +34,14 @@ function PayrollModal({ employee, onClose }) {
                         ['Fecha de pago', 'payment_date', 'date'],
                     ].map(([label, name, type]) => (
                         <div key={name}>
-                            <label className="block text-sm text-gray-400 mb-1">{label}</label>
+                            <label className="block text-sm text-gray-600 mb-1">{label}</label>
                             <input type={type} value={data[name]} onChange={e => setData(name, e.target.value)}
-                                className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white text-sm focus:outline-none" />
+                                className="w-full px-3 py-2 bg-gray-100 border border-gray-200 rounded-lg text-white text-sm focus:outline-none" />
                             {errors[name] && <p className="text-red-400 text-xs mt-1">{errors[name]}</p>}
                         </div>
                     ))}
-                    <div className="bg-gray-700/50 rounded-lg p-3 flex justify-between items-center">
-                        <span className="text-gray-400 text-sm">Neto a pagar</span>
+                    <div className="bg-gray-100 rounded-lg p-3 flex justify-between items-center">
+                        <span className="text-gray-600 text-sm">Neto a pagar</span>
                         <span className="text-white font-bold">S/ {net.toFixed(2)}</span>
                     </div>
                     <div className="flex gap-2 pt-2">
@@ -50,7 +50,7 @@ function PayrollModal({ employee, onClose }) {
                             Generar
                         </button>
                         <button type="button" onClick={onClose}
-                            className="flex-1 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg text-sm transition">
+                            className="flex-1 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm transition">
                             Cancelar
                         </button>
                     </div>
@@ -71,7 +71,7 @@ export default function HRShow({ employee, stats }) {
             <div className="space-y-6">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                        <Link href={route('employees.index')} className="p-2 rounded-lg hover:bg-gray-700 text-gray-400 transition">
+                        <Link href={route('employees.index')} className="p-2 rounded-lg hover:bg-gray-100 text-gray-600 transition">
                             <ArrowLeft size={18} />
                         </Link>
                         <div className="flex items-center gap-3">
@@ -80,7 +80,7 @@ export default function HRShow({ employee, stats }) {
                             </div>
                             <div>
                                 <h1 className="text-2xl font-bold text-white">{employee.first_name} {employee.last_name}</h1>
-                                <p className="text-gray-400 text-sm">{employee.position} · {employee.department}</p>
+                                <p className="text-gray-600 text-sm">{employee.position} · {employee.department}</p>
                             </div>
                         </div>
                     </div>
@@ -102,10 +102,10 @@ export default function HRShow({ employee, stats }) {
                         ['Sueldo mensual', `S/ ${parseFloat(employee.salary).toFixed(2)}`, 'text-green-400'],
                         ['Asistencias (mes)', stats.attendance_this_month, 'text-blue-400'],
                         ['Ausencias (mes)', stats.absences_this_month, 'text-red-400'],
-                        ['Fecha ingreso', employee.hire_date, 'text-gray-300'],
+                        ['Fecha ingreso', employee.hire_date, 'text-gray-700'],
                     ].map(([label, val, cls]) => (
-                        <div key={label} className="bg-gray-800/50 rounded-xl border border-gray-700/50 p-4">
-                            <p className="text-gray-400 text-xs">{label}</p>
+                        <div key={label} className="bg-white rounded-xl border border-gray-200 p-4">
+                            <p className="text-gray-600 text-xs">{label}</p>
                             <p className={`text-lg font-bold mt-1 ${cls}`}>{val}</p>
                         </div>
                     ))}
@@ -113,7 +113,7 @@ export default function HRShow({ employee, stats }) {
 
                 {/* Details */}
                 <div className="grid grid-cols-2 gap-4">
-                    <div className="bg-gray-800/50 rounded-xl border border-gray-700/50 p-4 space-y-3">
+                    <div className="bg-white rounded-xl border border-gray-200 p-4 space-y-3">
                         <h2 className="text-white font-semibold text-sm">Información Personal</h2>
                         {[
                             ['Código', employee.code],
@@ -123,12 +123,12 @@ export default function HRShow({ employee, stats }) {
                             ['Dirección', employee.address],
                         ].map(([k, v]) => (
                             <div key={k} className="flex justify-between text-sm">
-                                <span className="text-gray-400">{k}</span>
+                                <span className="text-gray-600">{k}</span>
                                 <span className="text-white text-right max-w-48 truncate">{v || '—'}</span>
                             </div>
                         ))}
                     </div>
-                    <div className="bg-gray-800/50 rounded-xl border border-gray-700/50 p-4 space-y-3">
+                    <div className="bg-white rounded-xl border border-gray-200 p-4 space-y-3">
                         <h2 className="text-white font-semibold text-sm">Datos Laborales</h2>
                         {[
                             ['Cargo', employee.position],
@@ -137,7 +137,7 @@ export default function HRShow({ employee, stats }) {
                             ['Cuenta bancaria', employee.bank_account],
                         ].map(([k, v]) => (
                             <div key={k} className="flex justify-between text-sm">
-                                <span className="text-gray-400">{k}</span>
+                                <span className="text-gray-600">{k}</span>
                                 <span className="text-white">{v || '—'}</span>
                             </div>
                         ))}
@@ -146,15 +146,15 @@ export default function HRShow({ employee, stats }) {
 
                 {/* Payrolls */}
                 {employee.payrolls && employee.payrolls.length > 0 && (
-                    <div className="bg-gray-800/50 rounded-xl border border-gray-700/50 overflow-hidden">
-                        <div className="px-4 py-3 border-b border-gray-700/50">
+                    <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+                        <div className="px-4 py-3 border-b border-gray-200">
                             <h2 className="text-white font-semibold flex items-center gap-2">
                                 <DollarSign size={16} className="text-green-400" /> Historial de Planillas
                             </h2>
                         </div>
                         <table className="w-full text-sm">
-                            <thead className="bg-gray-900/50">
-                                <tr className="text-gray-400 text-left">
+                            <thead className="bg-white/80">
+                                <tr className="text-gray-600 text-left">
                                     <th className="px-4 py-3 font-medium">Período</th>
                                     <th className="px-4 py-3 font-medium">Base</th>
                                     <th className="px-4 py-3 font-medium">Bonif.</th>
@@ -165,9 +165,9 @@ export default function HRShow({ employee, stats }) {
                             </thead>
                             <tbody className="divide-y divide-gray-700/50">
                                 {employee.payrolls.map(p => (
-                                    <tr key={p.id} className="hover:bg-gray-700/30">
+                                    <tr key={p.id} className="hover:bg-gray-100/30">
                                         <td className="px-4 py-3 text-white font-mono">{p.period}</td>
-                                        <td className="px-4 py-3 text-gray-300">S/ {parseFloat(p.base_salary).toFixed(2)}</td>
+                                        <td className="px-4 py-3 text-gray-700">S/ {parseFloat(p.base_salary).toFixed(2)}</td>
                                         <td className="px-4 py-3 text-green-400">+S/ {parseFloat(p.bonuses).toFixed(2)}</td>
                                         <td className="px-4 py-3 text-red-400">-S/ {parseFloat(p.deductions).toFixed(2)}</td>
                                         <td className="px-4 py-3 text-white font-bold">S/ {parseFloat(p.net_salary).toFixed(2)}</td>
