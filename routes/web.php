@@ -34,6 +34,7 @@ Route::middleware('auth')->group(function () {
 
     // Invoices / Billing
     Route::resource('invoices', \App\Http\Controllers\InvoiceController::class);
+    Route::get('quotations', [\App\Http\Controllers\QuotationController::class, 'index'])->name('quotations.index');
 
     // Inventory & Warehouses
     Route::get('inventory',             [\App\Http\Controllers\WarehouseController::class, 'index'])->name('inventory.index');

@@ -39,6 +39,7 @@ const GROUPS = [
         items: [
             { name: 'Pedidos',     href: () => route('orders.index'),   icon: ShoppingCart, match: 'orders.*'   },
             { name: 'Clientes',    href: () => route('clients.index'),  icon: Users,        match: 'clients.*'  },
+            { name: 'Cotización',  href: () => route('quotations.index'), icon: FileText,   match: 'quotations.*' },
             { name: 'Facturación', href: () => route('invoices.index'), icon: FileText,     match: 'invoices.*' },
             { name: 'Alquileres',  href: () => route('rentals.index'),  icon: KeyRound,     match: 'rentals.*', adminOnly: true },
         ],
