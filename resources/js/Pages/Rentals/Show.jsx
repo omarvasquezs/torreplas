@@ -199,17 +199,17 @@ export default function RentalShow({ rental, overdue, nextReceiptNumber }) {
             {/* Register Payment Modal — Recibo de Alquiler */}
             {showPayModal && payingPayment && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/70 backdrop-blur-[1px] p-4" onClick={e => e.target === e.currentTarget && setShowPayModal(false)}>
-                    <div className="w-full max-w-lg shadow-[0_16px_48px_rgba(0,0,0,0.18)] rounded-xl overflow-hidden border border-gray-300" style={{fontFamily: 'sans-serif', colorScheme: 'light'}}>
+                    <div className="rental-receipt-modal w-full max-w-xl shadow-[0_18px_50px_rgba(0,0,0,0.20)] rounded-2xl overflow-hidden border border-gray-300" style={{fontFamily: 'sans-serif', colorScheme: 'light'}}>
 
                         {/* ── Receipt Header ── */}
                         <div className="flex items-stretch">
-                            <div className="flex-1 bg-[#e05a5a] flex items-center justify-center px-6 py-4">
-                                <span className="text-white text-2xl font-extrabold tracking-wide uppercase">Recibo de Alquiler</span>
+                            <div className="flex-1 bg-[#e05a5a] flex items-center justify-center px-6 py-5">
+                                <span className="text-white text-[34px] font-extrabold tracking-wide uppercase leading-none">Recibo de Alquiler</span>
                             </div>
                             <div className="bg-[#e05a5a] flex items-center px-4 border-l-2 border-white/30">
                                 <div className="text-right">
                                     <span className="text-white font-bold text-sm">N°</span>
-                                    <div className="bg-white text-gray-800 font-bold text-base px-3 py-1 rounded mt-1 min-w-[64px] text-center">
+                                    <div className="receipt-number-badge bg-white font-bold text-base px-3 py-1 rounded mt-1 min-w-[96px] text-center font-mono tracking-wider border border-gray-300 shadow-sm">
                                         {payingPayment.receipt_number ?? nextReceiptNumber}
                                     </div>
                                 </div>
@@ -217,7 +217,7 @@ export default function RentalShow({ rental, overdue, nextReceiptNumber }) {
                         </div>
 
                         {/* ── Receipt Body ── */}
-                        <form onSubmit={submitPayment} className="bg-white border-x border-b border-gray-300 px-6 pt-5 pb-6 space-y-4" style={{backgroundColor: '#ffffff', color: '#1f2937'}}>
+                        <form onSubmit={submitPayment} className="bg-white border-x border-b border-gray-300 px-6 pt-6 pb-6 space-y-4" style={{backgroundColor: '#ffffff', color: '#1f2937'}}>
 
                             {/* Row: Fecha + Cantidad */}
                             <div className="flex gap-4 items-end">

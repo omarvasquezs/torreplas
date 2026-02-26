@@ -115,4 +115,9 @@
 	.intranet-light .bg-\[\#e05a5a\] * {
 		color: #ffffff !important;
 	}
+
+	.intranet-light .rental-receipt-modal .receipt-number-badge,
+	.intranet-light .rental-receipt-modal .receipt-number-badge * {
+		color: #1f2937 !important;
+	}
 }
