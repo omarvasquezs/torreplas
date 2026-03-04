@@ -71,7 +71,9 @@ const GROUPS = [
     {
         label: 'RRHH',
         items: [
-            { name: 'Empleados', href: () => route('employees.index'), icon: Users, match: 'employees.*' },
+            { name: 'Mis Permisos', href: () => route('hr.my-requests'), icon: FileText, match: 'hr.my-requests' },
+            { name: 'Solicitudes RRHH', href: () => route('hr.requests.index'), icon: FileText, match: 'hr.requests.*', adminOnly: true },
+            { name: 'Empleados', href: () => route('employees.index'), icon: Users, match: 'employees.*', adminOnly: true },
         ],
     },
     {
