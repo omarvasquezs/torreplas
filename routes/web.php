@@ -61,9 +61,17 @@ Route::middleware('auth')->group(function () {
     Route::post('accounts/payable/{purchase}/payment',              [\App\Http\Controllers\AccountsController::class, 'storePayablePayment'])->name('accounts.payable.payment');
 
     // Human Resources
-    Route::resource('employees', \App\Http\Controllers\EmployeeController::class);
-    Route::get('employees/{employee}/payrolls',     [\App\Http\Controllers\EmployeeController::class, 'payrolls'])->name('employees.payrolls');
-    Route::post('employees/{employee}/payrolls',    [\App\Http\Controllers\EmployeeController::class, 'storePayroll'])->name('employees.payrolls.store');
+    Route::get('hr/my-requests', [\App\Http\Controllers\LeaveRequestController::class, 'myIndex'])->name('hr.my-requests');
+    Route::post('hr/my-requests', [\App\Http\Controllers\LeaveRequestController::class, 'store'])->name('hr.my-requests.store');
+
+    Route::middleware('admin')->group(function () {
+        Route::resource('employees', \App\Http\Controllers\EmployeeController::class);
+        Route::get('employees/{employee}/payrolls',     [\App\Http\Controllers\EmployeeController::class, 'payrolls'])->name('employees.payrolls');
+        Route::post('employees/{employee}/payrolls',    [\App\Http\Controllers\EmployeeController::class, 'storePayroll'])->name('employees.payrolls.store');
+
+        Route::get('hr/requests', [\App\Http\Controllers\LeaveRequestController::class, 'adminIndex'])->name('hr.requests.index');
+        Route::patch('hr/requests/{leaveRequest}/status', [\App\Http\Controllers\LeaveRequestController::class, 'updateStatus'])->name('hr.requests.status');
+    });
 
     // Logistics
     Route::resource('deliveries', \App\Http\Controllers\DeliveryController::class);
@@ -105,16 +113,16 @@ Route::middleware('auth')->group(function () {
     Route::get('products/{product}/kardex', [\App\Http\Controllers\ProductController::class, 'kardex'])->name('products.kardex');
 
     // Employee Documents
-    Route::get('employees/{employee}/documents',                              [\App\Http\Controllers\EmployeeController::class, 'documents'])->name('employees.documents');
-    Route::post('employees/{employee}/documents',                             [\App\Http\Controllers\EmployeeController::class, 'storeDocument'])->name('employees.documents.store');
-    Route::delete('employees/{employee}/documents/{document}',                [\App\Http\Controllers\EmployeeController::class, 'destroyDocument'])->name('employees.documents.destroy');
+    Route::get('employees/{employee}/documents',                              [\App\Http\Controllers\EmployeeController::class, 'documents'])->middleware('admin')->name('employees.documents');
+    Route::post('employees/{employee}/documents',                             [\App\Http\Controllers\EmployeeController::class, 'storeDocument'])->middleware('admin')->name('employees.documents.store');
+    Route::delete('employees/{employee}/documents/{document}',                [\App\Http\Controllers\EmployeeController::class, 'destroyDocument'])->middleware('admin')->name('employees.documents.destroy');
 
     // Bank Reconciliation
     Route::get('bank-accounts/{bankAccount}/reconciliation',   [\App\Http\Controllers\CashController::class, 'reconciliation'])->name('bank.reconciliation');
     Route::post('bank-transactions/{transaction}/reconcile',   [\App\Http\Controllers\CashController::class, 'toggleReconcile'])->name('bank.reconcile');
 
     // Users
-    Route::resource('users', \App\Http\Controllers\UserController::class);
+    Route::resource('users', \App\Http\Controllers\UserController::class)->middleware('admin');
 
     // Rentals (Alquileres) — admin only
     Route::resource('rentals', \App\Http\Controllers\RentalController::class);
