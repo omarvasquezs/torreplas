@@ -15,8 +15,8 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // Roles
-        $adminRole = Role::create(['name' => 'admin', 'label' => 'Administrador']);
-        $sellerRole = Role::create(['name' => 'seller', 'label' => 'Vendedor']);
+        $adminRole = Role::firstOrCreate(['name' => 'admin'], ['label' => 'Administrador']);
+        Role::firstOrCreate(['name' => 'seller'], ['label' => 'Vendedor']);
 
         // Admin User
         User::factory()->create([
@@ -36,5 +36,7 @@ class DatabaseSeeder extends Seeder
         Unit::create(['name' => 'Unidad', 'abbreviation' => 'UND']);
         Unit::create(['name' => 'Millar', 'abbreviation' => 'MLL']);
         Unit::create(['name' => 'Paquete', 'abbreviation' => 'PAQ']);
+
+        $this->call(ProfilePermissionsSeeder::class);
     }
 }

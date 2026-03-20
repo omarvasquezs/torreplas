@@ -12,7 +12,7 @@ class AdminOnly
     {
         $user = $request->user();
 
-        if (!$user || $user->role?->name !== 'admin') {
+        if (!$user || !$user->isAdmin()) {
             abort(403, 'No autorizado.');
         }
 

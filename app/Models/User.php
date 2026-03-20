@@ -38,7 +38,7 @@ class User extends Authenticatable
 
     public function isAdmin(): bool
     {
-        return $this->role?->name === 'admin';
+        return in_array($this->role?->name, ['admin', 'gerencial_general'], true);
     }
 
     public function hasPermission(string $permissionName): bool
