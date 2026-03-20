@@ -37,68 +37,81 @@ const GROUPS = [
     {
         label: 'Ventas',
         items: [
-            { name: 'Pedidos',     href: () => route('orders.index'),   icon: ShoppingCart, match: 'orders.*'   },
-            { name: 'Clientes',    href: () => route('clients.index'),  icon: Users,        match: 'clients.*'  },
-            { name: 'Cotización',  href: () => route('quotations.index'), icon: FileText,   match: 'quotations.*' },
-            { name: 'Facturación', href: () => route('invoices.index'), icon: FileText,     match: 'invoices.*' },
-            { name: 'Alquileres',  href: () => route('rentals.index'),  icon: KeyRound,     match: 'rentals.*', adminOnly: true },
+            { name: 'Pedidos',     href: () => route('orders.index'),      icon: ShoppingCart, match: 'orders.*', permission: 'sales.access' },
+            { name: 'Cotización',  href: () => route('quotations.index'),  icon: FileText,     match: 'quotations.*', permission: 'sales.access' },
+            { name: 'Facturación', href: () => route('invoices.index'),    icon: FileText,     match: 'invoices.*', permission: 'sales.access' },
         ],
     },
     {
         label: 'Inventario',
         items: [
-            { name: 'Productos',  href: () => route('products.index'), icon: Package,         match: 'products.*'    },
-            { name: 'Almacenes',  href: () => route('inventory.index'),icon: Boxes,           match: 'inventory.*'   },
-            { name: 'Logística',  href: () => route('deliveries.index'),icon: Truck,          match: 'deliveries.*'  },
-            { name: 'Guías de Remisión', href: () => route('dispatch-guides.index'), icon: FileText, match: 'dispatch-guides.*' },
+            { name: 'Productos',  href: () => route('products.index'),        icon: Package,  match: 'products.*', permission: 'logistics.access' },
+            { name: 'Almacenes',  href: () => route('inventory.index'),       icon: Boxes,    match: 'inventory.*', permission: 'logistics.access' },
+            { name: 'Logística',  href: () => route('deliveries.index'),      icon: Truck,    match: 'deliveries.*', permission: 'logistics.access' },
+            { name: 'Guías de Remisión', href: () => route('dispatch-guides.index'), icon: FileText, match: 'dispatch-guides.*', permission: 'logistics.access' },
         ],
     },
     {
         label: 'Compras',
         items: [
-            { name: 'Órdenes de Compra', href: () => route('purchases.index'), icon: Truck,       match: 'purchases.*'   },
-            { name: 'Proveedores',       href: () => route('suppliers.index'), icon: Building2,   match: 'suppliers.*'   },
+            { name: 'Órdenes de Compra', href: () => route('purchases.index'), icon: Truck,       match: 'purchases.*', permission: 'logistics.access' },
+            { name: 'Proveedores',       href: () => route('suppliers.index'), icon: Building2,   match: 'suppliers.*', permission: 'logistics.access' },
         ],
     },
     {
         label: 'Finanzas',
         items: [
-            { name: 'Caja y Bancos',    href: () => route('cash.index'),           icon: Wallet,          match: 'cash.*'          },
-            { name: 'Cuentas x Cobrar', href: () => route('accounts.receivable'),  icon: ArrowDownCircle, match: 'accounts.receivable' },
-            { name: 'Cuentas x Pagar',  href: () => route('accounts.payable'),     icon: ArrowUpCircle,   match: 'accounts.payable'    },
+            { name: 'Caja y Bancos',    href: () => route('cash.index'),           icon: Wallet,          match: 'cash.*', permission: 'finance.access' },
+            { name: 'Cuentas x Cobrar', href: () => route('accounts.receivable'),  icon: ArrowDownCircle, match: 'accounts.receivable', permission: 'finance.access' },
+            { name: 'Cuentas x Pagar',  href: () => route('accounts.payable'),     icon: ArrowUpCircle,   match: 'accounts.payable', permission: 'finance.access' },
         ],
     },
     {
         label: 'RRHH',
         items: [
-            { name: 'Mis Permisos', href: () => route('hr.my-requests'), icon: FileText, match: 'hr.my-requests' },
-            { name: 'Solicitudes RRHH', href: () => route('hr.requests.index'), icon: FileText, match: 'hr.requests.*', adminOnly: true },
-            { name: 'Empleados', href: () => route('employees.index'), icon: Users, match: 'employees.*', adminOnly: true },
+            { name: 'Mis Permisos', href: () => route('hr.my-requests'), icon: FileText, match: 'hr.my-requests', permission: 'hr.self' },
+            { name: 'Solicitudes RRHH', href: () => route('hr.requests.index'), icon: FileText, match: 'hr.requests.*', permission: 'hr.manage' },
+            { name: 'Empleados', href: () => route('employees.index'), icon: Users, match: 'employees.*', permission: 'admin.access' },
         ],
     },
     {
         label: 'Contabilidad',
         items: [
-            { name: 'Plan Contable', href: () => route('accounting.accounts'), icon: BookOpen,  match: 'accounting.accounts' },
-            { name: 'Asientos',      href: () => route('accounting.entries'),  icon: AlignLeft, match: 'accounting.entries'  },
-            { name: 'Balance',       href: () => route('accounting.balance'),  icon: PieChart,  match: 'accounting.balance'  },
+            { name: 'Plan Contable', href: () => route('accounting.accounts'), icon: BookOpen,  match: 'accounting.accounts', permission: 'accounting.access' },
+            { name: 'Asientos',      href: () => route('accounting.entries'),  icon: AlignLeft, match: 'accounting.entries', permission: 'accounting.access'  },
+            { name: 'Balance',       href: () => route('accounting.balance'),  icon: PieChart,  match: 'accounting.balance', permission: 'accounting.access'  },
         ],
     },
     {
         label: 'Administración',
         items: [
-            { name: 'Reportes',      href: () => route('reports.index'),   icon: BarChart2, match: 'reports.*'  },
-            { name: 'Usuarios',      href: () => route('users.index'),     icon: UserCog,   match: 'users.*'    },
-            { name: 'Configuración', href: () => route('settings.index'),  icon: Settings,  match: 'settings.*' },
+            { name: 'Reportes',      href: () => route('reports.index'),   icon: BarChart2, match: 'reports.*', permission: 'admin.access' },
+            { name: 'Usuarios',      href: () => route('users.index'),     icon: UserCog,   match: 'users.*', permission: 'admin.access' },
+            { name: 'Configuración', href: () => route('settings.index'),  icon: Settings,  match: 'settings.*', permission: 'admin.access' },
+            { name: 'Alquileres',    href: () => route('rentals.index'),   icon: KeyRound,  match: 'rentals.*', permission: 'admin.access' },
+        ],
+    },
+    {
+        label: 'Soporte',
+        items: [
+            { name: 'Caja Negra 2103', href: () => route('support.blackbox'), icon: CreditCard, match: 'support.blackbox', permission: 'support.blackbox' },
         ],
     },
 ];
 
 function NavGroup({ group, auth, setSidebarOpen }) {
     const [open, setOpen] = useState(true);
-    const isAdmin = auth?.user?.role?.name === 'admin';
+    const roleName = auth?.user?.role?.name;
+    const isAdmin = roleName === 'admin' || roleName === 'gerencial_general';
+    const permissions = Array.isArray(auth?.permissions) ? auth.permissions : [];
 
-    const visibleItems = group.items.filter(item => !item.adminOnly || isAdmin);
+    const can = (permission) => {
+        if (!permission) return true;
+        if (isAdmin) return true;
+        return permissions.includes(permission);
+    };
+
+    const visibleItems = group.items.filter(item => can(item.permission));
     if (visibleItems.length === 0) return null;
 
     const isAnyActive = visibleItems.some(item => {
