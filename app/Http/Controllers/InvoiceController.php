@@ -51,13 +51,21 @@ class InvoiceController extends Controller
 
     public function store(Request $request)
     {
+        $isBoleta  = $request->input('type') === 'boleta';
+        $isFactura = $request->input('type') === 'factura';
+
         $data = $request->validate([
-            'order_id'     => 'nullable|exists:orders,id',
-            'client_id'    => 'required|exists:clients,id',
-            'type'         => 'required|in:factura,boleta,nota_credito,nota_debito',
-            'serie'        => 'required|string|max:10',
-            'issue_date'   => 'required|date',
-            'total_amount' => 'required|numeric|min:0',
+            'order_id'      => 'nullable|exists:orders,id',
+            'client_id'     => 'required|exists:clients,id',
+            'type'          => 'required|in:factura,boleta,nota_credito,nota_debito',
+            'serie'         => 'required|string|max:10',
+            'issue_date'    => 'required|date',
+            'total_amount'  => 'required|numeric|min:0',
+            // Factura: RUC 11 dígitos + razón social obligatorios
+            'customer_ruc'  => $isFactura ? 'required|digits:11' : 'nullable|digits:11',
+            'customer_name' => $isFactura ? 'required|string|max:200' : 'nullable|string|max:200',
+            // Boleta: DNI opcional
+            'customer_dni'  => 'nullable|digits:8',
         ]);
 
         $serie = strtoupper(trim($data['serie']));
@@ -98,14 +106,17 @@ class InvoiceController extends Controller
             }
 
             Invoice::create([
-                'order_id' => $data['order_id'] ?: null,
-                'client_id' => $data['client_id'],
-                'type' => $data['type'],
-                'serie' => $serie,
-                'number' => str_pad((string) $nextNumber, 8, '0', STR_PAD_LEFT),
-                'issue_date' => $data['issue_date'],
-                'total_amount' => $data['total_amount'],
-                'status' => 'generated',
+                'order_id'      => $data['order_id'] ?: null,
+                'client_id'     => $data['client_id'],
+                'type'          => $data['type'],
+                'serie'         => $serie,
+                'number'        => str_pad((string) $nextNumber, 8, '0', STR_PAD_LEFT),
+                'issue_date'    => $data['issue_date'],
+                'total_amount'  => $data['total_amount'],
+                'customer_ruc'  => $data['customer_ruc'] ?? null,
+                'customer_name' => $data['customer_name'] ?? null,
+                'customer_dni'  => $data['customer_dni'] ?? null,
+                'status'        => 'generated',
             ]);
         });
 

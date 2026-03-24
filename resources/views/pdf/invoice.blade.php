@@ -77,15 +77,51 @@
         <tr>
             <td width="60%">
                 <div class="info-section">
-                    <h3>Cliente</h3>
-                    <div class="field">
-                        <div class="label">Razón Social / Nombre</div>
-                        <div class="value">{{ $invoice->client?->name ?? '—' }}</div>
-                    </div>
-                    <div class="field">
-                        <div class="label">{{ strtoupper($invoice->client?->document_type ?? 'RUC') }}</div>
-                        <div class="value">{{ $invoice->client?->document_number ?? '—' }}</div>
-                    </div>
+                    <h3>
+                        @if($invoice->type === 'factura') Adquiriente / Cliente
+                        @elseif($invoice->type === 'boleta') Receptor / Cliente
+                        @else Cliente
+                        @endif
+                    </h3>
+
+                    @if($invoice->type === 'factura')
+                        {{-- Factura: muestra RUC + Razón Social --}}
+                        <div class="field">
+                            <div class="label">RUC</div>
+                            <div class="value">{{ $invoice->customer_ruc ?? $invoice->client?->document_number ?? '—' }}</div>
+                        </div>
+                        <div class="field">
+                            <div class="label">Razón Social</div>
+                            <div class="value">{{ $invoice->customer_name ?? $invoice->client?->name ?? '—' }}</div>
+                        </div>
+                    @elseif($invoice->type === 'boleta')
+                        {{-- Boleta: muestra nombre y DNI si existe --}}
+                        <div class="field">
+                            <div class="label">Cliente</div>
+                            <div class="value">{{ $invoice->client?->name ?? '—' }}</div>
+                        </div>
+                        @if($invoice->customer_dni)
+                        <div class="field">
+                            <div class="label">DNI</div>
+                            <div class="value">{{ $invoice->customer_dni }}</div>
+                        </div>
+                        @elseif($invoice->client?->document_type === 'DNI')
+                        <div class="field">
+                            <div class="label">DNI</div>
+                            <div class="value">{{ $invoice->client->document_number }}</div>
+                        </div>
+                        @endif
+                    @else
+                        <div class="field">
+                            <div class="label">Razón Social / Nombre</div>
+                            <div class="value">{{ $invoice->client?->name ?? '—' }}</div>
+                        </div>
+                        <div class="field">
+                            <div class="label">{{ strtoupper($invoice->client?->document_type ?? 'RUC') }}</div>
+                            <div class="value">{{ $invoice->client?->document_number ?? '—' }}</div>
+                        </div>
+                    @endif
+
                     @if($invoice->client?->address)
                     <div class="field">
                         <div class="label">Dirección</div>

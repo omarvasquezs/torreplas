@@ -3,6 +3,11 @@ import { useEffect, useMemo } from 'react';
 import DashboardLayout from '@/Layouts/DashboardLayout';
 import { ArrowLeft, Save } from 'lucide-react';
 
+const isFactura  = (type) => type === 'factura';
+const isBoleta   = (type) => type === 'boleta';
+const needsRuc   = (type) => isFactura(type);
+const needsDni   = (type) => isBoleta(type);
+
 export default function InvoicesForm({ clients, orders, series = [] }) {
     const defaultSeriesByType = useMemo(() => {
         const map = {};
@@ -13,12 +18,15 @@ export default function InvoicesForm({ clients, orders, series = [] }) {
     }, [series]);
 
     const { data, setData, post, processing, errors } = useForm({
-        client_id:    '',
-        order_id:     '',
-        type:         'factura',
-        serie:        defaultSeriesByType.factura ?? 'F001',
-        issue_date:   new Date().toISOString().slice(0, 10),
-        total_amount: '',
+        client_id:     '',
+        order_id:      '',
+        type:          'factura',
+        serie:         defaultSeriesByType.factura ?? 'F001',
+        issue_date:    new Date().toISOString().slice(0, 10),
+        total_amount:  '',
+        customer_ruc:  '',
+        customer_name: '',
+        customer_dni:  '',
     });
 
     const seriesOptions = useMemo(
@@ -39,6 +47,29 @@ export default function InvoicesForm({ clients, orders, series = [] }) {
         }
     }, [seriesOptions, data.serie, setData]);
 
+    // Auto-rellenar RUC / Nombre / DNI desde el cliente seleccionado
+    useEffect(() => {
+        if (!data.client_id) return;
+        const client = clients.find((c) => String(c.id) === String(data.client_id));
+        if (!client) return;
+
+        if (isFactura(data.type)) {
+            setData((d) => ({
+                ...d,
+                customer_ruc:  client.document_type === 'RUC' ? (client.document_number ?? '') : '',
+                customer_name: client.name ?? '',
+                customer_dni:  '',
+            }));
+        } else if (isBoleta(data.type)) {
+            setData((d) => ({
+                ...d,
+                customer_ruc:  '',
+                customer_name: '',
+                customer_dni:  client.document_type === 'DNI' ? (client.document_number ?? '') : '',
+            }));
+        }
+    }, [data.client_id, data.type]);
+
     function submit(e) {
         e.preventDefault();
         post(route('invoices.store'));
@@ -54,6 +85,9 @@ export default function InvoicesForm({ clients, orders, series = [] }) {
         }
     }
 
+    const inputCls = 'w-full px-3 py-2 bg-white border border-gray-200 rounded-lg text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500';
+    const errorCls = 'text-red-500 text-xs mt-1';
+
     return (
         <DashboardLayout>
             <Head title="Nuevo Comprobante" />
@@ -66,13 +100,13 @@ export default function InvoicesForm({ clients, orders, series = [] }) {
                 </div>
 
                 <form onSubmit={submit} className="space-y-5">
+                    {/* ── Datos del Comprobante ── */}
                     <section className="bg-white rounded-xl border border-gray-200 p-5 space-y-4">
                         <h2 className="text-gray-900 font-semibold">Datos del Comprobante</h2>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label className="block text-sm text-gray-600 mb-1">Tipo</label>
-                                <select value={data.type} onChange={e => setData('type', e.target.value)}
-                                    className="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                <select value={data.type} onChange={e => setData('type', e.target.value)} className={inputCls}>
                                     <option value="factura">Factura</option>
                                     <option value="boleta">Boleta</option>
                                     <option value="nota_credito">Nota Crédito</option>
@@ -81,19 +115,17 @@ export default function InvoicesForm({ clients, orders, series = [] }) {
                             </div>
                             <div>
                                 <label className="block text-sm text-gray-600 mb-1">Fecha Emisión</label>
-                                <input type="date" value={data.issue_date} onChange={e => setData('issue_date', e.target.value)}
-                                    className="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" />
-                                {errors.issue_date && <p className="text-red-400 text-xs mt-1">{errors.issue_date}</p>}
+                                <input type="date" value={data.issue_date} onChange={e => setData('issue_date', e.target.value)} className={inputCls} />
+                                {errors.issue_date && <p className={errorCls}>{errors.issue_date}</p>}
                             </div>
                             <div>
                                 <label className="block text-sm text-gray-600 mb-1">Serie</label>
-                                <select value={data.serie} onChange={e => setData('serie', e.target.value)}
-                                    className="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                <select value={data.serie} onChange={e => setData('serie', e.target.value)} className={inputCls}>
                                     {(seriesOptions.length > 0 ? seriesOptions : [{ series: data.serie }]).map((row) => (
                                         <option key={row.series} value={row.series}>{row.series}</option>
                                     ))}
                                 </select>
-                                {errors.serie && <p className="text-red-400 text-xs mt-1">{errors.serie}</p>}
+                                {errors.serie && <p className={errorCls}>{errors.serie}</p>}
                             </div>
                             <div>
                                 <label className="block text-sm text-gray-600 mb-1">Número</label>
@@ -104,8 +136,7 @@ export default function InvoicesForm({ clients, orders, series = [] }) {
 
                         <div>
                             <label className="block text-sm text-gray-600 mb-1">Pedido (opcional)</label>
-                            <select value={data.order_id} onChange={e => handleOrderChange(e.target.value)}
-                                className="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            <select value={data.order_id} onChange={e => handleOrderChange(e.target.value)} className={inputCls}>
                                 <option value="">Sin pedido asociado</option>
                                 {orders.map(o => (
                                     <option key={o.id} value={o.id}>{o.code} — {o.client?.name} (S/ {parseFloat(o.total).toFixed(2)})</option>
@@ -115,21 +146,83 @@ export default function InvoicesForm({ clients, orders, series = [] }) {
 
                         <div>
                             <label className="block text-sm text-gray-600 mb-1">Cliente</label>
-                            <select value={data.client_id} onChange={e => setData('client_id', e.target.value)}
-                                className="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            <select value={data.client_id} onChange={e => setData('client_id', e.target.value)} className={inputCls}>
                                 <option value="">Seleccionar cliente...</option>
                                 {clients.map(c => <option key={c.id} value={c.id}>{c.name} ({c.document_type}: {c.document_number})</option>)}
                             </select>
-                            {errors.client_id && <p className="text-red-400 text-xs mt-1">{errors.client_id}</p>}
+                            {errors.client_id && <p className={errorCls}>{errors.client_id}</p>}
                         </div>
 
                         <div>
                             <label className="block text-sm text-gray-600 mb-1">Monto Total (S/)</label>
-                            <input type="number" step="0.01" value={data.total_amount} onChange={e => setData('total_amount', e.target.value)}
-                                className="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" />
-                            {errors.total_amount && <p className="text-red-400 text-xs mt-1">{errors.total_amount}</p>}
+                            <input type="number" step="0.01" value={data.total_amount} onChange={e => setData('total_amount', e.target.value)} className={inputCls} />
+                            {errors.total_amount && <p className={errorCls}>{errors.total_amount}</p>}
                         </div>
                     </section>
+
+                    {/* ── Datos del Adquiriente (condicional por tipo) ── */}
+                    {needsRuc(data.type) && (
+                        <section className="bg-white rounded-xl border border-indigo-200 p-5 space-y-4">
+                            <h2 className="text-gray-900 font-semibold flex items-center gap-2">
+                                <span className="inline-block w-2 h-2 rounded-full bg-indigo-500"></span>
+                                Datos del Adquiriente — Factura
+                            </h2>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-sm text-gray-600 mb-1">
+                                        RUC <span className="text-red-500">*</span>
+                                        <span className="text-gray-400 text-xs ml-1">(11 dígitos)</span>
+                                    </label>
+                                    <input
+                                        type="text"
+                                        maxLength={11}
+                                        value={data.customer_ruc}
+                                        onChange={e => setData('customer_ruc', e.target.value.replace(/\D/g, ''))}
+                                        placeholder="20XXXXXXXXX"
+                                        className={inputCls}
+                                    />
+                                    {errors.customer_ruc && <p className={errorCls}>{errors.customer_ruc}</p>}
+                                </div>
+                                <div className="md:col-span-1">
+                                    <label className="block text-sm text-gray-600 mb-1">
+                                        Razón Social <span className="text-red-500">*</span>
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={data.customer_name}
+                                        onChange={e => setData('customer_name', e.target.value)}
+                                        placeholder="EMPRESA S.A.C."
+                                        className={inputCls}
+                                    />
+                                    {errors.customer_name && <p className={errorCls}>{errors.customer_name}</p>}
+                                </div>
+                            </div>
+                        </section>
+                    )}
+
+                    {needsDni(data.type) && (
+                        <section className="bg-white rounded-xl border border-sky-200 p-5 space-y-4">
+                            <h2 className="text-gray-900 font-semibold flex items-center gap-2">
+                                <span className="inline-block w-2 h-2 rounded-full bg-sky-500"></span>
+                                Datos del Receptor — Boleta
+                            </h2>
+                            <div className="w-full md:w-64">
+                                <label className="block text-sm text-gray-600 mb-1">
+                                    DNI
+                                    <span className="text-gray-400 text-xs ml-1">(opcional, 8 dígitos)</span>
+                                </label>
+                                <input
+                                    type="text"
+                                    maxLength={8}
+                                    value={data.customer_dni}
+                                    onChange={e => setData('customer_dni', e.target.value.replace(/\D/g, ''))}
+                                    placeholder="12345678"
+                                    className={inputCls}
+                                />
+                                {errors.customer_dni && <p className={errorCls}>{errors.customer_dni}</p>}
+                            </div>
+                        </section>
+                    )}
 
                     <div className="flex gap-3">
                         <button type="submit" disabled={processing}
