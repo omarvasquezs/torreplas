@@ -8,6 +8,7 @@ use App\Models\Order;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\DB;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class InvoiceController extends Controller
 {
@@ -133,5 +134,16 @@ class InvoiceController extends Controller
     {
         $invoice->delete();
         return redirect()->route('invoices.index')->with('success', 'Comprobante eliminado.');
+    }
+
+    public function pdf(Invoice $invoice)
+    {
+        $invoice->load(['client', 'order.items.product']);
+
+        $pdf = Pdf::loadView('pdf.invoice', ['invoice' => $invoice])
+            ->setPaper('a4');
+
+        $filename = 'comprobante_' . $invoice->serie . '-' . $invoice->number . '.pdf';
+        return $pdf->download($filename);
     }
 }

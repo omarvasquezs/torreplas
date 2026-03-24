@@ -1,6 +1,6 @@
 import { Head, Link, useForm } from '@inertiajs/react';
 import DashboardLayout from '@/Layouts/DashboardLayout';
-import { ArrowLeft, FileText } from 'lucide-react';
+import { ArrowLeft, FileText, Download } from 'lucide-react';
 
 const STATUS_LABELS = {
     generated:   { label: 'Generado',     color: 'bg-blue-500/20 text-blue-400' },
@@ -26,13 +26,20 @@ export default function InvoicesShow({ invoice }) {
                     <Link href={route('invoices.index')} className="p-2 rounded-lg hover:bg-gray-100 text-gray-600 transition">
                         <ArrowLeft size={18} />
                     </Link>
-                    <div>
+                    <div className="flex-1">
                         <h1 className="text-2xl font-bold text-white flex items-center gap-2">
                             <FileText size={22} className="text-indigo-400" />
                             {invoice.serie}-{invoice.number}
                         </h1>
                         <span className={`inline-block mt-1 px-2 py-0.5 rounded-full text-xs font-medium ${st.color}`}>{st.label}</span>
                     </div>
+                    <a
+                        href={route('invoices.pdf', invoice.id)}
+                        target="_blank"
+                        className="inline-flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm font-medium transition"
+                    >
+                        <Download size={16} /> Descargar PDF
+                    </a>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">

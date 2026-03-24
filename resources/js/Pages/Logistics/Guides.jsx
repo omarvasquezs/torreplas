@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Head, Link, router } from '@inertiajs/react';
 import DashboardLayout from '@/Layouts/DashboardLayout';
-import { Plus, Search, FileText, Truck, Package, X, Trash2 } from 'lucide-react';
+import { Plus, Search, FileText, Truck, Package, X, Trash2, Download } from 'lucide-react';
 import { createPortal } from 'react-dom';
 
 function today() {
@@ -147,6 +147,7 @@ export default function GuidesIndex({ guides, products, filters }) {
                                 <th className="px-4 py-3 font-medium">Fecha</th>
                                 <th className="px-4 py-3 font-medium">Productos</th>
                                 <th className="px-4 py-3 font-medium">Estado</th>
+                                <th className="px-4 py-3 font-medium text-center">PDF</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-200">
@@ -163,6 +164,16 @@ export default function GuidesIndex({ guides, products, filters }) {
                                     <td className="px-4 py-3 text-gray-700">{g.items?.length ?? 0}</td>
                                     <td className="px-4 py-3">
                                         <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700">Procesado</span>
+                                    </td>
+                                    <td className="px-4 py-3 text-center">
+                                        <a
+                                            href={route('dispatch-guides.pdf', g.id)}
+                                            target="_blank"
+                                            className="inline-flex items-center gap-1 px-3 py-1.5 bg-red-50 hover:bg-red-100 text-red-700 rounded-lg text-xs font-medium transition"
+                                            title="Descargar PDF"
+                                        >
+                                            <Download size={13} /> PDF
+                                        </a>
                                     </td>
                                 </tr>
                             ))}

@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class DispatchGuideController extends Controller
 {
@@ -90,5 +91,16 @@ class DispatchGuideController extends Controller
         });
 
         return redirect()->route('dispatch-guides.index')->with('success', 'Guía de remisión registrada.');
+    }
+
+    public function pdf(DispatchGuide $dispatchGuide)
+    {
+        $dispatchGuide->load(['user', 'items.product']);
+
+        $pdf = Pdf::loadView('pdf.dispatch-guide', ['guide' => $dispatchGuide])
+            ->setPaper('a4');
+
+        $filename = 'guia_remision_' . str_replace('/', '-', $dispatchGuide->code) . '.pdf';
+        return $pdf->download($filename);
     }
 }

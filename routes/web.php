@@ -45,6 +45,7 @@ Route::middleware('auth')->group(function () {
     // Invoices / Billing
     Route::middleware('permission:sales.access')->group(function () {
         Route::resource('invoices', \App\Http\Controllers\InvoiceController::class);
+        Route::get('invoices/{invoice}/pdf', [\App\Http\Controllers\InvoiceController::class, 'pdf'])->name('invoices.pdf');
         Route::get('quotations', [\App\Http\Controllers\QuotationController::class, 'index'])->name('quotations.index');
     });
 
@@ -102,6 +103,7 @@ Route::middleware('auth')->group(function () {
         Route::post('carriers',       [\App\Http\Controllers\DeliveryController::class, 'storeCarrier'])->name('carriers.store');
         Route::get('dispatch-guides', [\App\Http\Controllers\DispatchGuideController::class, 'index'])->name('dispatch-guides.index');
         Route::post('dispatch-guides', [\App\Http\Controllers\DispatchGuideController::class, 'store'])->name('dispatch-guides.store');
+        Route::get('dispatch-guides/{dispatchGuide}/pdf', [\App\Http\Controllers\DispatchGuideController::class, 'pdf'])->name('dispatch-guides.pdf');
     });
 
     // Reports (with CSV export)
