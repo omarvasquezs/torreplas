@@ -5,121 +5,136 @@
     <title>Guía de Remisión {{ $guide->code }}</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: DejaVu Sans, sans-serif; color: #1f2937; font-size: 12px; padding: 20px; }
+        body {
+            font-family: DejaVu Sans, sans-serif;
+            font-size: 11px;
+            color: #1f2937;
+            padding: 18px 22px;
+            line-height: 1.3;
+        }
 
-        .header { display: table; width: 100%; border-bottom: 3px solid #0891b2; padding-bottom: 12px; margin-bottom: 16px; }
-        .header-left  { display: table-cell; vertical-align: middle; }
-        .header-right { display: table-cell; text-align: right; vertical-align: middle; }
-        .company-name { font-size: 20px; font-weight: 700; color: #164e63; }
-        .company-sub  { font-size: 11px; color: #6b7280; margin-top: 2px; }
-        .doc-box { border: 2px solid #0891b2; border-radius: 6px; padding: 8px 16px; display: inline-block; text-align: center; }
-        .doc-type { font-size: 11px; font-weight: 700; color: #0891b2; text-transform: uppercase; letter-spacing: 0.05em; }
-        .doc-code { font-size: 17px; font-weight: 700; color: #111827; margin-top: 2px; font-family: monospace; }
+        /* ── HEADER ── */
+        .header-table { width: 100%; border-collapse: collapse; border-bottom: 3px solid #0891b2; padding-bottom: 8px; margin-bottom: 12px; }
+        .company-name { font-size: 18px; font-weight: 700; color: #164e63; }
+        .company-sub  { font-size: 10px; color: #6b7280; margin-top: 2px; }
+        .doc-box { border: 2px solid #0891b2; border-radius: 4px; padding: 5px 12px; text-align: center; }
+        .doc-type { font-size: 9px; font-weight: 700; color: #0891b2; text-transform: uppercase; letter-spacing: 0.04em; }
+        .doc-code { font-size: 15px; font-weight: 700; color: #111827; font-family: monospace; }
 
-        .grid { display: table; width: 100%; border-collapse: collapse; margin-bottom: 14px; }
-        .col { display: table-cell; padding: 0 6px; vertical-align: top; }
-        .col:first-child { padding-left: 0; }
-        .col:last-child  { padding-right: 0; }
-        .box { border: 1px solid #e5e7eb; border-radius: 6px; padding: 10px 12px; height: 100%; }
-        .box h3 { font-size: 10px; text-transform: uppercase; color: #0891b2; letter-spacing: 0.06em; margin-bottom: 6px; font-weight: 700; }
-        .field { margin-bottom: 4px; }
-        .label { color: #9ca3af; font-size: 10px; }
-        .value { font-weight: 600; color: #111827; font-size: 12px; }
+        /* ── INFO BLOCKS ── */
+        .info-table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
+        .info-table td { vertical-align: top; padding: 0 5px; }
+        .info-table td:first-child { padding-left: 0; }
+        .info-table td:last-child  { padding-right: 0; }
+        .box { border: 1px solid #d1d5db; border-radius: 4px; padding: 7px 10px; }
+        .box-title { font-size: 9px; text-transform: uppercase; color: #0891b2; font-weight: 700; letter-spacing: 0.05em; margin-bottom: 5px; }
+        .field { margin-bottom: 3px; }
+        .lbl { font-size: 9px; color: #9ca3af; }
+        .val { font-weight: 600; font-size: 11px; color: #111827; }
 
-        .route-section { margin-bottom: 14px; }
-        .route-grid { display: table; width: 100%; }
-        .route-col { display: table-cell; width: 50%; padding-right: 6px; vertical-align: top; }
-        .route-col:last-child { padding-right: 0; padding-left: 6px; }
+        /* ── ROUTE (dos columnas) ── */
+        .route-table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
+        .route-table td { width: 50%; vertical-align: top; padding: 0; }
+        .route-table td:first-child { padding-right: 5px; }
+        .route-table td:last-child  { padding-left: 5px; }
+        .route-arrow { width: 28px; text-align: center; vertical-align: middle; font-size: 18px; color: #9ca3af; padding: 0 2px; }
 
-        .arrow { display: table-cell; width: 30px; text-align: center; vertical-align: middle; font-size: 20px; color: #6b7280; }
+        /* ── OBSERVATIONS ── */
+        .obs { border: 1px dashed #d1d5db; border-radius: 4px; padding: 6px 10px; margin-bottom: 10px; font-size: 10px; color: #374151; }
 
-        table.items { width: 100%; border-collapse: collapse; }
-        table.items thead th { background: #ecfeff; color: #164e63; text-align: left; padding: 8px 10px; font-size: 11px; border-bottom: 2px solid #0891b2; }
-        table.items tbody td { padding: 7px 10px; border-bottom: 1px solid #f3f4f6; font-size: 12px; }
+        /* ── ITEMS TABLE ── */
+        table.items { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
+        table.items thead th { background: #ecfeff; color: #164e63; padding: 6px 8px; font-size: 10px; border-bottom: 2px solid #0891b2; text-align: left; }
+        table.items thead th.r { text-align: right; }
+        table.items thead th.c { text-align: center; }
+        table.items tbody td { padding: 5px 8px; font-size: 11px; border-bottom: 1px solid #f3f4f6; }
+        table.items tbody td.r { text-align: right; }
+        table.items tbody td.c { text-align: center; }
         table.items tbody tr:last-child td { border-bottom: none; }
-        .text-right  { text-align: right; }
-        .text-center { text-align: center; }
-        .mono { font-family: monospace; }
+        .mono { font-family: monospace; font-size: 10px; }
 
-        .footer { margin-top: 24px; text-align: center; font-size: 10px; color: #9ca3af; border-top: 1px solid #e5e7eb; padding-top: 10px; }
-        .obs-box { border: 1px dashed #d1d5db; border-radius: 6px; padding: 8px 12px; margin-bottom: 14px; font-size: 11px; color: #374151; }
+        /* ── FOOTER ── */
+        .footer { text-align: center; font-size: 9px; color: #9ca3af; border-top: 1px solid #e5e7eb; padding-top: 6px; }
     </style>
 </head>
 <body>
 
-    {{-- HEADER --}}
-    <div class="header">
-        <div class="header-left">
+{{-- HEADER --}}
+<table class="header-table">
+    <tr>
+        <td style="padding-bottom:8px">
             <div class="company-name">TORREPLAS SAC</div>
             <div class="company-sub">RUC: 20XXXXXXXXX &nbsp;|&nbsp; Lima, Perú</div>
-        </div>
-        <div class="header-right">
+        </td>
+        <td style="text-align:right; padding-bottom:8px">
             <div class="doc-box">
-                <div class="doc-type">Guía de Remisión - Remitente</div>
+                <div class="doc-type">Guía de Remisión — Remitente</div>
                 <div class="doc-code">{{ $guide->code }}</div>
             </div>
-        </div>
-    </div>
+        </td>
+    </tr>
+</table>
 
-    {{-- META --}}
-    <div class="grid" style="margin-bottom:14px">
-        <div class="col" style="width:50%">
+{{-- META INFO --}}
+<table class="info-table">
+    <tr>
+        <td width="50%">
             <div class="box">
-                <h3>Datos del Traslado</h3>
-                <div class="field"><div class="label">Fecha de Emisión</div><div class="value">{{ \Carbon\Carbon::parse($guide->issue_date)->format('d/m/Y') }}</div></div>
-                <div class="field"><div class="label">Destinatario</div><div class="value">{{ $guide->recipient_name }}</div></div>
-                <div class="field"><div class="label">Estado</div><div class="value">{{ strtoupper($guide->status) }}</div></div>
-                <div class="field"><div class="label">Registrado por</div><div class="value">{{ $guide->user?->name ?? '—' }}</div></div>
+                <div class="box-title">Traslado</div>
+                <div class="field"><div class="lbl">Destinatario</div><div class="val">{{ $guide->recipient_name }}</div></div>
+                <div class="field"><div class="lbl">Fecha de Emisión</div><div class="val">{{ \Carbon\Carbon::parse($guide->issue_date)->format('d/m/Y') }}</div></div>
+                <div class="field"><div class="lbl">Estado</div><div class="val">{{ strtoupper($guide->status) }}</div></div>
+                <div class="field"><div class="lbl">Registrado por</div><div class="val">{{ $guide->user?->name ?? '—' }}</div></div>
             </div>
-        </div>
-        <div class="col" style="width:50%">
+        </td>
+        <td width="50%">
             <div class="box">
-                <h3>Ruta</h3>
-                <div class="field"><div class="label">Ubigeo Origen</div><div class="value mono">{{ $guide->origin_ubigeo }}</div></div>
-                <div class="field"><div class="label">Dirección Origen</div><div class="value">{{ $guide->origin_address }}</div></div>
-                <div class="field" style="margin-top:6px"><div class="label">Ubigeo Destino</div><div class="value mono">{{ $guide->destination_ubigeo }}</div></div>
-                <div class="field"><div class="label">Dirección Destino</div><div class="value">{{ $guide->destination_address }}</div></div>
+                <div class="box-title">Ruta</div>
+                <div class="field"><div class="lbl">Ubigeo Origen</div><div class="val mono">{{ $guide->origin_ubigeo }}</div></div>
+                <div class="field"><div class="lbl">Dirección Origen</div><div class="val">{{ $guide->origin_address }}</div></div>
+                <div class="field" style="margin-top:4px"><div class="lbl">Ubigeo Destino</div><div class="val mono">{{ $guide->destination_ubigeo }}</div></div>
+                <div class="field"><div class="lbl">Dirección Destino</div><div class="val">{{ $guide->destination_address }}</div></div>
             </div>
-        </div>
-    </div>
+        </td>
+    </tr>
+</table>
 
-    {{-- OBSERVATIONS --}}
-    @if($guide->observations)
-    <div class="obs-box">
-        <strong>Observaciones:</strong> {{ $guide->observations }}
-    </div>
-    @endif
+{{-- OBSERVACIONES --}}
+@if($guide->observations)
+<div class="obs"><strong>Observaciones:</strong> {{ $guide->observations }}</div>
+@endif
 
-    {{-- ITEMS --}}
-    <table class="items">
-        <thead>
-            <tr>
-                <th class="text-center">#</th>
-                <th>Código</th>
-                <th>Descripción</th>
-                <th class="text-center">Unidad</th>
-                <th class="text-right">Cantidad</th>
-            </tr>
-        </thead>
-        <tbody>
-            @forelse($guide->items as $i => $item)
-            <tr>
-                <td class="text-center">{{ $i + 1 }}</td>
-                <td class="mono">{{ $item->product?->code ?? '—' }}</td>
-                <td>{{ $item->product_name }}</td>
-                <td class="text-center">{{ $item->unit_name ?? 'UND' }}</td>
-                <td class="text-right">{{ number_format($item->quantity, 2) }}</td>
-            </tr>
-            @empty
-            <tr><td colspan="5" style="text-align:center;color:#9ca3af;padding:16px">Sin ítems registrados.</td></tr>
-            @endforelse
-        </tbody>
-    </table>
+{{-- ITEMS --}}
+<table class="items">
+    <thead>
+        <tr>
+            <th class="c" style="width:30px">#</th>
+            <th style="width:80px">Código</th>
+            <th>Descripción</th>
+            <th class="c" style="width:50px">Unidad</th>
+            <th class="r" style="width:70px">Cantidad</th>
+        </tr>
+    </thead>
+    <tbody>
+        @forelse($guide->items as $i => $item)
+        <tr>
+            <td class="c">{{ $i + 1 }}</td>
+            <td class="mono">{{ $item->product?->code ?? '—' }}</td>
+            <td>{{ $item->product_name }}</td>
+            <td class="c">{{ $item->unit_name ?? 'UND' }}</td>
+            <td class="r">{{ number_format($item->quantity, 2) }}</td>
+        </tr>
+        @empty
+        <tr><td colspan="5" style="text-align:center;color:#9ca3af;padding:12px">Sin ítems registrados.</td></tr>
+        @endforelse
+    </tbody>
+</table>
 
-    <div class="footer">
-        Total de ítems: {{ $guide->items->count() }} &nbsp;|&nbsp;
-        Generado el {{ now()->format('d/m/Y H:i') }} &nbsp;|&nbsp; TORREPLAS SAC
-    </div>
+<div class="footer">
+    Total de ítems: {{ $guide->items->count() }}
+    &nbsp;|&nbsp; Emitido el {{ now()->format('d/m/Y H:i') }}
+    &nbsp;|&nbsp; TORREPLAS SAC
+</div>
 
 </body>
 </html>

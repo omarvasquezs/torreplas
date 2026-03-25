@@ -98,7 +98,12 @@ class DispatchGuideController extends Controller
         $dispatchGuide->load(['user', 'items.product']);
 
         $pdf = Pdf::loadView('pdf.dispatch-guide', ['guide' => $dispatchGuide])
-            ->setPaper('a4');
+            ->setPaper('a4', 'portrait')
+            ->setOption('defaultFont', 'DejaVu Sans')
+            ->setOption('margin_top', 0)
+            ->setOption('margin_right', 0)
+            ->setOption('margin_bottom', 0)
+            ->setOption('margin_left', 0);
 
         $filename = 'guia_remision_' . str_replace('/', '-', $dispatchGuide->code) . '.pdf';
         return $pdf->download($filename);
