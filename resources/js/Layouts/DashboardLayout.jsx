@@ -37,9 +37,10 @@ const GROUPS = [
     {
         label: 'Ventas',
         items: [
-            { name: 'Pedidos',     href: () => route('orders.index'),      icon: ShoppingCart, match: 'orders.*', permission: 'sales.access' },
+            { name: 'Clientes',    href: () => route('clients.index'),    icon: Users,        match: 'clients.*',    permission: 'sales.access' },
+            { name: 'Pedidos',     href: () => route('orders.index'),      icon: ShoppingCart, match: 'orders.*',     permission: 'sales.access' },
             { name: 'Cotización',  href: () => route('quotations.index'),  icon: FileText,     match: 'quotations.*', permission: 'sales.access' },
-            { name: 'Facturación', href: () => route('invoices.index'),    icon: FileText,     match: 'invoices.*', permission: 'sales.access' },
+            { name: 'Facturación', href: () => route('invoices.index'),    icon: FileText,     match: 'invoices.*',   permission: 'sales.access' },
         ],
     },
     {
