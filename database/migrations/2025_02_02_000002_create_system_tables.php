@@ -49,7 +49,7 @@ return new class extends Migration {
         Schema::create('document_series', function (Blueprint $table) {
             $table->id();
             $table->string('type');         // factura, boleta, nota_credito, etc.
-            $table->string('series', 4);    // F001, B001
+            $table->string('series', 10);   // F001, B001, NC001
             $table->unsignedInteger('next_number')->default(1);
             $table->boolean('is_active')->default(true);
             $table->timestamps();

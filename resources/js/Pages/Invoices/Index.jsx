@@ -13,8 +13,8 @@ const STATUS_LABELS = {
 const TYPE_LABELS = {
     factura:       'Factura',
     boleta:        'Boleta',
-    nota_credito:  'NC NOTA DE CRÉDITO',
-    nota_debito:   'ND NOTA DE DEBITO',
+    nota_credito:  'Nota Crédito',
+    nota_debito:   'Nota Débito',
 };
 
 export default function InvoicesIndex({ invoices, filters }) {
@@ -60,8 +60,8 @@ export default function InvoicesIndex({ invoices, filters }) {
                         <option value="">Todos los tipos</option>
                         <option value="factura">Factura</option>
                         <option value="boleta">Boleta</option>
-                        <option value="nota_credito">NC NOTA DE CRÉDITO</option>
-                        <option value="nota_debito">ND NOTA DE DEBITO</option>
+                        <option value="nota_credito">Nota Crédito</option>
+                        <option value="nota_debito">Nota Débito</option>
                     </select>
                     <button type="submit" className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm">Buscar</button>
                 </form>
