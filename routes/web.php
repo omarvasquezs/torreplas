@@ -12,6 +12,13 @@ Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'ind
 
 Route::middleware('auth')->group(function () {
 
+    // Padron RUC API
+    Route::prefix('api/padron')->group(function () {
+        Route::get('buscar', [\App\Http\Controllers\Api\PadronRucController::class, 'buscar'])->name('padron.buscar');
+        Route::get('buscar-ruc/{ruc}', [\App\Http\Controllers\Api\PadronRucController::class, 'buscarRuc'])->name('padron.buscar-ruc');
+        Route::get('stats', [\App\Http\Controllers\Api\PadronRucController::class, 'stats'])->name('padron.stats');
+    });
+
     // Profile
     Route::get('/profile',    [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile',  [ProfileController::class, 'update'])->name('profile.update');
