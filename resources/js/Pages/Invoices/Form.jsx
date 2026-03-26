@@ -2,6 +2,7 @@ import { Head, Link, useForm } from '@inertiajs/react';
 import { useEffect, useMemo } from 'react';
 import DashboardLayout from '@/Layouts/DashboardLayout';
 import { ArrowLeft, Save } from 'lucide-react';
+import axios from 'axios';
 
 const isFactura  = (type) => type === 'factura';
 const isBoleta   = (type) => type === 'boleta';
@@ -28,6 +29,78 @@ export default function InvoicesForm({ clients, orders, series = [] }) {
         customer_name: '',
         customer_dni:  '',
     });
+
+    // Autocomplete states
+    const [padronResults, setPadronResults] = React.useState([]);
+    const [padronLoading, setPadronLoading] = React.useState(false);
+    const [activeField, setActiveField] = React.useState(null); // 'ruc', 'razon_social', 'dni', 'nombre_boleta'
+    const debounceTimer = React.useRef(null);
+
+    const closeDropdown = () => {
+        setTimeout(() => { setPadronResults([]); setActiveField(null); }, 200);
+    };
+
+    const fetchPadron = async (q, tipo, fieldTarget) => {
+        try {
+            setPadronLoading(true);
+            setActiveField(fieldTarget);
+            const { data } = await axios.get('/api/padron/buscar', { params: { q, tipo, limit: 8 } });
+            setPadronResults(data);
+        } catch (e) {
+            setPadronResults([]);
+        } finally {
+            setPadronLoading(false);
+        }
+    };
+
+    // Factura Handlers
+    const onRucInput = (e) => {
+        const val = e.target.value.replace(/\D/g, '');
+        setData('customer_ruc', val);
+        clearTimeout(debounceTimer.current);
+        if (val.length < 7) { setPadronResults([]); return; }
+        debounceTimer.current = setTimeout(() => fetchPadron(val, 'ruc', 'ruc'), 350);
+    };
+
+    const onRazonSocialInput = (e) => {
+        const val = e.target.value;
+        setData('customer_name', val);
+        clearTimeout(debounceTimer.current);
+        if (val.length < 3) { setPadronResults([]); return; }
+        debounceTimer.current = setTimeout(() => fetchPadron(val, 'nombre', 'razon_social'), 400);
+    };
+
+    const selectPadronFactura = (r) => {
+        setData(d => ({ ...d, customer_ruc: r.ruc, customer_name: r.nombre }));
+        setPadronResults([]);
+        setActiveField(null);
+    };
+
+    // Boleta Handlers
+    const onDniInput = (e) => {
+        const val = e.target.value.replace(/\D/g, '');
+        setData('customer_dni', val);
+        clearTimeout(debounceTimer.current);
+        if (val.length < 7) { setPadronResults([]); return; }
+        debounceTimer.current = setTimeout(() => fetchPadron(val, 'dni', 'dni'), 350);
+    };
+
+    const onNombreBoletaInput = (e) => {
+        const val = e.target.value;
+        setData('customer_name', val);
+        clearTimeout(debounceTimer.current);
+        if (val.length < 3) { setPadronResults([]); return; }
+        debounceTimer.current = setTimeout(() => fetchPadron(val, 'nombre', 'nombre_boleta'), 400);
+    };
+
+    const selectPadronBoleta = (r) => {
+        let dni = r.ruc;
+        if (dni.startsWith('10') && dni.length === 11) dni = dni.substring(2, 10);
+        else if (dni.startsWith('20')) dni = '';
+        setData(d => ({ ...d, customer_name: r.nombre, customer_dni: dni }));
+        setPadronResults([]);
+        setActiveField(null);
+    };
 
     const seriesOptions = useMemo(
         () => series.filter((row) => row.type === data.type),
@@ -168,7 +241,7 @@ export default function InvoicesForm({ clients, orders, series = [] }) {
                                 Datos del Adquiriente — Factura
                             </h2>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>
+                                <div className="relative">
                                     <label className="block text-sm text-gray-600 mb-1">
                                         RUC <span className="text-red-500">*</span>
                                         <span className="text-gray-400 text-xs ml-1">(11 dígitos)</span>
@@ -177,23 +250,67 @@ export default function InvoicesForm({ clients, orders, series = [] }) {
                                         type="text"
                                         maxLength={11}
                                         value={data.customer_ruc}
-                                        onChange={e => setData('customer_ruc', e.target.value.replace(/\D/g, ''))}
+                                        onChange={onRucInput}
+                                        onBlur={closeDropdown}
                                         placeholder="20XXXXXXXXX"
                                         className={inputCls}
+                                        autoComplete="off"
                                     />
+                                    {padronLoading && activeField === 'ruc' && (
+                                        <div className="absolute right-3 top-9 border-t-transparent border-indigo-600 w-4 h-4 border-2 rounded-full animate-spin"></div>
+                                    )}
+                                    {padronResults.length > 0 && activeField === 'ruc' && (
+                                        <ul className="absolute z-50 w-full bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-auto mt-1">
+                                            {padronResults.map(r => (
+                                                <li key={r.ruc}
+                                                    onMouseDown={(e) => { e.preventDefault(); selectPadronFactura(r); }}
+                                                    className="px-3 py-2 border-b border-gray-100 hover:bg-gray-50 cursor-pointer">
+                                                    <div className="text-sm font-semibold text-gray-900">{r.ruc}</div>
+                                                    <div className="text-xs text-gray-500 truncate">{r.nombre}</div>
+                                                    {r.estado && (
+                                                        <span className={`inline-block mt-1 px-2 py-0.5 text-[0.65rem] rounded-full text-white ${r.estado === 'ACTIVO' ? 'bg-green-500' : 'bg-gray-500'}`}>
+                                                            {r.estado}
+                                                        </span>
+                                                    )}
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    )}
                                     {errors.customer_ruc && <p className={errorCls}>{errors.customer_ruc}</p>}
                                 </div>
-                                <div className="md:col-span-1">
+                                <div className="md:col-span-1 relative">
                                     <label className="block text-sm text-gray-600 mb-1">
                                         Razón Social <span className="text-red-500">*</span>
                                     </label>
                                     <input
                                         type="text"
                                         value={data.customer_name}
-                                        onChange={e => setData('customer_name', e.target.value)}
+                                        onChange={onRazonSocialInput}
+                                        onBlur={closeDropdown}
                                         placeholder="EMPRESA S.A.C."
                                         className={inputCls}
+                                        autoComplete="off"
                                     />
+                                    {padronLoading && activeField === 'razon_social' && (
+                                        <div className="absolute right-3 top-9 border-t-transparent border-indigo-600 w-4 h-4 border-2 rounded-full animate-spin"></div>
+                                    )}
+                                    {padronResults.length > 0 && activeField === 'razon_social' && (
+                                        <ul className="absolute z-50 w-full bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-auto mt-1">
+                                            {padronResults.map(r => (
+                                                <li key={r.ruc}
+                                                    onMouseDown={(e) => { e.preventDefault(); selectPadronFactura(r); }}
+                                                    className="px-3 py-2 border-b border-gray-100 hover:bg-gray-50 cursor-pointer">
+                                                    <div className="text-sm font-semibold text-gray-900">{r.ruc}</div>
+                                                    <div className="text-xs text-gray-500 truncate">{r.nombre}</div>
+                                                    {r.estado && (
+                                                        <span className={`inline-block mt-1 px-2 py-0.5 text-[0.65rem] rounded-full text-white ${r.estado === 'ACTIVO' ? 'bg-green-500' : 'bg-gray-500'}`}>
+                                                            {r.estado}
+                                                        </span>
+                                                    )}
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    )}
                                     {errors.customer_name && <p className={errorCls}>{errors.customer_name}</p>}
                                 </div>
                             </div>
@@ -206,20 +323,70 @@ export default function InvoicesForm({ clients, orders, series = [] }) {
                                 <span className="inline-block w-2 h-2 rounded-full bg-sky-500"></span>
                                 Datos del Receptor — Boleta
                             </h2>
-                            <div className="w-full md:w-64">
-                                <label className="block text-sm text-gray-600 mb-1">
-                                    DNI
-                                    <span className="text-gray-400 text-xs ml-1">(opcional, 8 dígitos)</span>
-                                </label>
-                                <input
-                                    type="text"
-                                    maxLength={8}
-                                    value={data.customer_dni}
-                                    onChange={e => setData('customer_dni', e.target.value.replace(/\D/g, ''))}
-                                    placeholder="12345678"
-                                    className={inputCls}
-                                />
-                                {errors.customer_dni && <p className={errorCls}>{errors.customer_dni}</p>}
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="md:col-span-1 relative">
+                                    <label className="block text-sm text-gray-600 mb-1">
+                                        Nombre Completo
+                                        <span className="text-gray-400 text-xs ml-1">(opcional)</span>
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={data.customer_name}
+                                        onChange={onNombreBoletaInput}
+                                        onBlur={closeDropdown}
+                                        placeholder="Nombres y apellidos del cliente"
+                                        className={inputCls}
+                                        autoComplete="off"
+                                    />
+                                    {padronLoading && activeField === 'nombre_boleta' && (
+                                        <div className="absolute right-3 top-9 border-t-transparent border-sky-600 w-4 h-4 border-2 rounded-full animate-spin"></div>
+                                    )}
+                                    {padronResults.length > 0 && activeField === 'nombre_boleta' && (
+                                        <ul className="absolute z-50 w-full bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-auto mt-1">
+                                            {padronResults.map(r => (
+                                                <li key={r.ruc}
+                                                    onMouseDown={(e) => { e.preventDefault(); selectPadronBoleta(r); }}
+                                                    className="px-3 py-2 border-b border-gray-100 hover:bg-gray-50 cursor-pointer">
+                                                    <div className="text-sm font-semibold text-gray-900">{r.nombre}</div>
+                                                    <div className="text-xs text-gray-500">RUC: {r.ruc}</div>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    )}
+                                    {errors.customer_name && <p className={errorCls}>{errors.customer_name}</p>}
+                                </div>
+                                <div className="relative">
+                                    <label className="block text-sm text-gray-600 mb-1">
+                                        DNI
+                                        <span className="text-gray-400 text-xs ml-1">(opcional, 8 dígitos)</span>
+                                    </label>
+                                    <input
+                                        type="text"
+                                        maxLength={8}
+                                        value={data.customer_dni}
+                                        onChange={onDniInput}
+                                        onBlur={closeDropdown}
+                                        placeholder="12345678"
+                                        className={inputCls}
+                                        autoComplete="off"
+                                    />
+                                    {padronLoading && activeField === 'dni' && (
+                                        <div className="absolute right-3 top-9 border-t-transparent border-sky-600 w-4 h-4 border-2 rounded-full animate-spin"></div>
+                                    )}
+                                    {padronResults.length > 0 && activeField === 'dni' && (
+                                        <ul className="absolute z-50 w-full bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-auto mt-1">
+                                            {padronResults.map(r => (
+                                                <li key={r.ruc}
+                                                    onMouseDown={(e) => { e.preventDefault(); selectPadronBoleta(r); }}
+                                                    className="px-3 py-2 border-b border-gray-100 hover:bg-gray-50 cursor-pointer">
+                                                    <div className="text-sm font-semibold text-gray-900">{r.nombre}</div>
+                                                    <div className="text-xs text-gray-500">RUC: {r.ruc}</div>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    )}
+                                    {errors.customer_dni && <p className={errorCls}>{errors.customer_dni}</p>}
+                                </div>
                             </div>
                         </section>
                     )}
