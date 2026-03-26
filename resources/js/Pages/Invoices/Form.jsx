@@ -324,37 +324,6 @@ export default function InvoicesForm({ clients, orders, series = [] }) {
                                 Datos del Receptor — Boleta
                             </h2>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div className="md:col-span-1 relative">
-                                    <label className="block text-sm text-gray-600 mb-1">
-                                        Nombre Completo
-                                        <span className="text-gray-400 text-xs ml-1">(opcional)</span>
-                                    </label>
-                                    <input
-                                        type="text"
-                                        value={data.customer_name}
-                                        onChange={onNombreBoletaInput}
-                                        onBlur={closeDropdown}
-                                        placeholder="Nombres y apellidos del cliente"
-                                        className={inputCls}
-                                        autoComplete="off"
-                                    />
-                                    {padronLoading && activeField === 'nombre_boleta' && (
-                                        <div className="absolute right-3 top-9 border-t-transparent border-sky-600 w-4 h-4 border-2 rounded-full animate-spin"></div>
-                                    )}
-                                    {padronResults.length > 0 && activeField === 'nombre_boleta' && (
-                                        <ul className="absolute z-50 w-full bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-auto mt-1">
-                                            {padronResults.map(r => (
-                                                <li key={r.ruc}
-                                                    onMouseDown={(e) => { e.preventDefault(); selectPadronBoleta(r); }}
-                                                    className="px-3 py-2 border-b border-gray-100 hover:bg-gray-50 cursor-pointer">
-                                                    <div className="text-sm font-semibold text-gray-900">{r.nombre}</div>
-                                                    <div className="text-xs text-gray-500">RUC: {r.ruc}</div>
-                                                </li>
-                                            ))}
-                                        </ul>
-                                    )}
-                                    {errors.customer_name && <p className={errorCls}>{errors.customer_name}</p>}
-                                </div>
                                 <div className="relative">
                                     <label className="block text-sm text-gray-600 mb-1">
                                         DNI
@@ -386,6 +355,37 @@ export default function InvoicesForm({ clients, orders, series = [] }) {
                                         </ul>
                                     )}
                                     {errors.customer_dni && <p className={errorCls}>{errors.customer_dni}</p>}
+                                </div>
+                                <div className="md:col-span-1 relative">
+                                    <label className="block text-sm text-gray-600 mb-1">
+                                        Nombre Completo
+                                        <span className="text-gray-400 text-xs ml-1">(opcional)</span>
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={data.customer_name}
+                                        onChange={onNombreBoletaInput}
+                                        onBlur={closeDropdown}
+                                        placeholder="Nombres y apellidos del cliente"
+                                        className={inputCls}
+                                        autoComplete="off"
+                                    />
+                                    {padronLoading && activeField === 'nombre_boleta' && (
+                                        <div className="absolute right-3 top-9 border-t-transparent border-sky-600 w-4 h-4 border-2 rounded-full animate-spin"></div>
+                                    )}
+                                    {padronResults.length > 0 && activeField === 'nombre_boleta' && (
+                                        <ul className="absolute z-50 w-full bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-auto mt-1">
+                                            {padronResults.map(r => (
+                                                <li key={r.ruc}
+                                                    onMouseDown={(e) => { e.preventDefault(); selectPadronBoleta(r); }}
+                                                    className="px-3 py-2 border-b border-gray-100 hover:bg-gray-50 cursor-pointer">
+                                                    <div className="text-sm font-semibold text-gray-900">{r.nombre}</div>
+                                                    <div className="text-xs text-gray-500">RUC: {r.ruc}</div>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    )}
+                                    {errors.customer_name && <p className={errorCls}>{errors.customer_name}</p>}
                                 </div>
                             </div>
                         </section>
