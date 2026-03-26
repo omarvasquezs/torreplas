@@ -182,8 +182,8 @@ export default function InvoicesForm({ clients, orders, series = [] }) {
                                 <select value={data.type} onChange={e => setData('type', e.target.value)} className={inputCls}>
                                     <option value="factura">Factura</option>
                                     <option value="boleta">Boleta</option>
-                                    <option value="nota_credito">Nota Crédito</option>
-                                    <option value="nota_debito">Nota Débito</option>
+                                    <option value="nota_credito">NC NOTA DE CRÉDITO</option>
+                                    <option value="nota_debito">ND NOTA DE DEBITO</option>
                                 </select>
                             </div>
                             <div>
