@@ -56,7 +56,7 @@ class InvoiceController extends Controller
 
         $data = $request->validate([
             'order_id'      => 'nullable|exists:orders,id',
-            'client_id'     => 'required|exists:clients,id',
+            'client_id'     => 'required', // handled manually for "new" or existing
             'type'          => 'required|in:factura,boleta,nota_credito,nota_debito',
             'serie'         => 'required|string|max:10',
             'issue_date'    => 'required|date',
@@ -69,6 +69,24 @@ class InvoiceController extends Controller
         ]);
 
         $serie = strtoupper(trim($data['serie']));
+
+        if ($data['client_id'] === 'new') {
+            $docType = $isFactura ? 'RUC' : ($request->filled('customer_dni') ? 'DNI' : 'SIN RUC/DNI');
+            $docNum = $isFactura ? ($data['customer_ruc'] ?? '00000000000') : ($data['customer_dni'] ?? '00000000');
+            $name = $data['customer_name'] ?: 'CLIENTE VARIOS';
+
+            $client = Client::firstOrCreate(
+                ['document_number' => $docNum],
+                [
+                    'document_type' => $docType,
+                    'name' => $name,
+                    'is_active' => true,
+                ]
+            );
+            $data['client_id'] = $client->id;
+        } else {
+            $request->validate(['client_id' => 'exists:clients,id']);
+        }
 
         DB::transaction(function () use ($data, $serie) {
             $seriesRow = DB::table('document_series')

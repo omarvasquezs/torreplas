@@ -102,6 +102,52 @@ export default function InvoicesForm({ clients, orders, series = [] }) {
         setActiveField(null);
     };
 
+    const displayedClients = useMemo(() => {
+        let docNumber = '';
+        let name = data.customer_name;
+
+        if (needsRuc(data.type) && data.customer_ruc?.length === 11) {
+            docNumber = data.customer_ruc;
+        } else if (needsDni(data.type) && data.customer_dni?.length >= 8) {
+            docNumber = data.customer_dni;
+        }
+
+        const existingClient = clients.find(c => c.document_number === docNumber);
+        
+        if (docNumber && name && !existingClient) {
+            return [
+                 { id: 'new', name: `${name} (NUEVO CLIENTE)`, document_type: needsRuc(data.type) ? 'RUC' : 'DNI', document_number: docNumber },
+                 ...clients
+            ];
+        }
+
+        return clients;
+    }, [clients, data.customer_ruc, data.customer_dni, data.customer_name, data.type]);
+
+    useEffect(() => {
+        let docNumber = '';
+        let name = data.customer_name;
+
+        if (needsRuc(data.type) && data.customer_ruc?.length === 11) {
+            docNumber = data.customer_ruc;
+        } else if (needsDni(data.type) && data.customer_dni?.length >= 8) {
+            docNumber = data.customer_dni;
+        }
+
+        if (docNumber && name) {
+            const existingClient = clients.find(c => c.document_number === docNumber);
+            if (existingClient) {
+                if (data.client_id !== existingClient.id) {
+                    setData('client_id', existingClient.id);
+                }
+            } else {
+                if (data.client_id !== 'new') {
+                    setData('client_id', 'new');
+                }
+            }
+        }
+    }, [data.customer_ruc, data.customer_dni, data.customer_name, data.type, clients]);
+
     const seriesOptions = useMemo(
         () => series.filter((row) => row.type === data.type),
         [series, data.type]
@@ -221,7 +267,7 @@ export default function InvoicesForm({ clients, orders, series = [] }) {
                             <label className="block text-sm text-gray-600 mb-1">Cliente</label>
                             <select value={data.client_id} onChange={e => setData('client_id', e.target.value)} className={inputCls}>
                                 <option value="">Seleccionar cliente...</option>
-                                {clients.map(c => <option key={c.id} value={c.id}>{c.name} ({c.document_type}: {c.document_number})</option>)}
+                                {displayedClients.map(c => <option key={c.id} value={c.id}>{c.name} ({c.document_type}: {c.document_number})</option>)}
                             </select>
                             {errors.client_id && <p className={errorCls}>{errors.client_id}</p>}
                         </div>
