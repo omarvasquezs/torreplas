@@ -339,7 +339,21 @@ export default function Form({ clients: initialClients, products }) {
                     </button>
                 </div>
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 relative z-10">
+                <div className="space-y-4 mb-6 relative z-10">
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Tipo de Documento</label>
+                        <select
+                            value={clientForm.document_type}
+                            onChange={(e) => setClientForm({ ...clientForm, document_type: e.target.value })}
+                            className="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 shadow-sm bg-gray-50"
+                        >
+                            <option value="RUC">RUC</option>
+                            <option value="DNI">DNI</option>
+                            <option value="CE">CE</option>
+                            <option value="OTROS">OTROS</option>
+                        </select>
+                    </div>
+
                     <div className="relative">
                         <label className="block text-sm font-medium text-gray-700 mb-1">Documento (RUC/DNI) <span className="text-red-500">*</span></label>
                         <input
@@ -394,22 +408,7 @@ export default function Form({ clients: initialClients, products }) {
                         )}
                         {clientErrors.name && <p className="text-red-500 text-xs mt-1">{clientErrors.name[0]}</p>}
                     </div>
-                </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Tipo de Documento</label>
-                        <select
-                            value={clientForm.document_type}
-                            onChange={(e) => setClientForm({ ...clientForm, document_type: e.target.value })}
-                            className="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 shadow-sm bg-gray-50"
-                        >
-                            <option value="RUC">RUC</option>
-                            <option value="DNI">DNI</option>
-                            <option value="CE">CE</option>
-                            <option value="OTROS">OTROS</option>
-                        </select>
-                    </div>
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">Email <span className="text-gray-400 text-xs">(Opcional)</span></label>
                         <input
