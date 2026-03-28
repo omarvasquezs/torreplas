@@ -43,13 +43,31 @@ class OrderController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'client_id' => 'required|exists:clients,id',
+            'client_id' => 'required',
             'date_issue' => 'required|date',
             'items' => 'required|array|min:1',
             'items.*.product_id' => 'required|exists:products,id',
             'items.*.quantity' => 'required|numeric|min:0.1',
             'items.*.unit_price' => 'required|numeric|min:0',
         ]);
+
+        if ($request->input('client_id') === 'new') {
+            $docNum = $request->input('customer_doc') ?: '00000000';
+            $docType = strlen($docNum) === 11 ? 'RUC' : (strlen($docNum) === 8 ? 'DNI' : 'OTROS');
+            $name = $request->input('customer_name') ?: 'CLIENTE VARIOS';
+
+            $client = Client::firstOrCreate(
+                ['document_number' => $docNum],
+                [
+                    'document_type' => $docType,
+                    'name' => $name,
+                    'is_active' => true,
+                ]
+            );
+            $validated['client_id'] = $client->id;
+        } else {
+            $request->validate(['client_id' => 'exists:clients,id']);
+        }
 
         DB::transaction(function () use ($validated, $request) {
             $total = 0;
@@ -61,7 +79,7 @@ class OrderController extends Controller
                 $total += $lineTotal;
             }
 
-            $tax = $total * 0.18; // IGV 18% assumption, or included. 
+            $tax = $total * 0.18; // IGV 18% assumption
             // Lets assume prices include IGV for simplicity or excluded. 
             // Simplification: Input prices are final for now.
             // If we want rigorous tax: subtotal = total / 1.18; tax = total - subtotal;

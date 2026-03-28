@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { Head, Link, useForm } from '@inertiajs/react';
 import DashboardLayout from '@/Layouts/DashboardLayout';
 import { Save, ArrowLeft, Plus, Trash, ShoppingBag } from 'lucide-react';
+import axios from 'axios';
 
 export default function Form({ clients, products }) {
     // Initial Items State
@@ -11,10 +12,90 @@ export default function Form({ clients, products }) {
 
     const { data, setData, post, processing, errors } = useForm({
         client_id: '',
+        customer_doc: '',
+        customer_name: '',
         date_issue: new Date().toISOString().split('T')[0],
         items: [],
         notes: ''
     });
+
+    // Padrón State
+    const [padronResults, setPadronResults] = useState([]);
+    const [padronLoading, setPadronLoading] = useState(false);
+    const [activeField, setActiveField] = useState(null);
+    const debounceTimer = useRef(null);
+
+    const closeDropdown = () => {
+        setTimeout(() => { setPadronResults([]); setActiveField(null); }, 200);
+    };
+
+    const fetchPadron = async (q, tipo, fieldTarget) => {
+        try {
+            setPadronLoading(true);
+            setActiveField(fieldTarget);
+            const res = await axios.get('/api/padron/buscar', { params: { q, tipo, limit: 8 } });
+            setPadronResults(res.data);
+        } catch (e) {
+            setPadronResults([]);
+        } finally {
+            setPadronLoading(false);
+        }
+    };
+
+    const onDocInput = (e) => {
+        const val = e.target.value.replace(/\D/g, '');
+        setData('customer_doc', val);
+        clearTimeout(debounceTimer.current);
+        if (val.length < 8) { setPadronResults([]); return; }
+        const tipo = val.length === 11 ? 'ruc' : 'dni';
+        debounceTimer.current = setTimeout(() => fetchPadron(val, tipo, 'doc'), 350);
+    };
+
+    const onNameInput = (e) => {
+        const val = e.target.value;
+        setData('customer_name', val);
+        clearTimeout(debounceTimer.current);
+        if (val.length < 3) { setPadronResults([]); return; }
+        debounceTimer.current = setTimeout(() => fetchPadron(val, 'nombre', 'name'), 400);
+    };
+
+    const selectPadronClient = (r) => {
+        let dni = r.ruc;
+        if (dni.startsWith('10') && dni.length === 11 && data.customer_doc && data.customer_doc.length < 11) {
+            dni = dni.substring(2, 10);
+        } else if (dni.startsWith('20') && data.customer_doc && data.customer_doc.length < 11) {
+            dni = '';
+        }
+        setData(d => ({ ...d, customer_doc: dni, customer_name: r.nombre }));
+        setPadronResults([]);
+        setActiveField(null);
+    };
+
+    const displayedClients = useMemo(() => {
+        let docNumber = data.customer_doc;
+        let name = data.customer_name;
+        const existingClient = clients.find(c => c.document_number === docNumber);
+        if (docNumber && name && !existingClient) {
+            return [
+                 { id: 'new', name: `${name} (NUEVO CLIENTE)`, document_type: docNumber.length === 11 ? 'RUC' : 'DNI', document_number: docNumber },
+                 ...clients
+            ];
+        }
+        return clients;
+    }, [clients, data.customer_doc, data.customer_name]);
+
+    useEffect(() => {
+        let docNumber = data.customer_doc;
+        let name = data.customer_name;
+        if (docNumber && name) {
+            const existingClient = clients.find(c => c.document_number === docNumber);
+            if (existingClient) {
+                if (data.client_id !== existingClient.id) setData('client_id', existingClient.id);
+            } else {
+                if (data.client_id !== 'new') setData('client_id', 'new');
+            }
+        }
+    }, [data.customer_doc, data.customer_name, clients]);
 
     // Update form data when line items change
     useEffect(() => {
@@ -87,23 +168,82 @@ export default function Form({ clients, products }) {
                         {/* Client Info */}
                         <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700 p-6">
                             <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4 border-b pb-2">Datos del Cliente</h3>
+                            {/* Auto-search inputs */}
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                <div className="relative">
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                        Documento (RUC/DNI)
+                                    </label>
+                                    <input
+                                        type="text"
+                                        maxLength={11}
+                                        value={data.customer_doc}
+                                        onChange={onDocInput}
+                                        onBlur={closeDropdown}
+                                        placeholder="Buscar o crear..."
+                                        className="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 shadow-sm dark:bg-slate-700 dark:border-slate-600 dark:text-white"
+                                        autoComplete="off"
+                                    />
+                                    {padronLoading && activeField === 'doc' && (
+                                        <div className="absolute right-3 top-9 border-t-transparent border-indigo-600 w-4 h-4 border-2 rounded-full animate-spin"></div>
+                                    )}
+                                    {padronResults.length > 0 && activeField === 'doc' && (
+                                        <ul className="absolute z-50 w-full bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-auto mt-1">
+                                            {padronResults.map(r => (
+                                                <li key={r.ruc} onMouseDown={(e) => { e.preventDefault(); selectPadronClient(r); }} className="px-3 py-2 hover:bg-gray-50 cursor-pointer border-b border-gray-100">
+                                                    <div className="text-sm font-semibold">{r.ruc}</div>
+                                                    <div className="text-xs text-gray-500 truncate">{r.nombre}</div>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    )}
+                                </div>
+                                <div className="relative">
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                        Razón Social / Nombre
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={data.customer_name}
+                                        onChange={onNameInput}
+                                        onBlur={closeDropdown}
+                                        placeholder="Ingrese razón social"
+                                        className="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 shadow-sm dark:bg-slate-700 dark:border-slate-600 dark:text-white"
+                                        autoComplete="off"
+                                    />
+                                    {padronLoading && activeField === 'name' && (
+                                        <div className="absolute right-3 top-9 border-t-transparent border-indigo-600 w-4 h-4 border-2 rounded-full animate-spin"></div>
+                                    )}
+                                    {padronResults.length > 0 && activeField === 'name' && (
+                                        <ul className="absolute z-50 w-full bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-auto mt-1">
+                                            {padronResults.map(r => (
+                                                <li key={r.ruc} onMouseDown={(e) => { e.preventDefault(); selectPadronClient(r); }} className="px-3 py-2 hover:bg-gray-50 cursor-pointer border-b border-gray-100">
+                                                    <div className="text-sm font-semibold">{r.ruc}</div>
+                                                    <div className="text-xs text-gray-500 truncate">{r.nombre}</div>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    )}
+                                </div>
+                            </div>
+
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-700 mb-1">Cliente</label>
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Cliente Seleccionado</label>
                                     <select
                                         value={data.client_id}
                                         onChange={(e) => setData('client_id', e.target.value)}
-                                        className="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 shadow-sm dark:bg-slate-700 dark:border-slate-600 dark:text-white"
+                                        className="w-full rounded-lg border-gray-300 bg-gray-50 focus:border-blue-500 focus:ring-blue-500 shadow-sm dark:bg-slate-700 dark:border-slate-600 dark:text-white"
                                     >
                                         <option value="">Seleccionar Cliente...</option>
-                                        {clients.map(client => (
+                                        {displayedClients.map(client => (
                                             <option key={client.id} value={client.id}>{client.name} - {client.document_number}</option>
                                         ))}
                                     </select>
                                     {errors.client_id && <p className="text-red-500 text-xs mt-1">{errors.client_id}</p>}
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-700 mb-1">Fecha Emisión</label>
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Fecha Emisión</label>
                                     <input
                                         type="date"
                                         value={data.date_issue}
