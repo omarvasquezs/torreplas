@@ -1,23 +1,36 @@
-import React, { useState, useEffect, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Head, Link, useForm } from '@inertiajs/react';
 import DashboardLayout from '@/Layouts/DashboardLayout';
-import { Save, ArrowLeft, Plus, Trash, ShoppingBag } from 'lucide-react';
+import Modal from '@/Components/Modal';
+import { Save, ArrowLeft, Plus, Trash, ShoppingBag, X } from 'lucide-react';
 import axios from 'axios';
 
-export default function Form({ clients, products }) {
+export default function Form({ clients: initialClients, products }) {
+    const [localClients, setLocalClients] = useState(initialClients);
     // Initial Items State
     const [lineItems, setLineItems] = useState([
         { product_id: '', quantity: 1, unit_price: 0, total: 0 }
     ]);
 
-    const { data, setData, post, processing, errors } = useForm({
+    const { data, setData, post, processing, errors, clearErrors } = useForm({
         client_id: '',
-        customer_doc: '',
-        customer_name: '',
         date_issue: new Date().toISOString().split('T')[0],
         items: [],
         notes: ''
     });
+
+    // Modal State
+    const [showClientModal, setShowClientModal] = useState(false);
+    const [clientForm, setClientForm] = useState({
+        document_number: '',
+        document_type: 'RUC',
+        name: '',
+        email: '',
+        phone: '',
+        address: ''
+    });
+    const [clientErrors, setClientErrors] = useState({});
+    const [clientSaving, setClientSaving] = useState(false);
 
     // Padrón State
     const [padronResults, setPadronResults] = useState([]);
@@ -44,7 +57,7 @@ export default function Form({ clients, products }) {
 
     const onDocInput = (e) => {
         const val = e.target.value.replace(/\D/g, '');
-        setData('customer_doc', val);
+        setClientForm({ ...clientForm, document_number: val });
         clearTimeout(debounceTimer.current);
         if (val.length < 8) { setPadronResults([]); return; }
         const tipo = val.length === 11 ? 'ruc' : 'dni';
@@ -53,7 +66,7 @@ export default function Form({ clients, products }) {
 
     const onNameInput = (e) => {
         const val = e.target.value;
-        setData('customer_name', val);
+        setClientForm({ ...clientForm, name: val });
         clearTimeout(debounceTimer.current);
         if (val.length < 3) { setPadronResults([]); return; }
         debounceTimer.current = setTimeout(() => fetchPadron(val, 'nombre', 'name'), 400);
@@ -61,41 +74,40 @@ export default function Form({ clients, products }) {
 
     const selectPadronClient = (r) => {
         let dni = r.ruc;
-        if (dni.startsWith('10') && dni.length === 11 && data.customer_doc && data.customer_doc.length < 11) {
+        let cType = 'RUC';
+        if (dni.startsWith('10') && dni.length === 11 && clientForm.document_number.length < 11) {
             dni = dni.substring(2, 10);
-        } else if (dni.startsWith('20') && data.customer_doc && data.customer_doc.length < 11) {
+            cType = 'DNI';
+        } else if (dni.startsWith('20') && clientForm.document_number.length < 11) {
             dni = '';
+        } else if (dni.length === 8) {
+            cType = 'DNI';
         }
-        setData(d => ({ ...d, customer_doc: dni, customer_name: r.nombre }));
+        setClientForm(f => ({ ...f, document_number: dni, name: r.nombre, document_type: cType }));
         setPadronResults([]);
         setActiveField(null);
     };
 
-    const displayedClients = useMemo(() => {
-        let docNumber = data.customer_doc;
-        let name = data.customer_name;
-        const existingClient = clients.find(c => c.document_number === docNumber);
-        if (docNumber && name && !existingClient) {
-            return [
-                 { id: 'new', name: `${name} (NUEVO CLIENTE)`, document_type: docNumber.length === 11 ? 'RUC' : 'DNI', document_number: docNumber },
-                 ...clients
-            ];
-        }
-        return clients;
-    }, [clients, data.customer_doc, data.customer_name]);
-
-    useEffect(() => {
-        let docNumber = data.customer_doc;
-        let name = data.customer_name;
-        if (docNumber && name) {
-            const existingClient = clients.find(c => c.document_number === docNumber);
-            if (existingClient) {
-                if (data.client_id !== existingClient.id) setData('client_id', existingClient.id);
-            } else {
-                if (data.client_id !== 'new') setData('client_id', 'new');
+    const saveClient = async () => {
+        setClientSaving(true);
+        setClientErrors({});
+        try {
+            const res = await axios.post(route('clients.store'), clientForm, {
+                headers: { 'Accept': 'application/json' }
+            });
+            const newClient = res.data.client;
+            setLocalClients([newClient, ...localClients]);
+            setData('client_id', newClient.id);
+            setShowClientModal(false);
+            setClientForm({ document_number: '', document_type: 'RUC', name: '', email: '', phone: '', address: '' });
+        } catch (err) {
+            if (err.response?.data?.errors) {
+                setClientErrors(err.response.data.errors);
             }
+        } finally {
+            setClientSaving(false);
         }
-    }, [data.customer_doc, data.customer_name, clients]);
+    };
 
     // Update form data when line items change
     useEffect(() => {
@@ -148,6 +160,7 @@ export default function Form({ clients, products }) {
     };
 
     return (
+        <>
         <DashboardLayout>
             <Head title="Nuevo Pedido" />
 
@@ -167,79 +180,29 @@ export default function Form({ clients, products }) {
                     <div className="lg:col-span-2 space-y-6">
                         {/* Client Info */}
                         <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700 p-6">
-                            <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4 border-b pb-2">Datos del Cliente</h3>
-                            {/* Auto-search inputs */}
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                                <div className="relative">
-                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                        Documento (RUC/DNI)
-                                    </label>
-                                    <input
-                                        type="text"
-                                        maxLength={11}
-                                        value={data.customer_doc}
-                                        onChange={onDocInput}
-                                        onBlur={closeDropdown}
-                                        placeholder="Buscar o crear..."
-                                        className="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 shadow-sm dark:bg-slate-700 dark:border-slate-600 dark:text-white"
-                                        autoComplete="off"
-                                    />
-                                    {padronLoading && activeField === 'doc' && (
-                                        <div className="absolute right-3 top-9 border-t-transparent border-indigo-600 w-4 h-4 border-2 rounded-full animate-spin"></div>
-                                    )}
-                                    {padronResults.length > 0 && activeField === 'doc' && (
-                                        <ul className="absolute z-50 w-full bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-auto mt-1">
-                                            {padronResults.map(r => (
-                                                <li key={r.ruc} onMouseDown={(e) => { e.preventDefault(); selectPadronClient(r); }} className="px-3 py-2 hover:bg-gray-50 cursor-pointer border-b border-gray-100">
-                                                    <div className="text-sm font-semibold">{r.ruc}</div>
-                                                    <div className="text-xs text-gray-500 truncate">{r.nombre}</div>
-                                                </li>
-                                            ))}
-                                        </ul>
-                                    )}
-                                </div>
-                                <div className="relative">
-                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                        Razón Social / Nombre
-                                    </label>
-                                    <input
-                                        type="text"
-                                        value={data.customer_name}
-                                        onChange={onNameInput}
-                                        onBlur={closeDropdown}
-                                        placeholder="Ingrese razón social"
-                                        className="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 shadow-sm dark:bg-slate-700 dark:border-slate-600 dark:text-white"
-                                        autoComplete="off"
-                                    />
-                                    {padronLoading && activeField === 'name' && (
-                                        <div className="absolute right-3 top-9 border-t-transparent border-indigo-600 w-4 h-4 border-2 rounded-full animate-spin"></div>
-                                    )}
-                                    {padronResults.length > 0 && activeField === 'name' && (
-                                        <ul className="absolute z-50 w-full bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-auto mt-1">
-                                            {padronResults.map(r => (
-                                                <li key={r.ruc} onMouseDown={(e) => { e.preventDefault(); selectPadronClient(r); }} className="px-3 py-2 hover:bg-gray-50 cursor-pointer border-b border-gray-100">
-                                                    <div className="text-sm font-semibold">{r.ruc}</div>
-                                                    <div className="text-xs text-gray-500 truncate">{r.nombre}</div>
-                                                </li>
-                                            ))}
-                                        </ul>
-                                    )}
-                                </div>
-                            </div>
-
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Cliente Seleccionado</label>
-                                    <select
-                                        value={data.client_id}
-                                        onChange={(e) => setData('client_id', e.target.value)}
-                                        className="w-full rounded-lg border-gray-300 bg-gray-50 focus:border-blue-500 focus:ring-blue-500 shadow-sm dark:bg-slate-700 dark:border-slate-600 dark:text-white"
-                                    >
-                                        <option value="">Seleccionar Cliente...</option>
-                                        {displayedClients.map(client => (
-                                            <option key={client.id} value={client.id}>{client.name} - {client.document_number}</option>
-                                        ))}
-                                    </select>
+                                    <div className="flex gap-2">
+                                        <select
+                                            value={data.client_id}
+                                            onChange={(e) => setData('client_id', e.target.value)}
+                                            className="w-full rounded-lg border-gray-300 bg-gray-50 focus:border-blue-500 focus:ring-blue-500 shadow-sm dark:bg-slate-700 dark:border-slate-600 dark:text-white"
+                                        >
+                                            <option value="">Seleccionar Cliente...</option>
+                                            {localClients.map(client => (
+                                                <option key={client.id} value={client.id}>{client.name} - {client.document_number}</option>
+                                            ))}
+                                        </select>
+                                        <button 
+                                            type="button" 
+                                            onClick={() => setShowClientModal(true)}
+                                            className="bg-blue-100 text-blue-600 p-2.5 rounded-lg hover:bg-blue-200 transition-colors flex-shrink-0"
+                                            title="Agregar nuevo cliente"
+                                        >
+                                            <Plus size={20} />
+                                        </button>
+                                    </div>
                                     {errors.client_id && <p className="text-red-500 text-xs mt-1">{errors.client_id}</p>}
                                 </div>
                                 <div>
@@ -365,5 +328,137 @@ export default function Form({ clients, products }) {
                 </form>
             </div>
         </DashboardLayout>
+        
+        {/* Client Creation Modal */}
+        <Modal show={showClientModal} onClose={() => setShowClientModal(false)} maxWidth="2xl">
+            <div className="p-6">
+                <div className="flex justify-between items-center mb-5 pb-3 border-b border-gray-100">
+                    <h2 className="text-xl font-bold text-gray-900">Agregar Nuevo Cliente</h2>
+                    <button onClick={() => setShowClientModal(false)} className="text-gray-400 hover:text-gray-600">
+                        <X size={24} />
+                    </button>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 relative z-10">
+                    <div className="relative">
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Documento (RUC/DNI) <span className="text-red-500">*</span></label>
+                        <input
+                            type="text"
+                            maxLength={11}
+                            value={clientForm.document_number}
+                            onChange={onDocInput}
+                            onBlur={closeDropdown}
+                            placeholder="Ej. 20123456789"
+                            className="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 shadow-sm"
+                            autoComplete="off"
+                        />
+                        {padronLoading && activeField === 'doc' && (
+                            <div className="absolute right-3 top-9 border-t-transparent border-indigo-600 w-4 h-4 border-2 rounded-full animate-spin"></div>
+                        )}
+                        {padronResults.length > 0 && activeField === 'doc' && (
+                            <ul className="absolute z-50 w-full bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-auto mt-1">
+                                {padronResults.map(r => (
+                                    <li key={r.ruc} onMouseDown={(e) => { e.preventDefault(); selectPadronClient(r); }} className="px-3 py-2 hover:bg-gray-50 cursor-pointer border-b border-gray-100">
+                                        <div className="text-sm font-semibold text-indigo-700">{r.ruc}</div>
+                                        <div className="text-xs text-gray-600">{r.nombre}</div>
+                                    </li>
+                                ))}
+                            </ul>
+                        )}
+                        {clientErrors.document_number && <p className="text-red-500 text-xs mt-1">{clientErrors.document_number[0]}</p>}
+                    </div>
+
+                    <div className="relative">
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Razón Social / Nombre <span className="text-red-500">*</span></label>
+                        <input
+                            type="text"
+                            value={clientForm.name}
+                            onChange={onNameInput}
+                            onBlur={closeDropdown}
+                            placeholder="Nombre del cliente"
+                            className="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 shadow-sm"
+                            autoComplete="off"
+                        />
+                        {padronLoading && activeField === 'name' && (
+                            <div className="absolute right-3 top-9 border-t-transparent border-indigo-600 w-4 h-4 border-2 rounded-full animate-spin"></div>
+                        )}
+                        {padronResults.length > 0 && activeField === 'name' && (
+                            <ul className="absolute z-50 w-full bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-auto mt-1">
+                                {padronResults.map(r => (
+                                    <li key={r.ruc} onMouseDown={(e) => { e.preventDefault(); selectPadronClient(r); }} className="px-3 py-2 hover:bg-gray-50 cursor-pointer border-b border-gray-100">
+                                        <div className="text-sm font-semibold text-indigo-700">{r.ruc}</div>
+                                        <div className="text-xs text-gray-600">{r.nombre}</div>
+                                    </li>
+                                ))}
+                            </ul>
+                        )}
+                        {clientErrors.name && <p className="text-red-500 text-xs mt-1">{clientErrors.name[0]}</p>}
+                    </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Tipo de Documento</label>
+                        <select
+                            value={clientForm.document_type}
+                            onChange={(e) => setClientForm({ ...clientForm, document_type: e.target.value })}
+                            className="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 shadow-sm bg-gray-50"
+                        >
+                            <option value="RUC">RUC</option>
+                            <option value="DNI">DNI</option>
+                            <option value="CE">CE</option>
+                            <option value="OTROS">OTROS</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Email <span className="text-gray-400 text-xs">(Opcional)</span></label>
+                        <input
+                            type="email"
+                            value={clientForm.email}
+                            onChange={e => setClientForm({ ...clientForm, email: e.target.value })}
+                            className="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 shadow-sm"
+                        />
+                        {clientErrors.email && <p className="text-red-500 text-xs mt-1">{clientErrors.email[0]}</p>}
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Teléfono <span className="text-gray-400 text-xs">(Opcional)</span></label>
+                        <input
+                            type="text"
+                            value={clientForm.phone}
+                            onChange={e => setClientForm({ ...clientForm, phone: e.target.value })}
+                            className="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 shadow-sm"
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Dirección <span className="text-gray-400 text-xs">(Opcional)</span></label>
+                        <input
+                            type="text"
+                            value={clientForm.address}
+                            onChange={e => setClientForm({ ...clientForm, address: e.target.value })}
+                            className="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 shadow-sm"
+                        />
+                    </div>
+                </div>
+
+                <div className="flex justify-end gap-3 pt-4 border-t border-gray-100">
+                    <button
+                        type="button"
+                        onClick={() => setShowClientModal(false)}
+                        className="px-4 py-2 font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50"
+                    >
+                        Cancelar
+                    </button>
+                    <button
+                        type="button"
+                        onClick={saveClient}
+                        disabled={clientSaving}
+                        className="px-4 py-2 font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-50 flex items-center gap-2"
+                    >
+                        {clientSaving ? 'Guardando...' : 'Guardar Cliente'}
+                    </button>
+                </div>
+            </div>
+        </Modal>
+    </>
     );
 }

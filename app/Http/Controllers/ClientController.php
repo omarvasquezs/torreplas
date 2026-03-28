@@ -43,7 +43,11 @@ class ClientController extends Controller
             'credit_limit' => 'nullable|numeric|min:0',
         ]);
 
-        Client::create($validated);
+        $client = Client::create($validated);
+
+        if ($request->wantsJson()) {
+            return response()->json(['message' => 'Cliente registrado exitosamente.', 'client' => $client], 201);
+        }
 
         return redirect()->route('clients.index')->with('success', 'Cliente registrado exitosamente.');
     }
