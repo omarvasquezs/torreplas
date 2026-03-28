@@ -59,8 +59,10 @@ export default function Form({ clients: initialClients, products }) {
         const val = e.target.value.replace(/\D/g, '');
         setClientForm({ ...clientForm, document_number: val });
         clearTimeout(debounceTimer.current);
-        if (val.length < 8) { setPadronResults([]); return; }
-        const tipo = val.length === 11 ? 'ruc' : 'dni';
+        if (val.length < 6) { setPadronResults([]); return; }
+        
+        const tipo = clientForm.document_type === 'DNI' ? 'dni' : 'ruc';
+        
         debounceTimer.current = setTimeout(() => fetchPadron(val, tipo, 'doc'), 350);
     };
 

@@ -53,12 +53,11 @@ export default function InvoicesForm({ clients, orders, series = [] }) {
         }
     };
 
-    // Factura Handlers
     const onRucInput = (e) => {
         const val = e.target.value.replace(/\D/g, '');
         setData('customer_ruc', val);
         clearTimeout(debounceTimer.current);
-        if (val.length < 7) { setPadronResults([]); return; }
+        if (val.length < 6) { setPadronResults([]); return; }
         debounceTimer.current = setTimeout(() => fetchPadron(val, 'ruc', 'ruc'), 350);
     };
 
@@ -81,7 +80,7 @@ export default function InvoicesForm({ clients, orders, series = [] }) {
         const val = e.target.value.replace(/\D/g, '');
         setData('customer_dni', val);
         clearTimeout(debounceTimer.current);
-        if (val.length < 7) { setPadronResults([]); return; }
+        if (val.length < 6) { setPadronResults([]); return; }
         debounceTimer.current = setTimeout(() => fetchPadron(val, 'dni', 'dni'), 350);
     };
 
