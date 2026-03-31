@@ -1,7 +1,7 @@
 import React from 'react';
-import { Head, Link, useForm } from '@inertiajs/react';
+import { Head, Link, useForm, router } from '@inertiajs/react';
 import DashboardLayout from '@/Layouts/DashboardLayout';
-import { Eye, Plus, Search, FileText } from 'lucide-react';
+import { Eye, Plus, Search, FileText, CheckCircle } from 'lucide-react';
 
 export default function Index({ orders, filters }) {
     const { data, setData, get } = useForm({
@@ -20,6 +20,12 @@ export default function Index({ orders, filters }) {
             case 'delivered': return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300';
             case 'cancelled': return 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300';
             default: return 'bg-gray-100 text-gray-800';
+        }
+    };
+
+    const handleApprove = (id) => {
+        if (confirm('¿Está seguro de aprobar este pedido? Esto permitirá facturarlo.')) {
+            router.patch(route('orders.approve', id), {}, { preserveScroll: true });
         }
     };
 
@@ -93,13 +99,16 @@ export default function Index({ orders, filters }) {
                                         </td>
                                         <td className="px-6 py-4">
                                             <div className="flex items-center justify-center gap-2">
-                                                {/* <Link // Show not implemented yet in this batch, or maybe simple show
-                                                    href={route('orders.show', order.id)}
-                                                    className="p-2 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-lg text-blue-600 transition-colors"
-                                                >
-                                                    <Eye size={16} />
-                                                </Link> */}
-                                                <button className="p-2 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-lg text-gray-600 cursor-not-allowed">
+                                                {order.status === 'pending' && (
+                                                    <button 
+                                                        onClick={() => handleApprove(order.id)}
+                                                        title="Aprobar Pedido"
+                                                        className="p-2 hover:bg-green-100 dark:hover:bg-green-900/30 rounded-lg text-green-600 dark:text-green-500 transition-colors"
+                                                    >
+                                                        <CheckCircle size={16} />
+                                                    </button>
+                                                )}
+                                                <button className="p-2 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-lg text-gray-400 cursor-not-allowed" title="Ver detalle (Próximamente)">
                                                     <Eye size={16} />
                                                 </button>
                                             </div>

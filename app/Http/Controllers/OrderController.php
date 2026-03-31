@@ -104,4 +104,10 @@ class OrderController extends Controller
             'order' => $order
         ]);
     }
+
+    public function approve(Order $order)
+    {
+        $order->update(['status' => 'approved']);
+        return back()->with('success', 'Pedido aprobado correctamente.');
+    }
 }

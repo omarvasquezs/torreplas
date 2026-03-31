@@ -41,6 +41,7 @@ Route::middleware('auth')->group(function () {
 
     // Orders / Sales
     Route::middleware('permission:sales.access')->group(function () {
+        Route::patch('orders/{order}/approve', [\App\Http\Controllers\OrderController::class, 'approve'])->name('orders.approve');
         Route::resource('orders', \App\Http\Controllers\OrderController::class);
     });
 
