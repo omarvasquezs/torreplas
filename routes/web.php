@@ -126,6 +126,8 @@ Route::middleware('auth')->group(function () {
         Route::get('reports/inventory/export',  [\App\Http\Controllers\ReportsController::class, 'exportInventory'])->name('reports.inventory.export');
         Route::get('reports/movements',         [\App\Http\Controllers\ReportsController::class, 'movements'])->name('reports.movements');
         Route::get('reports/movements/export',  [\App\Http\Controllers\ReportsController::class, 'exportMovements'])->name('reports.movements.export');
+        Route::get('reports/cash-by-method',    [\App\Http\Controllers\ReportsController::class, 'cashByMethod'])->name('reports.cash-by-method');
+        Route::get('reports/sellers',           [\App\Http\Controllers\ReportsController::class, 'sellers'])->name('reports.sellers');
     });
 
     // Settings

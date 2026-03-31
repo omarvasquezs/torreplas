@@ -6,6 +6,7 @@ use App\Models\Order;
 use App\Models\PurchaseOrder;
 use App\Models\Movement;
 use App\Models\Product;
+use App\Models\User;
 use App\Models\Warehouse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -231,6 +232,87 @@ class ReportsController extends Controller
                 ]) . "\n";
             }
         });
+    }
+
+    // ── Cash by Payment Method ────────────────────────────────────────────────
+
+    public function cashByMethod(Request $request)
+    {
+        $from = $request->from ?? now()->startOfMonth()->toDateString();
+        $to   = $request->to   ?? now()->toDateString();
+
+        // Group invoices by payment_method
+        $rows = DB::table('invoices')
+            ->whereBetween('issue_date', [$from, $to])
+            ->select(
+                'payment_method',
+                DB::raw('COUNT(*) as total_docs'),
+                DB::raw('SUM(total_amount) as total_amount')
+            )
+            ->groupBy('payment_method')
+            ->orderByDesc('total_amount')
+            ->get();
+
+        // Grand total
+        $grandTotal = $rows->sum('total_amount');
+
+        // Daily breakdown for chart (last 30 days within range)
+        $daily = DB::table('invoices')
+            ->whereBetween('issue_date', [$from, $to])
+            ->select(
+                'issue_date',
+                'payment_method',
+                DB::raw('SUM(total_amount) as amount')
+            )
+            ->groupBy('issue_date', 'payment_method')
+            ->orderBy('issue_date')
+            ->get();
+
+        return Inertia::render('Reports/CashByMethod', [
+            'rows'       => $rows,
+            'grandTotal' => $grandTotal,
+            'daily'      => $daily,
+            'filters'    => ['from' => $from, 'to' => $to],
+        ]);
+    }
+
+    // ── Sellers ────────────────────────────────────────────────────────────
+
+    public function sellers(Request $request)
+    {
+        $from    = $request->from    ?? now()->startOfMonth()->toDateString();
+        $to      = $request->to      ?? now()->toDateString();
+        $userId  = $request->user_id ?? null;
+
+        $query = Order::with(['client', 'user'])
+            ->whereBetween('created_at', [$from, now()->parse($to)->endOfDay()])
+            ->when($userId, fn($q) => $q->where('user_id', $userId));
+
+        $orders  = (clone $query)->paginate(30)->withQueryString();
+        $all     = (clone $query)->get();
+
+        // Summary per seller
+        $bySeller = $all->groupBy('user_id')->map(fn($g) => [
+            'user_id'      => $g->first()->user_id,
+            'seller_name'  => $g->first()->user?->name ?? 'N/A',
+            'orders_count' => $g->count(),
+            'total'        => $g->sum('total'),
+        ])->sortByDesc('total')->values();
+
+        $summary = [
+            'total'  => $all->sum('total'),
+            'count'  => $all->count(),
+        ];
+
+        $sellers = User::orderBy('name')->get(['id', 'name']);
+
+        return Inertia::render('Reports/Sellers', [
+            'orders'   => $orders,
+            'bySeller' => $bySeller,
+            'summary'  => $summary,
+            'sellers'  => $sellers,
+            'filters'  => ['from' => $from, 'to' => $to, 'user_id' => $userId],
+        ]);
     }
 
     // ── Helpers ───────────────────────────────────────────────────────────────
