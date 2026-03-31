@@ -51,21 +51,22 @@ class InvoiceController extends Controller
 
     public function store(Request $request)
     {
-        $isBoleta  = $request->input('type') === 'boleta';
-        $isFactura = $request->input('type') === 'factura';
+        $isBoleta   = $request->input('type') === 'boleta';
+        $isFactura  = $request->input('type') === 'factura';
+        $isNotaVenta = $request->input('type') === 'nota_venta';
 
         $data = $request->validate([
-            'order_id'      => 'nullable|exists:orders,id',
-            'client_id'     => 'required', // handled manually for "new" or existing
-            'type'          => 'required|in:factura,boleta,nota_credito,nota_debito',
-            'serie'         => 'required|string|max:10',
-            'issue_date'    => 'required|date',
-            'total_amount'  => 'required|numeric|min:0',
-            // Factura: RUC 11 dígitos + razón social obligatorios
-            'customer_ruc'  => $isFactura ? 'required|digits:11' : 'nullable|digits:11',
-            'customer_name' => $isFactura ? 'required|string|max:200' : 'nullable|string|max:200',
-            // Boleta: DNI opcional
-            'customer_dni'  => 'nullable|digits:8',
+            'order_id'       => 'nullable|exists:orders,id',
+            'client_id'      => 'required',
+            'type'           => 'required|in:factura,boleta,nota_venta,nota_credito,nota_debito',
+            'serie'          => 'required|string|max:10',
+            'issue_date'     => 'required|date',
+            'total_amount'   => 'required|numeric|min:0',
+            'customer_ruc'   => $isFactura ? 'required|digits:11' : 'nullable|digits:11',
+            'customer_name'  => $isFactura ? 'required|string|max:200' : 'nullable|string|max:200',
+            'customer_dni'   => 'nullable|digits:8',
+            'payment_method' => 'nullable|string|max:30',
+            'payment_bank'   => 'nullable|string|max:50',
         ]);
 
         $serie = strtoupper(trim($data['serie']));
@@ -124,17 +125,19 @@ class InvoiceController extends Controller
             }
 
             Invoice::create([
-                'order_id'      => $data['order_id'] ?: null,
-                'client_id'     => $data['client_id'],
-                'type'          => $data['type'],
-                'serie'         => $serie,
-                'number'        => str_pad((string) $nextNumber, 8, '0', STR_PAD_LEFT),
-                'issue_date'    => $data['issue_date'],
-                'total_amount'  => $data['total_amount'],
-                'customer_ruc'  => $data['customer_ruc'] ?? null,
-                'customer_name' => $data['customer_name'] ?? null,
-                'customer_dni'  => $data['customer_dni'] ?? null,
-                'status'        => 'generated',
+                'order_id'       => $data['order_id'] ?: null,
+                'client_id'      => $data['client_id'],
+                'type'           => $data['type'],
+                'serie'          => $serie,
+                'number'         => str_pad((string) $nextNumber, 8, '0', STR_PAD_LEFT),
+                'issue_date'     => $data['issue_date'],
+                'total_amount'   => $data['total_amount'],
+                'customer_ruc'   => $data['customer_ruc']  ?? null,
+                'customer_name'  => $data['customer_name'] ?? null,
+                'customer_dni'   => $data['customer_dni']  ?? null,
+                'payment_method' => $data['payment_method'] ?? 'efectivo',
+                'payment_bank'   => $data['payment_bank']  ?? null,
+                'status'         => 'generated',
             ]);
         });
 

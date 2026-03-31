@@ -4,10 +4,11 @@ import DashboardLayout from '@/Layouts/DashboardLayout';
 import { ArrowLeft, Save } from 'lucide-react';
 import axios from 'axios';
 
-const isFactura  = (type) => type === 'factura';
-const isBoleta   = (type) => type === 'boleta';
-const needsRuc   = (type) => isFactura(type);
-const needsDni   = (type) => isBoleta(type);
+const isFactura    = (type) => type === 'factura';
+const isBoleta     = (type) => type === 'boleta';
+const isNotaVenta  = (type) => type === 'nota_venta';
+const needsRuc     = (type) => isFactura(type);
+const needsDni     = (type) => isBoleta(type) || isNotaVenta(type);
 
 export default function InvoicesForm({ clients, orders, series = [] }) {
     const defaultSeriesByType = useMemo(() => {
@@ -19,15 +20,17 @@ export default function InvoicesForm({ clients, orders, series = [] }) {
     }, [series]);
 
     const { data, setData, post, processing, errors } = useForm({
-        client_id:     '',
-        order_id:      '',
-        type:          'factura',
-        serie:         defaultSeriesByType.factura ?? 'F001',
-        issue_date:    new Date().toISOString().slice(0, 10),
-        total_amount:  '',
-        customer_ruc:  '',
-        customer_name: '',
-        customer_dni:  '',
+        client_id:      '',
+        order_id:       '',
+        type:           'factura',
+        serie:          defaultSeriesByType.factura ?? 'F001',
+        issue_date:     new Date().toISOString().slice(0, 10),
+        total_amount:   '',
+        customer_ruc:   '',
+        customer_name:  '',
+        customer_dni:   '',
+        payment_method: 'efectivo',
+        payment_bank:   '',
     });
 
     // Autocomplete states
@@ -227,6 +230,7 @@ export default function InvoicesForm({ clients, orders, series = [] }) {
                                 <select value={data.type} onChange={e => setData('type', e.target.value)} className={inputCls}>
                                     <option value="factura">Factura</option>
                                     <option value="boleta">Boleta</option>
+                                    <option value="nota_venta">Nota de Venta</option>
                                     <option value="nota_credito">Nota Crédito</option>
                                     <option value="nota_debito">Nota Débito</option>
                                 </select>
@@ -435,6 +439,48 @@ export default function InvoicesForm({ clients, orders, series = [] }) {
                             </div>
                         </section>
                     )}
+
+                    {/* ── Forma de Pago ── */}
+                    <section className="bg-white rounded-xl border border-gray-200 p-5 space-y-4">
+                        <h2 className="text-gray-900 font-semibold">Forma de Pago</h2>
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                            {[
+                                { value: 'efectivo',    label: 'Efectivo',     icon: '💵' },
+                                { value: 'yape',        label: 'Yape',         icon: '📱' },
+                                { value: 'plin',        label: 'Plin',         icon: '📲' },
+                                { value: 'transferencia', label: 'Transf. Banco', icon: '🏦' },
+                            ].map(m => (
+                                <button
+                                    key={m.value}
+                                    type="button"
+                                    onClick={() => setData('payment_method', m.value)}
+                                    className={`flex flex-col items-center justify-center gap-1 p-3 rounded-xl border-2 text-sm font-medium transition ${
+                                        data.payment_method === m.value
+                                            ? 'border-indigo-500 bg-indigo-50 text-indigo-700'
+                                            : 'border-gray-200 hover:border-gray-300 text-gray-600'
+                                    }`}
+                                >
+                                    <span className="text-xl">{m.icon}</span>
+                                    {m.label}
+                                </button>
+                            ))}
+                        </div>
+                        {data.payment_method === 'transferencia' && (
+                            <div>
+                                <label className="block text-sm text-gray-600 mb-1">Banco / Número de Cuenta <span className="text-gray-400 text-xs">(opcional)</span></label>
+                                <select value={data.payment_bank} onChange={e => setData('payment_bank', e.target.value)} className={inputCls}>
+                                    <option value="">Seleccionar banco...</option>
+                                    <option value="BCP">BCP — Banco de Crédito del Perú</option>
+                                    <option value="BBVA">BBVA</option>
+                                    <option value="Interbank">Interbank</option>
+                                    <option value="Scotiabank">Scotiabank</option>
+                                    <option value="BanBif">BanBif</option>
+                                    <option value="Banbco Pichincha">Banco Pichincha</option>
+                                    <option value="Otro">Otro</option>
+                                </select>
+                            </div>
+                        )}
+                    </section>
 
                     <div className="flex gap-3">
                         <button type="submit" disabled={processing}

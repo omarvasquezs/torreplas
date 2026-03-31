@@ -60,11 +60,22 @@
 <body>
 
 {{-- HEADER --}}
+@php
+    $logoPath = public_path('logo_torre_plas.png');
+    $company  = DB::table('company_settings')->first();
+    $ruc      = $company->ruc     ?? '20XXXXXXXXX';
+    $bizName  = $company->name    ?? 'TORREPLAS SAC';
+    $address  = $company->address ?? 'Lima, Perú';
+@endphp
 <table class="header-table">
     <tr>
         <td style="padding-bottom:8px">
-            <div class="company-name">TORREPLAS SAC</div>
-            <div class="company-sub">RUC: 20XXXXXXXXX &nbsp;|&nbsp; Lima, Perú</div>
+            @if(file_exists($logoPath))
+                <img src="{{ $logoPath }}" style="max-height:55px; max-width:160px;" alt="Logo">
+            @else
+                <div class="company-name">{{ $bizName }}</div>
+            @endif
+            <div class="company-sub">RUC: {{ $ruc }} &nbsp;|&nbsp; {{ $address }}</div>
         </td>
         <td style="text-align:right; padding-bottom:8px">
             <div class="doc-box">
@@ -133,7 +144,7 @@
 <div class="footer">
     Total de ítems: {{ $guide->items->count() }}
     &nbsp;|&nbsp; Emitido el {{ now()->format('d/m/Y H:i') }}
-    &nbsp;|&nbsp; TORREPLAS SAC
+    &nbsp;|&nbsp; {{ $bizName }} RUC: {{ $ruc }}
 </div>
 
 </body>

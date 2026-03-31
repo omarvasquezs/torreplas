@@ -10,6 +10,7 @@
         .header { display: table; width: 100%; border-bottom: 3px solid #4f46e5; padding-bottom: 12px; margin-bottom: 16px; }
         .header-left { display: table-cell; vertical-align: middle; }
         .header-right { display: table-cell; text-align: right; vertical-align: middle; }
+        .company-logo { max-height: 60px; max-width: 180px; }
         .company-name { font-size: 20px; font-weight: 700; color: #312e81; }
         .company-sub { font-size: 11px; color: #6b7280; margin-top: 2px; }
         .doc-box { border: 2px solid #4f46e5; border-radius: 6px; padding: 8px 16px; display: inline-block; text-align: center; }
@@ -51,19 +52,32 @@
 <body>
 
     {{-- HEADER --}}
+    @php
+        $logoPath = public_path('logo_torre_plas.png');
+        $company  = DB::table('company_settings')->first();
+        $ruc      = $company->ruc      ?? '20XXXXXXXXX';
+        $bizName  = $company->name     ?? 'TORREPLAS SAC';
+        $address  = $company->address  ?? 'Lima, Perú';
+        $phone    = $company->phone    ?? '';
+    @endphp
     <div class="header">
         <div class="header-left">
-            <div class="company-name">TORREPLAS SAC</div>
-            <div class="company-sub">RUC: 20XXXXXXXXX &nbsp;|&nbsp; Lima, Perú</div>
+            @if(file_exists($logoPath))
+                <img src="{{ $logoPath }}" class="company-logo" alt="Logo">
+            @else
+                <div class="company-name">{{ $bizName }}</div>
+            @endif
+            <div class="company-sub">RUC: {{ $ruc }} &nbsp;|&nbsp; {{ $address }}{{ $phone ? ' &nbsp;|&nbsp; Tel: '.$phone : '' }}</div>
         </div>
         <div class="header-right">
             <div class="doc-box">
                 <div class="doc-type">
                     @switch($invoice->type)
-                        @case('factura')        Factura Electrónica @break
-                        @case('boleta')         Boleta de Venta     @break
-                        @case('nota_credito')   Nota de Crédito     @break
-                        @case('nota_debito')    Nota de Débito      @break
+                        @case('factura')      Factura Electrónica @break
+                        @case('boleta')       Boleta de Venta     @break
+                        @case('nota_credito') Nota de Crédito     @break
+                        @case('nota_debito')  Nota de Débito      @break
+                        @case('nota_venta')   Nota de Venta       @break
                         @default {{ $invoice->type }}
                     @endswitch
                 </div>
@@ -80,6 +94,7 @@
                     <h3>
                         @if($invoice->type === 'factura') Adquiriente / Cliente
                         @elseif($invoice->type === 'boleta') Receptor / Cliente
+                        @elseif($invoice->type === 'nota_venta') Cliente
                         @else Cliente
                         @endif
                     </h3>
@@ -211,7 +226,7 @@
     </div>
 
     <div class="footer">
-        Generado el {{ now()->format('d/m/Y H:i') }} &nbsp;|&nbsp; TORREPLAS SAC &nbsp;|&nbsp; Documento referencial
+        Generado el {{ now()->format('d/m/Y H:i') }} &nbsp;|&nbsp; {{ $bizName }} &nbsp;|&nbsp; RUC: {{ $ruc }}
     </div>
 
 </body>
