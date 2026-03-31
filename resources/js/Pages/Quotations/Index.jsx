@@ -1,246 +1,220 @@
 import React, { useMemo, useState } from 'react';
-import { Head } from '@inertiajs/react';
+import { Head, Link, router, useForm } from '@inertiajs/react';
 import DashboardLayout from '@/Layouts/DashboardLayout';
-import { Plus, Trash2, Printer } from 'lucide-react';
+import { Plus, Trash2, Printer, Save, Eye, Download, FileText, Search, XCircle } from 'lucide-react';
 
 function formatMoney(value) {
     return Number(value || 0).toLocaleString('es-PE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
-export default function QuotationsIndex({ clients = [], products = [] }) {
-    const [form, setForm] = useState({
+function StatusBadge({ status }) {
+    const map = {
+        draft:    'bg-gray-100 text-gray-600',
+        sent:     'bg-blue-100 text-blue-700',
+        accepted: 'bg-green-100 text-green-700',
+        rejected: 'bg-red-100 text-red-700',
+    };
+    const labels = { draft: 'Borrador', sent: 'Enviada', accepted: 'Aceptada', rejected: 'Rechazada' };
+    return (
+        <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${map[status] ?? map.draft}`}>
+            {labels[status] ?? status}
+        </span>
+    );
+}
+
+export default function QuotationsIndex({ quotations, clients = [], products = [], filters = {} }) {
+    const [tab, setTab] = useState('list'); // 'list' | 'new'
+    const [search, setSearch] = useState(filters.search ?? '');
+
+    // ── NEW QUOTATION FORM ──────────────────────────────────────────
+    const [formMeta, setFormMeta] = useState({
         quote_number: `COT-${new Date().getFullYear()}-${String(Date.now()).slice(-4)}`,
-        issue_date: new Date().toISOString().slice(0, 10),
-        valid_until: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10),
-        client_id: '',
-        attention: '',
-        notes: 'Precios incluyen IGV. Vigencia sujeta a disponibilidad de stock.',
+        issue_date:   new Date().toISOString().slice(0, 10),
+        valid_until:  new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10),
+        client_id:    '',
+        attention:    '',
+        notes:        'Precios incluyen IGV. Vigencia sujeta a disponibilidad de stock.',
     });
 
     const [items, setItems] = useState([
         { product_id: '', description: '', quantity: 1, unit_price: 0 },
     ]);
 
+    const [saving, setSaving] = useState(false);
+    const [errors, setErrors] = useState({});
+
     const selectedClient = useMemo(
-        () => clients.find((client) => String(client.id) === String(form.client_id)),
-        [clients, form.client_id]
+        () => clients.find(c => String(c.id) === String(formMeta.client_id)),
+        [clients, formMeta.client_id]
     );
 
     const subtotal = useMemo(
-        () => items.reduce((acc, row) => acc + (Number(row.quantity) || 0) * (Number(row.unit_price) || 0), 0),
+        () => items.reduce((acc, r) => acc + (Number(r.quantity) || 0) * (Number(r.unit_price) || 0), 0),
         [items]
     );
-
-    const igv = subtotal * 0.18;
+    const igv   = subtotal * 0.18;
     const total = subtotal + igv;
 
-    function updateItem(index, key, value) {
-        setItems((prev) => {
-            const next = [...prev];
-            next[index] = { ...next[index], [key]: value };
-            return next;
-        });
+    function updateItem(idx, key, val) {
+        setItems(prev => { const n = [...prev]; n[idx] = { ...n[idx], [key]: val }; return n; });
     }
 
-    function onProductChange(index, productId) {
-        const product = products.find((row) => String(row.id) === String(productId));
-        updateItem(index, 'product_id', productId);
-        if (product) {
-            updateItem(index, 'description', product.name);
-            updateItem(index, 'unit_price', product.price || 0);
+    function onProductChange(idx, productId) {
+        const p = products.find(r => String(r.id) === String(productId));
+        updateItem(idx, 'product_id', productId);
+        if (p) {
+            updateItem(idx, 'description', p.name);
+            updateItem(idx, 'unit_price', p.price || 0);
         }
     }
 
-    function addRow() {
-        setItems((prev) => [...prev, { product_id: '', description: '', quantity: 1, unit_price: 0 }]);
+    function addRow()         { setItems(prev => [...prev, { product_id: '', description: '', quantity: 1, unit_price: 0 }]); }
+    function removeRow(idx)   { setItems(prev => prev.filter((_, i) => i !== idx)); }
+
+    function saveQuotation() {
+        setSaving(true);
+        setErrors({});
+        router.post(route('quotations.store'), {
+            ...formMeta,
+            items: items.map(i => ({
+                product_id:  i.product_id || null,
+                description: i.description,
+                quantity:    Number(i.quantity),
+                unit_price:  Number(i.unit_price),
+            })),
+        }, {
+            onError: (e) => { setErrors(e); setSaving(false); },
+            onSuccess: () => setSaving(false),
+        });
     }
 
-    function removeRow(index) {
-        setItems((prev) => prev.filter((_, i) => i !== index));
+    // ── SEARCH ─────────────────────────────────────────────────────
+    function handleSearch(e) {
+        e.preventDefault();
+        router.get(route('quotations.index'), { search }, { preserveState: true });
     }
 
+    function confirmDelete(id) {
+        if (confirm('¿Eliminar esta cotización?')) {
+            router.delete(route('quotations.destroy', id), { preserveScroll: true });
+        }
+    }
+
+    // ── RENDER ─────────────────────────────────────────────────────
     return (
         <DashboardLayout>
-            <Head title="Cotización" />
+            <Head title="Cotizaciones" />
 
-            {/* Print-only styles */}
-            <style>{`
-                @media print {
-                    /* Hide everything except the quotation content */
-                    body > *:not(#app) { display: none !important; }
-                    nav, aside, header, .no-print, [data-sidebar], button { display: none !important; }
-                    #quotation-print { display: block !important; }
-
-                    /* Reset body for clean print */
-                    body { background: white !important; color: black !important; font-size: 11pt; }
-
-                    .print-only { display: block !important; }
-                    .print-hide { display: none !important; }
-
-                    .quotation-card { box-shadow: none !important; border: 1px solid #ddd !important; }
-                    .quotation-table th { background: #eee !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-                    .quotation-totals { border: 1px solid #ddd !important; }
-                    .quotation-header { border-bottom: 2px solid #4f46e5 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-                    a[href], button { display: none !important; }
-                    select, input, textarea { border: none !important; background: transparent !important; }
-                    @page { margin: 1.5cm; size: A4; }
-                }
-                @media screen {
-                    .print-only { display: none; }
-                }
-            `}</style>
-
-            <div id="quotation-print" className="max-w-6xl mx-auto space-y-4">
-                <div className="flex flex-wrap items-center justify-between gap-3 no-print">
-                    <div>
-                        <h1 className="text-2xl font-bold text-gray-900">Cotización</h1>
-                        <p className="text-sm text-gray-600">Formato referencial para compartir propuestas comerciales.</p>
-                    </div>
-                    <button
-                        type="button"
-                        onClick={() => window.print()}
-                        className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-medium"
-                    >
-                        <Printer size={16} /> Imprimir / PDF
-                    </button>
+            {/* Header */}
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div>
+                    <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Cotizaciones</h1>
+                    <p className="text-gray-500 dark:text-gray-400">Propuestas comerciales para tus clientes.</p>
                 </div>
+                <button
+                    onClick={() => setTab(tab === 'new' ? 'list' : 'new')}
+                    className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-medium shadow transition-all ${
+                        tab === 'new'
+                            ? 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                            : 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-indigo-600/20'
+                    }`}
+                >
+                    {tab === 'new' ? <><XCircle size={18} /> Cancelar</> : <><Plus size={18} /> Nueva Cotización</>}
+                </button>
+            </div>
 
-                {/* Print header — only visible when printing */}
-                <div className="print-only quotation-header" style={{ borderBottom: '2px solid #4f46e5', paddingBottom: '12px', marginBottom: '16px' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <div>
-                            <div style={{ fontSize: '20px', fontWeight: 700, color: '#312e81' }}>TORREPLAS SAC</div>
-                            <div style={{ fontSize: '11px', color: '#6b7280' }}>Lima, Perú</div>
-                        </div>
-                        <div style={{ textAlign: 'right' }}>
-                            <div style={{ fontSize: '13px', fontWeight: 700, color: '#4f46e5', textTransform: 'uppercase' }}>Cotización</div>
-                            <div style={{ fontSize: '16px', fontWeight: 700, color: '#111827' }}>{form.quote_number}</div>
-                        </div>
-                    </div>
-                </div>
+            {/* ── NEW QUOTATION PANEL ── */}
+            {tab === 'new' && (
+                <div className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 p-6 space-y-5">
+                    <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Nueva Cotización</h2>
 
-                <div className="quotation-card bg-white border border-gray-200 rounded-xl p-4 md:p-6 space-y-5">
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
-                        <div>
-                            <label className="block text-xs text-gray-600 mb-1">N° Cotización</label>
-                            <input
-                                value={form.quote_number}
-                                onChange={(event) => setForm((prev) => ({ ...prev, quote_number: event.target.value }))}
-                                className="w-full rounded-lg border-gray-300 text-sm"
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-xs text-gray-600 mb-1">Fecha Emisión</label>
-                            <input
-                                type="date"
-                                value={form.issue_date}
-                                onChange={(event) => setForm((prev) => ({ ...prev, issue_date: event.target.value }))}
-                                className="w-full rounded-lg border-gray-300 text-sm"
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-xs text-gray-600 mb-1">Válida hasta</label>
-                            <input
-                                type="date"
-                                value={form.valid_until}
-                                onChange={(event) => setForm((prev) => ({ ...prev, valid_until: event.target.value }))}
-                                className="w-full rounded-lg border-gray-300 text-sm"
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-xs text-gray-600 mb-1">Atención</label>
-                            <input
-                                value={form.attention}
-                                onChange={(event) => setForm((prev) => ({ ...prev, attention: event.target.value }))}
-                                placeholder="Nombre de contacto"
-                                className="w-full rounded-lg border-gray-300 text-sm"
-                            />
-                        </div>
+                    {/* Meta fields */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                        {[
+                            { label: 'N° Cotización', key: 'quote_number', type: 'text' },
+                            { label: 'Fecha Emisión', key: 'issue_date', type: 'date' },
+                            { label: 'Válida hasta', key: 'valid_until', type: 'date' },
+                            { label: 'Atención a', key: 'attention', type: 'text', placeholder: 'Nombre de contacto' },
+                        ].map(f => (
+                            <div key={f.key}>
+                                <label className="block text-sm text-gray-600 dark:text-gray-400 mb-1">{f.label}</label>
+                                <input
+                                    type={f.type}
+                                    value={formMeta[f.key]}
+                                    placeholder={f.placeholder ?? ''}
+                                    onChange={e => setFormMeta(p => ({ ...p, [f.key]: e.target.value }))}
+                                    className="w-full rounded-lg border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white text-sm"
+                                />
+                                {errors[f.key] && <p className="text-red-500 text-xs mt-1">{errors[f.key]}</p>}
+                            </div>
+                        ))}
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    {/* Client */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                            <label className="block text-xs text-gray-600 mb-1">Cliente</label>
+                            <label className="block text-sm text-gray-600 dark:text-gray-400 mb-1">Cliente</label>
                             <select
-                                value={form.client_id}
-                                onChange={(event) => setForm((prev) => ({ ...prev, client_id: event.target.value }))}
-                                className="w-full rounded-lg border-gray-300 text-sm"
+                                value={formMeta.client_id}
+                                onChange={e => setFormMeta(p => ({ ...p, client_id: e.target.value }))}
+                                className="w-full rounded-lg border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white text-sm"
                             >
                                 <option value="">Seleccionar cliente…</option>
-                                {clients.map((client) => (
-                                    <option key={client.id} value={client.id}>
-                                        {client.name}
-                                    </option>
+                                {clients.map(c => (
+                                    <option key={c.id} value={c.id}>{c.name}</option>
                                 ))}
                             </select>
                         </div>
-
-                        <div className="bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700">
-                            {selectedClient ? `${selectedClient.document_type}: ${selectedClient.document_number}` : 'Sin documento de cliente seleccionado'}
+                        <div className="flex items-end">
+                            <div className="w-full bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-lg px-3 py-2 text-sm text-gray-600 dark:text-gray-300">
+                                {selectedClient
+                                    ? `${selectedClient.document_type}: ${selectedClient.document_number}`
+                                    : 'Sin documento de cliente'}
+                            </div>
                         </div>
                     </div>
 
-                    <div className="overflow-x-auto border border-gray-200 rounded-xl">
-                        <table className="quotation-table min-w-[760px] w-full text-sm">
-                            <thead className="bg-gray-50 text-gray-700">
+                    {/* Items */}
+                    <div className="overflow-x-auto border border-gray-200 dark:border-slate-600 rounded-xl">
+                        <table className="min-w-[760px] w-full text-sm">
+                            <thead className="bg-gray-50 dark:bg-slate-700 text-gray-700 dark:text-gray-200">
                                 <tr>
                                     <th className="px-3 py-2 text-left">Producto</th>
                                     <th className="px-3 py-2 text-left">Descripción</th>
-                                    <th className="px-3 py-2 text-right">Cantidad</th>
-                                    <th className="px-3 py-2 text-right">P. Unit.</th>
-                                    <th className="px-3 py-2 text-right">Importe</th>
-                                    <th className="px-3 py-2 text-center no-print">Acción</th>
+                                    <th className="px-3 py-2 text-right w-24">Cantidad</th>
+                                    <th className="px-3 py-2 text-right w-28">P. Unit.</th>
+                                    <th className="px-3 py-2 text-right w-28">Importe</th>
+                                    <th className="px-3 py-2 text-center w-12"></th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {items.map((row, index) => (
-                                    <tr key={index} className="border-t border-gray-200">
+                                {items.map((row, idx) => (
+                                    <tr key={idx} className="border-t border-gray-200 dark:border-slate-600">
                                         <td className="px-3 py-2">
-                                            <select
-                                                value={row.product_id}
-                                                onChange={(event) => onProductChange(index, event.target.value)}
-                                                className="w-full rounded-lg border-gray-300 text-sm"
-                                            >
+                                            <select value={row.product_id} onChange={e => onProductChange(idx, e.target.value)}
+                                                className="w-full rounded-lg border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white text-sm">
                                                 <option value="">Seleccionar…</option>
-                                                {products.map((product) => (
-                                                    <option key={product.id} value={product.id}>{product.code} - {product.name}</option>
-                                                ))}
+                                                {products.map(p => <option key={p.id} value={p.id}>{p.code} - {p.name}</option>)}
                                             </select>
                                         </td>
                                         <td className="px-3 py-2">
-                                            <input
-                                                value={row.description}
-                                                onChange={(event) => updateItem(index, 'description', event.target.value)}
-                                                className="w-full rounded-lg border-gray-300 text-sm"
-                                            />
+                                            <input value={row.description} onChange={e => updateItem(idx, 'description', e.target.value)}
+                                                className="w-full rounded-lg border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white text-sm" />
                                         </td>
                                         <td className="px-3 py-2">
-                                            <input
-                                                type="number"
-                                                min="1"
-                                                value={row.quantity}
-                                                onChange={(event) => updateItem(index, 'quantity', event.target.value)}
-                                                className="w-full rounded-lg border-gray-300 text-sm text-right"
-                                            />
+                                            <input type="number" min="1" value={row.quantity} onChange={e => updateItem(idx, 'quantity', e.target.value)}
+                                                className="w-full rounded-lg border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white text-sm text-right" />
                                         </td>
                                         <td className="px-3 py-2">
-                                            <input
-                                                type="number"
-                                                step="0.01"
-                                                min="0"
-                                                value={row.unit_price}
-                                                onChange={(event) => updateItem(index, 'unit_price', event.target.value)}
-                                                className="w-full rounded-lg border-gray-300 text-sm text-right"
-                                            />
+                                            <input type="number" step="0.01" min="0" value={row.unit_price} onChange={e => updateItem(idx, 'unit_price', e.target.value)}
+                                                className="w-full rounded-lg border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white text-sm text-right" />
                                         </td>
-                                        <td className="px-3 py-2 text-right font-medium">S/ {formatMoney((Number(row.quantity) || 0) * (Number(row.unit_price) || 0))}</td>
-                                        <td className="px-3 py-2 text-center no-print">
-                                            <button
-                                                type="button"
-                                                onClick={() => removeRow(index)}
-                                                disabled={items.length === 1}
-                                                className="p-2 text-red-600 hover:bg-red-50 rounded-lg disabled:opacity-40"
-                                            >
+                                        <td className="px-3 py-2 text-right font-medium text-gray-900 dark:text-white">
+                                            S/ {formatMoney((Number(row.quantity)||0) * (Number(row.unit_price)||0))}
+                                        </td>
+                                        <td className="px-3 py-2 text-center">
+                                            <button type="button" onClick={() => removeRow(idx)} disabled={items.length === 1}
+                                                className="p-1.5 text-red-500 hover:bg-red-50 rounded-lg disabled:opacity-30">
                                                 <Trash2 size={14} />
                                             </button>
                                         </td>
@@ -250,33 +224,110 @@ export default function QuotationsIndex({ clients = [], products = [] }) {
                         </table>
                     </div>
 
-                    <div className="flex justify-between items-start gap-4 flex-wrap">
-                        <button
-                            type="button"
-                            onClick={addRow}
-                            className="no-print inline-flex items-center gap-2 px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-700 hover:bg-gray-50"
-                        >
-                            <Plus size={16} /> Agregar ítem
+                    <div className="flex flex-wrap justify-between items-start gap-4">
+                        <button type="button" onClick={addRow}
+                            className="inline-flex items-center gap-2 px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-slate-700">
+                            <Plus size={15} /> Agregar ítem
                         </button>
-
-                        <div className="quotation-totals w-full md:w-72 bg-gray-50 border border-gray-200 rounded-xl p-3 space-y-2 text-sm">
-                            <div className="flex justify-between"><span>Subtotal</span><span>S/ {formatMoney(subtotal)}</span></div>
-                            <div className="flex justify-between"><span>IGV (18%)</span><span>S/ {formatMoney(igv)}</span></div>
-                            <div className="flex justify-between pt-2 border-t border-gray-200 font-semibold text-base"><span>Total</span><span>S/ {formatMoney(total)}</span></div>
+                        <div className="w-full md:w-64 bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl p-3 space-y-1.5 text-sm">
+                            <div className="flex justify-between text-gray-600 dark:text-gray-300"><span>Subtotal</span><span>S/ {formatMoney(subtotal)}</span></div>
+                            <div className="flex justify-between text-gray-600 dark:text-gray-300"><span>IGV (18%)</span><span>S/ {formatMoney(igv)}</span></div>
+                            <div className="flex justify-between pt-2 border-t border-gray-200 dark:border-slate-500 font-bold text-base text-gray-900 dark:text-white"><span>Total</span><span>S/ {formatMoney(total)}</span></div>
                         </div>
                     </div>
 
                     <div>
-                        <label className="block text-xs text-gray-600 mb-1">Observaciones / Condiciones</label>
-                        <textarea
-                            rows={3}
-                            value={form.notes}
-                            onChange={(event) => setForm((prev) => ({ ...prev, notes: event.target.value }))}
-                            className="w-full rounded-lg border-gray-300 text-sm"
-                        />
+                        <label className="block text-sm text-gray-600 dark:text-gray-400 mb-1">Observaciones / Condiciones</label>
+                        <textarea rows={3} value={formMeta.notes} onChange={e => setFormMeta(p => ({ ...p, notes: e.target.value }))}
+                            className="w-full rounded-lg border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white text-sm" />
+                    </div>
+
+                    {errors.items && <p className="text-red-500 text-sm">{errors.items}</p>}
+
+                    <div className="flex gap-3">
+                        <button type="button" onClick={saveQuotation} disabled={saving}
+                            className="flex items-center gap-2 px-5 py-2 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white rounded-lg text-sm font-medium transition">
+                            <Save size={16} /> {saving ? 'Guardando…' : 'Guardar Cotización'}
+                        </button>
+                        <button type="button" onClick={() => setTab('list')}
+                            className="px-5 py-2 bg-gray-100 dark:bg-slate-700 hover:bg-gray-200 text-gray-700 dark:text-gray-200 rounded-lg text-sm transition">
+                            Cancelar
+                        </button>
                     </div>
                 </div>
-            </div>
+            )}
+
+            {/* ── QUOTATIONS LIST ── */}
+            {tab === 'list' && (
+                <>
+                    {/* Search */}
+                    <div className="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700">
+                        <form onSubmit={handleSearch} className="relative max-w-sm">
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={17} />
+                            <input
+                                type="text"
+                                value={search}
+                                onChange={e => setSearch(e.target.value)}
+                                placeholder="Buscar por número o cliente…"
+                                className="w-full pl-9 pr-4 py-2 bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none"
+                            />
+                        </form>
+                    </div>
+
+                    <div className="bg-white dark:bg-slate-800 rounded-xl border border-gray-100 dark:border-slate-700 overflow-hidden shadow-sm">
+                        <div className="overflow-x-auto">
+                            <table className="w-full text-left text-sm text-gray-600 dark:text-gray-400">
+                                <thead className="bg-gray-50 dark:bg-slate-700/50 text-xs font-semibold text-gray-700 dark:text-white uppercase">
+                                    <tr>
+                                        <th className="px-5 py-3">N° Cotización</th>
+                                        <th className="px-5 py-3">Cliente</th>
+                                        <th className="px-5 py-3">Fecha</th>
+                                        <th className="px-5 py-3">Válida hasta</th>
+                                        <th className="px-5 py-3">Estado</th>
+                                        <th className="px-5 py-3 text-right">Total</th>
+                                        <th className="px-5 py-3 text-center">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-gray-100 dark:divide-slate-700">
+                                    {quotations.data.length > 0 ? quotations.data.map(q => (
+                                        <tr key={q.id} className="hover:bg-gray-50 dark:hover:bg-slate-700/30 transition-colors">
+                                            <td className="px-5 py-3 font-mono font-semibold text-gray-900 dark:text-white">{q.quote_number}</td>
+                                            <td className="px-5 py-3 text-gray-800 dark:text-gray-200">{q.client?.name ?? <span className="text-gray-400 italic">Sin cliente</span>}</td>
+                                            <td className="px-5 py-3">{q.issue_date}</td>
+                                            <td className="px-5 py-3">{q.valid_until ?? '—'}</td>
+                                            <td className="px-5 py-3"><StatusBadge status={q.status} /></td>
+                                            <td className="px-5 py-3 text-right font-bold text-gray-900 dark:text-white">S/ {formatMoney(q.total)}</td>
+                                            <td className="px-5 py-3">
+                                                <div className="flex items-center justify-center gap-1">
+                                                    <Link href={route('quotations.show', q.id)} title="Ver detalle"
+                                                        className="p-1.5 hover:bg-blue-50 dark:hover:bg-slate-700 rounded-lg text-blue-600 transition">
+                                                        <Eye size={15} />
+                                                    </Link>
+                                                    <a href={route('quotations.pdf', q.id)} target="_blank" title="Descargar PDF"
+                                                        className="p-1.5 hover:bg-indigo-50 dark:hover:bg-slate-700 rounded-lg text-indigo-600 transition">
+                                                        <Download size={15} />
+                                                    </a>
+                                                    <button onClick={() => confirmDelete(q.id)} title="Eliminar"
+                                                        className="p-1.5 hover:bg-red-50 dark:hover:bg-slate-700 rounded-lg text-red-500 transition">
+                                                        <Trash2 size={15} />
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    )) : (
+                                        <tr>
+                                            <td colSpan={7} className="px-5 py-12 text-center text-gray-400">
+                                                <FileText className="mx-auto mb-2 opacity-30" size={36} />
+                                                No hay cotizaciones guardadas. Haz clic en <strong>Nueva Cotización</strong> para comenzar.
+                                            </td>
+                                        </tr>
+                                    )}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </>
+            )}
         </DashboardLayout>
     );
 }

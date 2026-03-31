@@ -54,7 +54,8 @@ Route::middleware('auth')->group(function () {
     Route::middleware('permission:sales.access')->group(function () {
         Route::resource('invoices', \App\Http\Controllers\InvoiceController::class);
         Route::get('invoices/{invoice}/pdf', [\App\Http\Controllers\InvoiceController::class, 'pdf'])->name('invoices.pdf');
-        Route::get('quotations', [\App\Http\Controllers\QuotationController::class, 'index'])->name('quotations.index');
+        Route::resource('quotations', \App\Http\Controllers\QuotationController::class)->except(['edit', 'update']);
+        Route::get('quotations/{quotation}/pdf', [\App\Http\Controllers\QuotationController::class, 'pdf'])->name('quotations.pdf');
     });
 
     // Inventory & Warehouses
