@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { Head, Link, router } from '@inertiajs/react';
 import DashboardLayout from '@/Layouts/DashboardLayout';
-import { Plus, Search, FileText, Eye, Trash2 } from 'lucide-react';
+import { Plus, FileText, Eye, Trash2 } from 'lucide-react';
+import SearchAutocomplete from '@/Components/SearchAutocomplete';
 
 const STATUS_LABELS = {
     generated:   { label: 'Generado',     color: 'bg-blue-500/20 text-blue-400' },
@@ -21,9 +22,9 @@ export default function InvoicesIndex({ invoices, filters }) {
     const [search, setSearch] = useState(filters?.search || '');
     const [type,   setType]   = useState(filters?.type   || '');
 
-    function handleSearch(e) {
-        e.preventDefault();
-        router.get(route('invoices.index'), { search, type }, { preserveState: true });
+    function handleSearch(val) {
+        const v = val !== undefined ? val : search;
+        router.get(route('invoices.index'), { search: v, type }, { preserveState: true });
     }
 
     function handleDelete(id) {
@@ -46,25 +47,25 @@ export default function InvoicesIndex({ invoices, filters }) {
                     </Link>
                 </div>
 
-                <form onSubmit={handleSearch} className="flex gap-2 flex-wrap">
-                    <div className="relative flex-1 max-w-xs">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-600" size={16} />
-                        <input
-                            type="text" placeholder="Serie, número, cliente..."
-                            value={search} onChange={e => setSearch(e.target.value)}
-                            className="w-full pl-9 pr-4 py-2 bg-white border border-gray-200 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                        />
-                    </div>
-                    <select value={type} onChange={e => setType(e.target.value)}
-                        className="px-3 py-2 bg-white border border-gray-200 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                <div className="flex gap-2 flex-wrap items-center">
+                    <SearchAutocomplete
+                        resource="invoices"
+                        value={search}
+                        onChange={setSearch}
+                        onSearch={handleSearch}
+                        placeholder="Serie, número, cliente..."
+                        className="flex-1 max-w-xs"
+                    />
+                    <select value={type} onChange={e => { setType(e.target.value); router.get(route('invoices.index'), { search, type: e.target.value }); }}
+                        className="px-3 py-2 bg-white dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-lg text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
                         <option value="">Todos los tipos</option>
                         <option value="factura">Factura</option>
                         <option value="boleta">Boleta</option>
+                        <option value="nota_venta">Nota de Venta</option>
                         <option value="nota_credito">Nota Crédito</option>
                         <option value="nota_debito">Nota Débito</option>
                     </select>
-                    <button type="submit" className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm">Buscar</button>
-                </form>
+                </div>
 
                 <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
                     <table className="w-full text-sm">

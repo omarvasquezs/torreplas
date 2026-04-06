@@ -1,17 +1,16 @@
 import React from 'react';
-import { Head, Link, useForm } from '@inertiajs/react';
+import { Head, Link, router, useForm } from '@inertiajs/react';
 import DashboardLayout from '@/Layouts/DashboardLayout';
-import { Plus, Search } from 'lucide-react';
+import { Plus } from 'lucide-react';
+import SearchAutocomplete from '@/Components/SearchAutocomplete';
 
 export default function Index({ purchases, filters }) {
-    const { data, setData, get } = useForm({
-        search: filters.search || '',
-    });
+    const { data, setData } = useForm({ search: filters.search || '' });
 
-    const handleSearch = (e) => {
-        e.preventDefault();
-        get(route('purchases.index'), { preserveState: true });
-    };
+    function handleSearch(val) {
+        const v = val !== undefined ? val : data.search;
+        router.get(route('purchases.index'), { search: v }, { preserveState: true });
+    }
 
     return (
         <DashboardLayout>
@@ -33,16 +32,14 @@ export default function Index({ purchases, filters }) {
 
             {/* Filters */}
             <div className="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700 mt-6">
-                <form onSubmit={handleSearch} className="relative max-w-sm">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-600" size={18} />
-                    <input
-                        type="text"
-                        value={data.search}
-                        onChange={(e) => setData('search', e.target.value)}
-                        placeholder="Buscar por código o proveedor..."
-                        className="w-full pl-10 pr-4 py-2 bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all"
-                    />
-                </form>
+                <SearchAutocomplete
+                    resource="purchases"
+                    value={data.search}
+                    onChange={(v) => setData('search', v)}
+                    onSearch={handleSearch}
+                    placeholder="Buscar por código o proveedor..."
+                    className="max-w-sm"
+                />
             </div>
 
             <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700 overflow-hidden mt-6">

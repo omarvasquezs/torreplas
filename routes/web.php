@@ -19,6 +19,9 @@ Route::middleware('auth')->group(function () {
         Route::get('stats', [\App\Http\Controllers\Api\PadronRucController::class, 'stats'])->name('padron.stats');
     });
 
+    // Generic search suggestions API
+    Route::get('api/suggestions', \App\Http\Controllers\Api\SearchSuggestionsController::class)->name('api.suggestions');
+
     // Profile
     Route::get('/profile',    [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile',  [ProfileController::class, 'update'])->name('profile.update');
