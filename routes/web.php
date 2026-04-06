@@ -21,6 +21,7 @@ Route::middleware('auth')->group(function () {
 
     // Generic search suggestions API
     Route::get('api/suggestions', \App\Http\Controllers\Api\SearchSuggestionsController::class)->name('api.suggestions');
+    Route::get('api/select/search', \App\Http\Controllers\Api\AsyncSelectController::class)->name('api.select.search');
 
     // Profile
     Route::get('/profile',    [ProfileController::class, 'edit'])->name('profile.edit');

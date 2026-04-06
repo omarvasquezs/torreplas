@@ -34,10 +34,7 @@ class OrderController extends Controller
 
     public function create()
     {
-        return Inertia::render('Orders/Form', [
-            'clients' => Client::where('is_active', true)->get(),
-            'products' => Product::with('unit')->where('is_active', true)->get(),
-        ]);
+        return Inertia::render('Orders/Form');
     }
 
     public function store(Request $request)

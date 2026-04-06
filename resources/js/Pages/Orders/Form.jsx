@@ -2,14 +2,15 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Head, Link, useForm } from '@inertiajs/react';
 import DashboardLayout from '@/Layouts/DashboardLayout';
 import Modal from '@/Components/Modal';
+import AsyncSelect from '@/Components/AsyncSelect';
 import { Save, ArrowLeft, Plus, Trash, ShoppingBag, X } from 'lucide-react';
 import axios from 'axios';
 
-export default function Form({ clients: initialClients, products }) {
-    const [localClients, setLocalClients] = useState(initialClients);
+export default function Form() {
+    const [selectedClient, setSelectedClient] = useState(null);
     // Initial Items State
     const [lineItems, setLineItems] = useState([
-        { product_id: '', quantity: 1, unit_price: 0, total: 0 }
+        { product_id: '', _product: null, quantity: 1, unit_price: 0, total: 0 }
     ]);
 
     const { data, setData, post, processing, errors, clearErrors } = useForm({
@@ -98,7 +99,7 @@ export default function Form({ clients: initialClients, products }) {
                 headers: { 'Accept': 'application/json' }
             });
             const newClient = res.data.client;
-            setLocalClients([newClient, ...localClients]);
+            setSelectedClient(newClient);
             setData('client_id', newClient.id);
             setShowClientModal(false);
             setClientForm({ document_number: '', document_type: 'RUC', name: '', email: '', phone: '', address: '' });
@@ -118,7 +119,7 @@ export default function Form({ clients: initialClients, products }) {
 
     // Add new line
     const addLine = () => {
-        setLineItems([...lineItems, { product_id: '', quantity: 1, unit_price: 0, total: 0 }]);
+        setLineItems([...lineItems, { product_id: '', _product: null, quantity: 1, unit_price: 0, total: 0 }]);
     };
 
     // Remove line
@@ -135,15 +136,16 @@ export default function Form({ clients: initialClients, products }) {
         newLines[index][field] = value;
 
         // Auto-fill price if product changes
-        if (field === 'product_id') {
-            const product = products.find(p => p.id == value);
+        if (field === '_product') {
+            const product = value;
+            newLines[index].product_id = product?.id || '';
             if (product) {
                 newLines[index].unit_price = parseFloat(product.price);
             }
         }
 
         // Recalculate total line
-        if (field === 'quantity' || field === 'unit_price' || field === 'product_id') {
+        if (field === 'quantity' || field === 'unit_price' || field === '_product') {
             const qty = parseFloat(newLines[index].quantity) || 0;
             const price = parseFloat(newLines[index].unit_price) || 0;
             newLines[index].total = qty * price;
@@ -186,16 +188,20 @@ export default function Form({ clients: initialClients, products }) {
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Cliente Seleccionado</label>
                                     <div className="flex gap-2">
-                                        <select
-                                            value={data.client_id}
-                                            onChange={(e) => setData('client_id', e.target.value)}
-                                            className="w-full rounded-lg border-gray-300 bg-gray-50 focus:border-blue-500 focus:ring-blue-500 shadow-sm dark:bg-slate-700 dark:border-slate-600 dark:text-white"
-                                        >
-                                            <option value="">Seleccionar Cliente...</option>
-                                            {localClients.map(client => (
-                                                <option key={client.id} value={client.id}>{client.name} - {client.document_number}</option>
-                                            ))}
-                                        </select>
+                                        <div className="w-full relative shadow-sm border-gray-300">
+                                            <AsyncSelect
+                                                resource="clients"
+                                                value={selectedClient}
+                                                onChange={(client) => {
+                                                    setSelectedClient(client);
+                                                    setData('client_id', client?.id || '');
+                                                }}
+                                                placeholder="Buscar y seleccionar cliente..."
+                                                renderOption={(item) => `${item.name} - ${item.document_number}`}
+                                                renderDisplay={(item) => item ? `${item.name}` : ''}
+                                                className="w-full z-20"
+                                            />
+                                        </div>
                                         <button 
                                             type="button" 
                                             onClick={() => setShowClientModal(true)}
@@ -233,16 +239,17 @@ export default function Form({ clients: initialClients, products }) {
                                 {lineItems.map((item, index) => (
                                     <div key={index} className="flex flex-col md:flex-row gap-3 items-start md:items-center bg-gray-50 dark:bg-slate-700/30 p-3 rounded-lg">
                                         <div className="flex-1 w-full">
-                                            <select
-                                                value={item.product_id}
-                                                onChange={(e) => updateLine(index, 'product_id', e.target.value)}
-                                                className="w-full rounded-lg border-gray-300 text-sm focus:border-blue-500 focus:ring-blue-500 shadow-sm dark:bg-slate-800 dark:border-slate-600 dark:text-white"
-                                            >
-                                                <option value="">Seleccionar Producto...</option>
-                                                {products.map(p => (
-                                                    <option key={p.id} value={p.id}>{p.name} (Stock: {p.warehouse_stock || 'N/A'})</option>
-                                                ))}
-                                            </select>
+                                            <div className="w-full relative">
+                                                <AsyncSelect
+                                                    resource="products"
+                                                    value={item._product}
+                                                    onChange={(prod) => updateLine(index, '_product', prod)}
+                                                    placeholder="Buscar producto..."
+                                                    renderOption={(item) => `${item.name} (${item.code || 'S/C'}) - Stock: ${item.warehouse_stock || 'N/A'}`}
+                                                    renderDisplay={(item) => item ? `${item.name}` : ''}
+                                                    className="w-full z-10"
+                                                />
+                                            </div>
                                         </div>
                                         <div className="w-24">
                                             <input
