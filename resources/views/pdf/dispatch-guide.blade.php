@@ -62,10 +62,10 @@
 {{-- HEADER --}}
 @php
     $logoPath = public_path('logo_torre_plas.png');
-    $company  = DB::table('company_settings')->first();
-    $ruc      = $company->ruc     ?? '20XXXXXXXXX';
-    $bizName  = $company->name    ?? 'TORREPLAS SAC';
-    $address  = $company->address ?? 'Lima, Perú';
+    $settings = \App\Models\Setting::all_flat();
+    $ruc      = $settings['company_ruc']     ?? '20XXXXXXXXX';
+    $bizName  = $settings['company_name']    ?? 'TORREPLAS SAC';
+    $address  = $settings['company_address'] ?? 'Lima, Perú';
 @endphp
 <table class="header-table">
     <tr>
