@@ -4,10 +4,10 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use App\Models\Client;
 use App\Models\Product;
 use App\Models\Invoice;
+use App\Models\Quotation;
 
 class AsyncSelectController extends Controller
 {
@@ -56,6 +56,20 @@ class AsyncSelectController extends Controller
                     $query->where(function($w) use ($like) {
                         $w->where('serie', 'like', $like)
                           ->orWhere('number', 'like', $like)
+                          ->orWhereHas('client', function($c) use ($like) {
+                              $c->where('name', 'like', $like)
+                                ->orWhere('document_number', 'like', $like);
+                          });
+                    });
+                }
+                return response()->json($query->orderByDesc('id')->paginate($perPage));
+
+            case 'quotations':
+                $query = Quotation::with(['client', 'items.product']);
+                if ($q) {
+                    $like = "%{$q}%";
+                    $query->where(function($w) use ($like) {
+                        $w->where('quote_number', 'like', $like)
                           ->orWhereHas('client', function($c) use ($like) {
                               $c->where('name', 'like', $like)
                                 ->orWhere('document_number', 'like', $like);

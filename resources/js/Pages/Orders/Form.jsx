@@ -29,6 +29,24 @@ export default function Form() {
         setShowClientModal(false);
     };
 
+    const handleImportFromQuote = (quote) => {
+        if (!quote) return;
+        if (quote.client) {
+            setSelectedClient(quote.client);
+            setData('client_id', quote.client.id);
+        }
+        if (quote.items && quote.items.length > 0) {
+            const mappedItems = quote.items.map(i => ({
+                product_id: i.product_id,
+                _product: i.product,
+                quantity: Number(i.quantity) || 1,
+                unit_price: Number(i.unit_price) || 0,
+                total: (Number(i.quantity) || 0) * (Number(i.unit_price) || 0)
+            }));
+            setLineItems(mappedItems);
+        }
+    };
+
     // Update form data when line items change
     useEffect(() => {
         setData('items', lineItems);
@@ -99,8 +117,33 @@ export default function Form() {
                 <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     {/* Left Column: Client & Items */}
                     <div className="lg:col-span-2 space-y-6">
+                        {/* Import from Quotation */}
+                        <div className="bg-indigo-50/60 dark:bg-indigo-900/20 rounded-xl border border-indigo-100 dark:border-indigo-800 p-5">
+                            <label className="block text-sm font-semibold text-indigo-900 dark:text-indigo-300 mb-1">
+                                Importar datos desde una Cotización <span className="font-normal text-indigo-600">(Opcional)</span>
+                            </label>
+                            <p className="text-xs text-indigo-700/70 mb-3">
+                                Selecciona una cotización previa para autocompletar el cliente y los productos en este pedido.
+                            </p>
+                            <div className="w-full relative shadow-sm border-indigo-200 z-30">
+                                <AsyncSelect
+                                    resource="quotations"
+                                    value={null}
+                                    onChange={handleImportFromQuote}
+                                    placeholder="Buscar por N° Cotización o Nombre del Cliente..."
+                                    renderOption={(item) => (
+                                        <div className="flex flex-col">
+                                            <span className="font-bold text-gray-900">{item.quote_number}</span>
+                                            <span className="text-xs text-gray-500">{item.client?.name}</span>
+                                        </div>
+                                    )}
+                                    renderDisplay={(item) => item ? item.quote_number : ''}
+                                />
+                            </div>
+                        </div>
+
                         {/* Client Info */}
-                        <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700 p-6">
+                        <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700 p-6 relative z-20">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Cliente Seleccionado</label>
