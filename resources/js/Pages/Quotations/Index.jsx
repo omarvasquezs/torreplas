@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { Head, Link, router, useForm } from '@inertiajs/react';
 import DashboardLayout from '@/Layouts/DashboardLayout';
+import AsyncSelect from '@/Components/AsyncSelect';
 import { Plus, Trash2, Printer, Save, Eye, Download, FileText, Search, XCircle } from 'lucide-react';
 
 function formatMoney(value) {
@@ -22,7 +23,7 @@ function StatusBadge({ status }) {
     );
 }
 
-export default function QuotationsIndex({ quotations, clients = [], products = [], filters = {} }) {
+export default function QuotationsIndex({ quotations, filters = {} }) {
     const [tab, setTab] = useState('list'); // 'list' | 'new'
     const [search, setSearch] = useState(filters.search ?? '');
 
@@ -37,16 +38,13 @@ export default function QuotationsIndex({ quotations, clients = [], products = [
     });
 
     const [items, setItems] = useState([
-        { product_id: '', description: '', quantity: 1, unit_price: 0 },
+        { product_id: '', _product: null, description: '', quantity: 1, unit_price: 0 },
     ]);
 
     const [saving, setSaving] = useState(false);
     const [errors, setErrors] = useState({});
 
-    const selectedClient = useMemo(
-        () => clients.find(c => String(c.id) === String(formMeta.client_id)),
-        [clients, formMeta.client_id]
-    );
+    const [selectedClientObj, setSelectedClientObj] = useState(null);
 
     const subtotal = useMemo(
         () => items.reduce((acc, r) => acc + (Number(r.quantity) || 0) * (Number(r.unit_price) || 0), 0),
@@ -59,16 +57,16 @@ export default function QuotationsIndex({ quotations, clients = [], products = [
         setItems(prev => { const n = [...prev]; n[idx] = { ...n[idx], [key]: val }; return n; });
     }
 
-    function onProductChange(idx, productId) {
-        const p = products.find(r => String(r.id) === String(productId));
-        updateItem(idx, 'product_id', productId);
-        if (p) {
-            updateItem(idx, 'description', p.name);
-            updateItem(idx, 'unit_price', p.price || 0);
+    function onProductChange(idx, val) {
+        updateItem(idx, '_product', val);
+        updateItem(idx, 'product_id', val?.id || '');
+        if (val) {
+            updateItem(idx, 'description', val.name);
+            updateItem(idx, 'unit_price', val.price || 0);
         }
     }
 
-    function addRow()         { setItems(prev => [...prev, { product_id: '', description: '', quantity: 1, unit_price: 0 }]); }
+    function addRow()         { setItems(prev => [...prev, { product_id: '', _product: null, description: '', quantity: 1, unit_price: 0 }]); }
     function removeRow(idx)   { setItems(prev => prev.filter((_, i) => i !== idx)); }
 
     function saveQuotation() {
@@ -154,21 +152,25 @@ export default function QuotationsIndex({ quotations, clients = [], products = [
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                             <label className="block text-sm text-gray-600 dark:text-gray-400 mb-1">Cliente</label>
-                            <select
-                                value={formMeta.client_id}
-                                onChange={e => setFormMeta(p => ({ ...p, client_id: e.target.value }))}
-                                className="w-full rounded-lg border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white text-sm"
-                            >
-                                <option value="">Seleccionar cliente…</option>
-                                {clients.map(c => (
-                                    <option key={c.id} value={c.id}>{c.name}</option>
-                                ))}
-                            </select>
+                            <div className="w-full relative shadow-sm">
+                                <AsyncSelect
+                                    resource="clients"
+                                    value={selectedClientObj}
+                                    onChange={obj => {
+                                        setSelectedClientObj(obj);
+                                        setFormMeta(p => ({ ...p, client_id: obj?.id || '' }));
+                                    }}
+                                    placeholder="Buscar y seleccionar cliente..."
+                                    renderOption={(item) => `${item.name} - ${item.document_number}`}
+                                    renderDisplay={(item) => item ? item.name : ''}
+                                    className="w-full z-20"
+                                />
+                            </div>
                         </div>
                         <div className="flex items-end">
                             <div className="w-full bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-lg px-3 py-2 text-sm text-gray-600 dark:text-gray-300">
-                                {selectedClient
-                                    ? `${selectedClient.document_type}: ${selectedClient.document_number}`
+                                {selectedClientObj
+                                    ? `${selectedClientObj.document_type || 'DOC'}: ${selectedClientObj.document_number}`
                                     : 'Sin documento de cliente'}
                             </div>
                         </div>
@@ -191,11 +193,17 @@ export default function QuotationsIndex({ quotations, clients = [], products = [
                                 {items.map((row, idx) => (
                                     <tr key={idx} className="border-t border-gray-200 dark:border-slate-600">
                                         <td className="px-3 py-2">
-                                            <select value={row.product_id} onChange={e => onProductChange(idx, e.target.value)}
-                                                className="w-full rounded-lg border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white text-sm">
-                                                <option value="">Seleccionar…</option>
-                                                {products.map(p => <option key={p.id} value={p.id}>{p.code} - {p.name}</option>)}
-                                            </select>
+                                            <div className="w-full relative">
+                                                <AsyncSelect
+                                                    resource="products"
+                                                    value={row._product}
+                                                    onChange={val => onProductChange(idx, val)}
+                                                    placeholder="Buscar..."
+                                                    renderOption={(item) => `${item.name} (${item.code || 'S/C'})`}
+                                                    renderDisplay={(item) => item ? item.name : ''}
+                                                    className="w-full z-10"
+                                                />
+                                            </div>
                                         </td>
                                         <td className="px-3 py-2">
                                             <input value={row.description} onChange={e => updateItem(idx, 'description', e.target.value)}

@@ -26,8 +26,6 @@ class QuotationController extends Controller
 
         return Inertia::render('Quotations/Index', [
             'quotations' => $quotations,
-            'clients'    => Client::orderBy('name')->get(['id', 'name', 'document_type', 'document_number']),
-            'products'   => Product::orderBy('name')->get(['id', 'name', 'code', 'price']),
             'filters'    => $request->only('search'),
         ]);
     }
