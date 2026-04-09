@@ -69,6 +69,21 @@ export default function QuotationsIndex({ quotations, filters = {} }) {
     function addRow()         { setItems(prev => [...prev, { product_id: '', _product: null, description: '', quantity: 1, unit_price: 0 }]); }
     function removeRow(idx)   { setItems(prev => prev.filter((_, i) => i !== idx)); }
 
+    function resetForm() {
+        setFormMeta({
+            quote_number: `COT-${new Date().getFullYear()}-${String(Date.now()).slice(-4)}`,
+            issue_date:   new Date().toISOString().slice(0, 10),
+            valid_until:  new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10),
+            client_id:    '',
+            attention:    '',
+            notes:        'Precios incluyen IGV. Vigencia sujeta a disponibilidad de stock.',
+        });
+        setItems([
+            { product_id: '', _product: null, description: '', quantity: 1, unit_price: 0 },
+        ]);
+        setSelectedClientObj(null);
+    }
+
     function saveQuotation() {
         setSaving(true);
         setErrors({});
@@ -82,7 +97,12 @@ export default function QuotationsIndex({ quotations, filters = {} }) {
             })),
         }, {
             onError: (e) => { setErrors(e); setSaving(false); },
-            onSuccess: () => setSaving(false),
+            onSuccess: () => {
+                setSaving(false);
+                setTab('list');
+                resetForm();
+                alert('Cotización creada exitosamente.');
+            },
         });
     }
 
