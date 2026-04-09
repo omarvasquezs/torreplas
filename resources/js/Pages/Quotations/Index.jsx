@@ -2,6 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { Head, Link, router, useForm } from '@inertiajs/react';
 import DashboardLayout from '@/Layouts/DashboardLayout';
 import AsyncSelect from '@/Components/AsyncSelect';
+import ClientModal from '@/Components/ClientModal';
 import { Plus, Trash2, Printer, Save, Eye, Download, FileText, Search, XCircle } from 'lucide-react';
 
 function formatMoney(value) {
@@ -45,6 +46,7 @@ export default function QuotationsIndex({ quotations, filters = {} }) {
     const [errors, setErrors] = useState({});
 
     const [selectedClientObj, setSelectedClientObj] = useState(null);
+    const [showClientModal, setShowClientModal] = useState(false);
 
     const subtotal = useMemo(
         () => items.reduce((acc, r) => acc + (Number(r.quantity) || 0) * (Number(r.unit_price) || 0), 0),
@@ -120,6 +122,7 @@ export default function QuotationsIndex({ quotations, filters = {} }) {
 
     // ── RENDER ─────────────────────────────────────────────────────
     return (
+        <>
         <DashboardLayout>
             <Head title="Cotizaciones" />
 
@@ -172,20 +175,31 @@ export default function QuotationsIndex({ quotations, filters = {} }) {
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                             <label className="block text-sm text-gray-600 dark:text-gray-400 mb-1">Cliente</label>
-                            <div className="w-full relative shadow-sm">
-                                <AsyncSelect
-                                    resource="clients"
-                                    value={selectedClientObj}
-                                    onChange={obj => {
-                                        setSelectedClientObj(obj);
-                                        setFormMeta(p => ({ ...p, client_id: obj?.id || '' }));
-                                    }}
-                                    placeholder="Buscar y seleccionar cliente..."
-                                    renderOption={(item) => `${item.name} - ${item.document_number}`}
-                                    renderDisplay={(item) => item ? item.name : ''}
-                                    className="w-full z-20"
-                                />
+                            <div className="flex gap-2">
+                                <div className="w-full relative shadow-sm border-gray-300">
+                                    <AsyncSelect
+                                        resource="clients"
+                                        value={selectedClientObj}
+                                        onChange={obj => {
+                                            setSelectedClientObj(obj);
+                                            setFormMeta(p => ({ ...p, client_id: obj?.id || '' }));
+                                        }}
+                                        placeholder="Buscar y seleccionar cliente..."
+                                        renderOption={(item) => `${item.name} - ${item.document_number}`}
+                                        renderDisplay={(item) => item ? item.name : ''}
+                                        className="w-full z-20"
+                                    />
+                                </div>
+                                <button 
+                                    type="button" 
+                                    onClick={() => setShowClientModal(true)}
+                                    className="bg-blue-100 text-blue-600 p-2.5 rounded-lg flex items-center justify-center hover:bg-blue-200 transition-colors flex-shrink-0"
+                                    title="Agregar nuevo cliente"
+                                >
+                                    <Plus size={20} />
+                                </button>
                             </div>
+                            {errors.client_id && <p className="text-red-500 text-xs mt-1">{errors.client_id}</p>}
                         </div>
                         <div className="flex items-end">
                             <div className="w-full bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-lg px-3 py-2 text-sm text-gray-600 dark:text-gray-300">
@@ -357,5 +371,16 @@ export default function QuotationsIndex({ quotations, filters = {} }) {
                 </>
             )}
         </DashboardLayout>
+
+        <ClientModal 
+            show={showClientModal} 
+            onClose={() => setShowClientModal(false)}
+            onClientCreated={(client) => {
+                setSelectedClientObj(client);
+                setFormMeta(p => ({ ...p, client_id: client.id }));
+                setShowClientModal(false);
+            }}
+        />
+        </>
     );
 }
