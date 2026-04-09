@@ -108,7 +108,7 @@ export default function AsyncSelect({
                             )}
                         </Combobox.Button>
                     </div>
-                    <Combobox.Options anchor="bottom" style={{ width: 'var(--button-width)' }} className="empty:invisible mt-1 max-h-60 overflow-auto rounded-md bg-white dark:bg-slate-800 py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm z-[9999] border border-gray-100 dark:border-slate-700 transition duration-100 ease-in data-[leave]:data-[closed]:opacity-0">
+                    <Combobox.Options anchor="bottom" className="w-[var(--input-width)] empty:invisible mt-1 max-h-60 overflow-auto rounded-md bg-white dark:bg-slate-800 py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm z-[9999] border border-gray-100 dark:border-slate-700 transition duration-100 ease-in data-[leave]:data-[closed]:opacity-0">
                             {items.length === 0 && !loading ? (
                                 <div className="relative cursor-default select-none px-4 py-2 text-gray-500 text-xs">
                                     No se encontraron resultados.
