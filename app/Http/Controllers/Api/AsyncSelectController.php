@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\Client;
 use App\Models\Product;
+use App\Models\Invoice;
 
 class AsyncSelectController extends Controller
 {
@@ -47,6 +48,21 @@ class AsyncSelectController extends Controller
                     });
                 }
                 return response()->json($query->orderBy('name')->paginate($perPage));
+
+            case 'invoices':
+                $query = Invoice::with(['client', 'order.items.product']);
+                if ($q) {
+                    $like = "%{$q}%";
+                    $query->where(function($w) use ($like) {
+                        $w->where('serie', 'like', $like)
+                          ->orWhere('number', 'like', $like)
+                          ->orWhereHas('client', function($c) use ($like) {
+                              $c->where('name', 'like', $like)
+                                ->orWhere('document_number', 'like', $like);
+                          });
+                    });
+                }
+                return response()->json($query->orderByDesc('id')->paginate($perPage));
 
             default:
                 return response()->json(['data' => [], 'next_page_url' => null]);

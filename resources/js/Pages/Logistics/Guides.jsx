@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Head, Link, router } from '@inertiajs/react';
 import DashboardLayout from '@/Layouts/DashboardLayout';
+import AsyncSelect from '@/Components/AsyncSelect';
 import { Plus, Search, FileText, Truck, Package, X, Trash2, Download } from 'lucide-react';
 import { createPortal } from 'react-dom';
 
@@ -12,6 +13,7 @@ export default function GuidesIndex({ guides, products, filters }) {
     const [search, setSearch] = useState(filters?.search || '');
     const [showModal, setShowModal] = useState(false);
     const [activeTab, setActiveTab] = useState('basic');
+    const [selectedInvoice, setSelectedInvoice] = useState(null);
 
     const [form, setForm] = useState({
         series: 'T001',
@@ -48,6 +50,7 @@ export default function GuidesIndex({ guides, products, filters }) {
             destination_address: '',
             products: [],
         });
+        setSelectedInvoice(null);
         setActiveTab('basic');
     }
 
@@ -219,6 +222,33 @@ export default function GuidesIndex({ guides, products, filters }) {
                         <form onSubmit={submitGuide} className="flex-1 min-h-0 flex flex-col bg-gray-100">
                             {activeTab === 'basic' && (
                                 <div className="flex-1 min-h-0 overflow-y-auto p-6 space-y-4 bg-gray-100">
+                                    <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm relative z-[9999]">
+                                        <label className="block text-sm font-semibold text-indigo-700 mb-2">Importar datos de Factura/Boleta (Opcional)</label>
+                                        <AsyncSelect
+                                            resource="invoices"
+                                            value={selectedInvoice}
+                                            onChange={(inv) => {
+                                                setSelectedInvoice(inv);
+                                                if (inv) {
+                                                    setForm(prev => ({
+                                                        ...prev,
+                                                        recipient_name: inv.client?.name || '',
+                                                        destination_address: inv.client?.address || prev.destination_address,
+                                                        products: inv.order?.items?.map(i => ({ 
+                                                            product_id: i.product_id, 
+                                                            quantity: Number(i.quantity) || 1, 
+                                                            _product: i.product 
+                                                        })) || []
+                                                    }));
+                                                }
+                                            }}
+                                            placeholder="Buscar F001-..., B001-..., o nombre de cliente..."
+                                            renderOption={(inv) => `${inv.serie}-${inv.number} | ${inv.client?.name || 'Varios'}`}
+                                            renderDisplay={(inv) => inv ? `${inv.serie}-${inv.number} - ${inv.client?.name || ''}` : ''}
+                                            className="w-full"
+                                        />
+                                    </div>
+                                    
                                     <div className="grid grid-cols-2 gap-4">
                                         <div>
                                             <label className="block text-sm text-gray-600 mb-1">Serie *</label>
