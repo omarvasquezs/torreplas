@@ -62,11 +62,15 @@
     <div class="header">
         <div class="header-left">
             @if(file_exists($logoPath))
-                <img src="{{ $logoPath }}" class="company-logo" alt="Logo">
-            @else
-                <div class="company-name">{{ $bizName }}</div>
+                <img src="{{ $logoPath }}" class="company-logo" alt="Logo" style="margin-bottom: 5px;">
             @endif
-            <div class="company-sub">RUC: {{ $ruc }} &nbsp;|&nbsp; {{ $address }}{{ $phone ? ' &nbsp;|&nbsp; Tel: '.$phone : '' }}</div>
+            <div class="company-name">{{ $bizName }}</div>
+            <div class="company-sub">
+                RUC: {{ $ruc }} &nbsp;|&nbsp; {{ $address }}
+                @if($phone)
+                    &nbsp;|&nbsp; Tel: {{ $phone }}
+                @endif
+            </div>
         </div>
         <div class="header-right">
             <div class="doc-box">
