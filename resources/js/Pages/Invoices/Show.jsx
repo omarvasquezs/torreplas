@@ -1,6 +1,8 @@
 import { Head, Link, useForm } from '@inertiajs/react';
 import DashboardLayout from '@/Layouts/DashboardLayout';
-import { ArrowLeft, FileText, Download, Printer } from 'lucide-react';
+import { ArrowLeft, FileText, Download, Printer, ChevronDown } from 'lucide-react';
+import { Menu, Transition } from '@headlessui/react';
+import { Fragment } from 'react';
 
 const STATUS_LABELS = {
     generated:   { label: 'Generado',     color: 'bg-blue-500/20 text-blue-400' },
@@ -35,19 +37,58 @@ export default function InvoicesShow({ invoice }) {
                     </div>
                     <div className="flex gap-2">
                         <a
-                            href={route('invoices.pdf', { invoice: invoice.id, format: 'a4' })}
+                            href={route('invoices.pdf', invoice.id)}
                             target="_blank"
                             className="inline-flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm font-medium transition shadow-sm"
                         >
-                            <Download size={16} /> PDF A4
+                            <Download size={16} /> Descargar PDF
                         </a>
-                        <a
-                            href={route('invoices.pdf', { invoice: invoice.id, format: 'ticket' })}
-                            target="_blank"
-                            className="inline-flex items-center gap-2 px-4 py-2 bg-slate-700 hover:bg-slate-800 text-white rounded-lg text-sm font-medium transition shadow-sm"
-                        >
-                            <Printer size={16} /> Ticket
-                        </a>
+
+                        <Menu as="div" className="relative inline-block text-left">
+                            <Menu.Button className="inline-flex items-center gap-2 px-4 py-2 bg-slate-700 hover:bg-slate-800 text-white rounded-lg text-sm font-medium transition shadow-sm">
+                                <Printer size={16} /> Imprimir <ChevronDown size={14} />
+                            </Menu.Button>
+                            <Transition
+                                as={Fragment}
+                                enter="transition ease-out duration-100"
+                                enterFrom="transform opacity-0 scale-95"
+                                enterTo="transform opacity-100 scale-100"
+                                leave="transition ease-in duration-75"
+                                leaveFrom="transform opacity-100 scale-100"
+                                leaveTo="transform opacity-0 scale-95"
+                            >
+                                <Menu.Items className="absolute right-0 mt-2 w-36 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none z-50">
+                                    <div className="py-1">
+                                        <Menu.Item>
+                                            {({ active }) => (
+                                                <a
+                                                    href={route('invoices.pdf', { invoice: invoice.id, format: 'a4', action: 'stream' })}
+                                                    target="_blank"
+                                                    className={`${
+                                                        active ? 'bg-gray-100 text-gray-900' : 'text-gray-700'
+                                                    } block px-4 py-2 text-sm`}
+                                                >
+                                                    Imprimir en A4
+                                                </a>
+                                            )}
+                                        </Menu.Item>
+                                        <Menu.Item>
+                                            {({ active }) => (
+                                                <a
+                                                    href={route('invoices.pdf', { invoice: invoice.id, format: 'ticket', action: 'stream' })}
+                                                    target="_blank"
+                                                    className={`${
+                                                        active ? 'bg-gray-100 text-gray-900' : 'text-gray-700'
+                                                    } block px-4 py-2 text-sm`}
+                                                >
+                                                    Imprimir 58mm
+                                                </a>
+                                            )}
+                                        </Menu.Item>
+                                    </div>
+                                </Menu.Items>
+                            </Transition>
+                        </Menu>
                     </div>
                 </div>
 

@@ -5,33 +5,33 @@
     <title>Ticket {{ $invoice->serie }}-{{ $invoice->number }}</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: monospace, sans-serif; color: #000; font-size: 11px; width: 100%; max-width: 80mm; margin: 0 auto; padding: 5mm; }
+        body { font-family: monospace, sans-serif; color: #000; font-size: 10px; width: 100%; max-width: 58mm; margin: 0 auto; padding: 2mm; }
 
         .text-center { text-align: center; }
         .text-right { text-align: right; }
         .text-left { text-align: left; }
         .font-bold { font-weight: bold; }
         
-        .header { margin-bottom: 5px; text-align: center; border-bottom: 1px dashed #000; padding-bottom: 5px; }
-        .company-name { font-size: 14px; font-weight: bold; margin-bottom: 2px; }
-        .company-meta { font-size: 10px; margin-bottom: 2px; }
+        .header { margin-bottom: 4px; text-align: center; border-bottom: 1px dashed #000; padding-bottom: 4px; }
+        .company-name { font-size: 12px; font-weight: bold; margin-bottom: 2px; }
+        .company-meta { font-size: 9px; margin-bottom: 2px; }
         
-        .doc-info { text-align: center; margin-top: 5px; margin-bottom: 5px; border-bottom: 1px dashed #000; padding-bottom: 5px; }
-        .doc-title { font-size: 12px; font-weight: bold; text-transform: uppercase; }
+        .doc-info { text-align: center; margin-top: 4px; margin-bottom: 4px; border-bottom: 1px dashed #000; padding-bottom: 4px; }
+        .doc-title { font-size: 11px; font-weight: bold; text-transform: uppercase; }
         
-        .client-info { margin-bottom: 5px; border-bottom: 1px dashed #000; padding-bottom: 5px; font-size: 10px; }
-        .client-info div { margin-bottom: 2px; }
+        .client-info { margin-bottom: 4px; border-bottom: 1px dashed #000; padding-bottom: 4px; font-size: 9px; }
+        .client-info div { margin-bottom: 1px; }
         
-        .items-table { width: 100%; border-collapse: collapse; margin-bottom: 5px; font-size: 10px; }
+        .items-table { width: 100%; border-collapse: collapse; margin-bottom: 4px; font-size: 9px; }
         .items-table th { border-bottom: 1px solid #000; padding: 2px 0; text-align: left; }
         .items-table td { padding: 2px 0; vertical-align: top; }
         
-        .totals { margin-top: 5px; border-top: 1px dashed #000; padding-top: 5px; font-size: 11px; }
+        .totals { margin-top: 4px; border-top: 1px dashed #000; padding-top: 4px; font-size: 10px; }
         .totals-row { display: table; width: 100%; margin-bottom: 2px; }
-        .totals-label { display: table-cell; text-align: right; padding-right: 10px; }
-        .totals-value { display: table-cell; text-align: right; font-weight: bold; width: 60px; }
+        .totals-label { display: table-cell; text-align: right; padding-right: 5px; }
+        .totals-value { display: table-cell; text-align: right; font-weight: bold; width: 50px; }
         
-        .footer { text-align: center; font-size: 9px; margin-top: 10px; margin-bottom: 10px; }
+        .footer { text-align: center; font-size: 8px; margin-top: 6px; margin-bottom: 6px; }
     </style>
 </head>
 <body>

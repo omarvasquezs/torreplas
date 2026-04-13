@@ -173,17 +173,24 @@ class InvoiceController extends Controller
         $invoice->load(['client', 'order.items.product']);
 
         $format = $request->query('format', 'a4');
+        $action = $request->query('action', 'download');
 
         if ($format === 'ticket') {
-            // Thermal ticket: 80mm width (approx 226.77 pt)
+            // Thermal ticket: 58mm width (approx 164.41 pt).
+            // A long vertical height is acceptable; paper cuts automatically.
             $pdf = Pdf::loadView('pdf.ticket', ['invoice' => $invoice])
-                ->setPaper([0, 0, 226.77, 841.89]);
+                ->setPaper([0, 0, 164.41, 1000]); // 58mm
         } else {
             $pdf = Pdf::loadView('pdf.invoice', ['invoice' => $invoice])
                 ->setPaper('a4');
         }
 
         $filename = 'comprobante_' . $invoice->serie . '-' . $invoice->number . '.pdf';
+        
+        if ($action === 'stream') {
+            return $pdf->stream($filename);
+        }
+        
         return $pdf->download($filename);
     }
 }
