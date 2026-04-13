@@ -168,12 +168,20 @@ class InvoiceController extends Controller
         return redirect()->route('invoices.index')->with('success', 'Comprobante eliminado.');
     }
 
-    public function pdf(Invoice $invoice)
+    public function pdf(Request $request, Invoice $invoice)
     {
         $invoice->load(['client', 'order.items.product']);
 
-        $pdf = Pdf::loadView('pdf.invoice', ['invoice' => $invoice])
-            ->setPaper('a4');
+        $format = $request->query('format', 'a4');
+
+        if ($format === 'ticket') {
+            // Thermal ticket: 80mm width (approx 226.77 pt)
+            $pdf = Pdf::loadView('pdf.ticket', ['invoice' => $invoice])
+                ->setPaper([0, 0, 226.77, 841.89]);
+        } else {
+            $pdf = Pdf::loadView('pdf.invoice', ['invoice' => $invoice])
+                ->setPaper('a4');
+        }
 
         $filename = 'comprobante_' . $invoice->serie . '-' . $invoice->number . '.pdf';
         return $pdf->download($filename);

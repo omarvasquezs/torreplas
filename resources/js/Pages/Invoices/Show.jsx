@@ -1,6 +1,6 @@
 import { Head, Link, useForm } from '@inertiajs/react';
 import DashboardLayout from '@/Layouts/DashboardLayout';
-import { ArrowLeft, FileText, Download } from 'lucide-react';
+import { ArrowLeft, FileText, Download, Printer } from 'lucide-react';
 
 const STATUS_LABELS = {
     generated:   { label: 'Generado',     color: 'bg-blue-500/20 text-blue-400' },
@@ -33,13 +33,22 @@ export default function InvoicesShow({ invoice }) {
                         </h1>
                         <span className={`inline-block mt-1 px-2 py-0.5 rounded-full text-xs font-medium ${st.color}`}>{st.label}</span>
                     </div>
-                    <a
-                        href={route('invoices.pdf', invoice.id)}
-                        target="_blank"
-                        className="inline-flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm font-medium transition"
-                    >
-                        <Download size={16} /> Descargar PDF
-                    </a>
+                    <div className="flex gap-2">
+                        <a
+                            href={route('invoices.pdf', { invoice: invoice.id, format: 'a4' })}
+                            target="_blank"
+                            className="inline-flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm font-medium transition shadow-sm"
+                        >
+                            <Download size={16} /> PDF A4
+                        </a>
+                        <a
+                            href={route('invoices.pdf', { invoice: invoice.id, format: 'ticket' })}
+                            target="_blank"
+                            className="inline-flex items-center gap-2 px-4 py-2 bg-slate-700 hover:bg-slate-800 text-white rounded-lg text-sm font-medium transition shadow-sm"
+                        >
+                            <Printer size={16} /> Ticket
+                        </a>
+                    </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
