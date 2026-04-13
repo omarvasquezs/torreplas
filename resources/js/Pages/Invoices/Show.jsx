@@ -45,7 +45,7 @@ export default function InvoicesShow({ invoice }) {
                         </a>
 
                         <Menu as="div" className="relative inline-block text-left">
-                            <Menu.Button className="inline-flex items-center gap-2 px-4 py-2 bg-slate-700 hover:bg-slate-800 text-white rounded-lg text-sm font-medium transition shadow-sm">
+                            <Menu.Button className="inline-flex items-center gap-2 px-4 py-2 bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 rounded-lg text-sm font-medium transition shadow-sm">
                                 <Printer size={16} /> Imprimir <ChevronDown size={14} />
                             </Menu.Button>
                             <Transition

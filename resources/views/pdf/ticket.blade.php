@@ -5,7 +5,8 @@
     <title>Ticket {{ $invoice->serie }}-{{ $invoice->number }}</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: monospace, sans-serif; color: #000; font-size: 10px; width: 100%; max-width: 58mm; margin: 0 auto; padding: 2mm; }
+        @page { margin: 0; }
+        body { font-family: monospace, sans-serif; color: #000; font-size: 10px; width: 58mm; margin: 0; padding: 2mm; }
 
         .text-center { text-align: center; }
         .text-right { text-align: right; }
@@ -13,23 +14,26 @@
         .font-bold { font-weight: bold; }
         
         .header { margin-bottom: 4px; text-align: center; border-bottom: 1px dashed #000; padding-bottom: 4px; }
-        .company-name { font-size: 12px; font-weight: bold; margin-bottom: 2px; }
-        .company-meta { font-size: 9px; margin-bottom: 2px; }
+        .company-name { font-size: 11px; font-weight: bold; margin-bottom: 2px; }
+        .company-meta { font-size: 9px; margin-bottom: 1px; }
         
         .doc-info { text-align: center; margin-top: 4px; margin-bottom: 4px; border-bottom: 1px dashed #000; padding-bottom: 4px; }
-        .doc-title { font-size: 11px; font-weight: bold; text-transform: uppercase; }
+        .doc-title { font-size: 10px; font-weight: bold; text-transform: uppercase; }
         
         .client-info { margin-bottom: 4px; border-bottom: 1px dashed #000; padding-bottom: 4px; font-size: 9px; }
-        .client-info div { margin-bottom: 1px; }
+        .client-info div { margin-bottom: 1px; word-wrap: break-word; }
         
-        .items-table { width: 100%; border-collapse: collapse; margin-bottom: 4px; font-size: 9px; }
-        .items-table th { border-bottom: 1px solid #000; padding: 2px 0; text-align: left; }
-        .items-table td { padding: 2px 0; vertical-align: top; }
+        .items-table { width: 100%; border-collapse: collapse; margin-bottom: 4px; font-size: 9px; table-layout: fixed; }
+        .items-table th { border-bottom: 1px solid #000; padding: 2px 0; }
+        .items-table td { padding: 2px 0; vertical-align: top; word-wrap: break-word; overflow: hidden; }
+        .col-cant { width: 12%; text-align: left; }
+        .col-desc { width: 63%; text-align: left; padding-right: 2px; }
+        .col-total { width: 25%; text-align: right; }
         
-        .totals { margin-top: 4px; border-top: 1px dashed #000; padding-top: 4px; font-size: 10px; }
-        .totals-row { display: table; width: 100%; margin-bottom: 2px; }
-        .totals-label { display: table-cell; text-align: right; padding-right: 5px; }
-        .totals-value { display: table-cell; text-align: right; font-weight: bold; width: 50px; }
+        .totals { margin-top: 4px; border-top: 1px dashed #000; padding-top: 4px; font-size: 9px; }
+        .totals-row { display: table; width: 100%; margin-bottom: 1px; }
+        .totals-label { display: table-cell; text-align: right; padding-right: 4px; }
+        .totals-value { display: table-cell; text-align: right; font-weight: bold; width: 40px; }
         
         .footer { text-align: center; font-size: 8px; margin-top: 6px; margin-bottom: 6px; }
     </style>
@@ -91,17 +95,17 @@
     <table class="items-table">
         <thead>
             <tr>
-                <th>Cant</th>
-                <th>Descripción</th>
-                <th class="text-right">Total</th>
+                <th class="col-cant">Cant</th>
+                <th class="col-desc">Descripción</th>
+                <th class="col-total">Total</th>
             </tr>
         </thead>
         <tbody>
             @foreach($invoice->order->items as $item)
             <tr>
-                <td>{{ number_format($item->quantity, 0) }}</td>
-                <td>{{ substr($item->product?->name ?? $item->description ?? '—', 0, 20) }}</td>
-                <td class="text-right">{{ number_format($item->total_price, 2) }}</td>
+                <td class="col-cant">{{ number_format($item->quantity, 0) }}</td>
+                <td class="col-desc">{{ $item->product?->name ?? $item->description ?? '—' }}</td>
+                <td class="col-total">{{ number_format($item->total_price, 2) }}</td>
             </tr>
             @endforeach
         </tbody>
