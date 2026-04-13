@@ -41,11 +41,10 @@
 <body>
 
     @php
-        $settings = \App\Models\Setting::all_flat();
-        $ruc      = $settings['company_ruc']      ?? '20XXXXXXXXX';
-        $bizName  = $settings['company_name']     ?? 'TORREPLAS SAC';
-        $address  = $settings['company_address']  ?? 'Lima, Perú';
-        $phone    = $settings['company_phone']    ?? '';
+        $ruc      = \App\Models\Setting::get('company_ruc', '20123456789');
+        $bizName  = \App\Models\Setting::get('company_name', 'TORREPLAS SAC');
+        $address  = \App\Models\Setting::get('company_address', 'Av. Industrial 123');
+        $phone    = \App\Models\Setting::get('company_phone', '01-234-5678');
     @endphp
 
     <div class="header">
