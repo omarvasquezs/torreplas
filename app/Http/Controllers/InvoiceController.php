@@ -177,9 +177,13 @@ class InvoiceController extends Controller
 
         if ($format === 'ticket') {
             // Thermal ticket: 58mm width (approx 164.41 pt).
-            // A long vertical height is acceptable; paper cuts automatically.
+            // Calculate dynamic height to avoid wasting paper.
+            $itemCount = $invoice->order && $invoice->order->items ? $invoice->order->items->count() : 0;
+            $height = 280 + ($itemCount * 25);
+            $height = max(350, $height); // Minimum height
+
             $pdf = Pdf::loadView('pdf.ticket', ['invoice' => $invoice])
-                ->setPaper([0, 0, 164.41, 1000]); // 58mm
+                ->setPaper([0, 0, 164.41, $height]); // 58mm x dynamic height
         } else {
             $pdf = Pdf::loadView('pdf.invoice', ['invoice' => $invoice])
                 ->setPaper('a4');

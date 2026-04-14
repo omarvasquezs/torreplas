@@ -6,7 +6,8 @@
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         @page { margin: 0; }
-        body { font-family: monospace, sans-serif; color: #000; font-size: 10px; width: 58mm; margin: 0; padding: 2mm; }
+        body { font-family: monospace, sans-serif; color: #000; font-size: 9px; width: 100%; margin: 0; padding: 0; }
+        .ticket-container { margin-left: 4mm; margin-right: 4mm; margin-top: 2mm; margin-bottom: 2mm; }
 
         .text-center { text-align: center; }
         .text-right { text-align: right; }
@@ -39,6 +40,7 @@
     </style>
 </head>
 <body>
+<div class="ticket-container">
 
     @php
         $ruc      = \App\Models\Setting::get('company_ruc', '20123456789');
@@ -136,5 +138,6 @@
         <div>Revise en sunat.gob.pe</div>
     </div>
 
+</div>
 </body>
 </html>
