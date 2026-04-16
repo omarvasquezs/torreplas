@@ -44,7 +44,7 @@ export default function UsersIndex({ users, filters }) {
                     <table className="w-full text-sm">
                         <thead className="bg-white/80">
                             <tr className="text-gray-600 text-left">
-                                <th className="px-4 py-3 font-medium">Usuario</th>
+                                <th className="px-4 py-3 font-medium">Nombre / Usuario</th>
                                 <th className="px-4 py-3 font-medium">Email</th>
                                 <th className="px-4 py-3 font-medium">Rol</th>
                                 <th className="px-4 py-3 font-medium">Estado</th>
@@ -62,7 +62,10 @@ export default function UsersIndex({ users, filters }) {
                                             <div className="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center text-white text-sm font-bold">
                                                 {u.name.charAt(0).toUpperCase()}
                                             </div>
-                                            <span className="text-white font-medium">{u.name}</span>
+                                            <div className="flex flex-col">
+                                                <span className="text-gray-800 font-medium">{u.name}</span>
+                                                <span className="text-gray-500 text-xs">@{u.username}</span>
+                                            </div>
                                         </div>
                                     </td>
                                     <td className="px-4 py-3 text-gray-700">{u.email}</td>

@@ -7,6 +7,7 @@ export default function UsersForm({ user, roles }) {
 
     const { data, setData, post, put, processing, errors } = useForm({
         name:                  user?.name     || '',
+        username:              user?.username || '',
         email:                 user?.email    || '',
         role_id:               user?.role_id  || '',
         is_active:             user?.is_active !== false,
@@ -35,6 +36,7 @@ export default function UsersForm({ user, roles }) {
                         <h2 className="text-white font-semibold">Información</h2>
                         {[
                             ['Nombre completo', 'name', 'text'],
+                            ['Nombre de usuario', 'username', 'text'],
                             ['Email', 'email', 'email'],
                         ].map(([label, name, type]) => (
                             <div key={name}>

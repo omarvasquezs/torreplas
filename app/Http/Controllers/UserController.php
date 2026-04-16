@@ -15,6 +15,7 @@ class UserController extends Controller
         $users = User::with('role')
             ->when($request->search, fn($q, $s) =>
                 $q->where('name', 'like', "%$s%")
+                  ->orWhere('username', 'like', "%$s%")
                   ->orWhere('email', 'like', "%$s%")
             )
             ->orderBy('name')
@@ -38,6 +39,7 @@ class UserController extends Controller
     {
         $data = $request->validate([
             'name'     => 'required|string|max:150',
+            'username' => 'required|string|max:150|unique:users',
             'email'    => 'required|email|unique:users',
             'password' => 'required|min:8|confirmed',
             'role_id'  => 'nullable|exists:roles,id',
@@ -45,6 +47,7 @@ class UserController extends Controller
 
         User::create([
             'name'     => $data['name'],
+            'username' => $data['username'],
             'email'    => $data['email'],
             'password' => Hash::make($data['password']),
             'role_id'  => $data['role_id'] ?? null,
@@ -65,6 +68,7 @@ class UserController extends Controller
     {
         $data = $request->validate([
             'name'     => 'required|string|max:150',
+            'username' => 'required|string|max:150|unique:users,username,' . $user->id,
             'email'    => 'required|email|unique:users,email,' . $user->id,
             'password' => 'nullable|min:8|confirmed',
             'role_id'  => 'nullable|exists:roles,id',
@@ -72,6 +76,7 @@ class UserController extends Controller
         ]);
 
         $user->name    = $data['name'];
+        $user->username= $data['username'];
         $user->email   = $data['email'];
         $user->role_id = $data['role_id'] ?? null;
         $user->is_active = $data['is_active'] ?? true;
