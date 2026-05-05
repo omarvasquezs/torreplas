@@ -47,9 +47,15 @@
         $bizName  = \App\Models\Setting::get('company_name', 'TORREPLAS SAC');
         $address  = \App\Models\Setting::get('company_address', 'Av. Industrial 123');
         $phone    = \App\Models\Setting::get('company_phone', '01-234-5678');
+        $logoPath = public_path('logo_torre_plas.png');
+        $qrData   = $ruc . '|' . $bizName . '|' . $invoice->serie . '-' . $invoice->number;
+        $qrCode   = base64_encode(SimpleSoftwareIO\QrCode\Facades\QrCode::format('png')->size(90)->margin(0)->generate($qrData));
     @endphp
 
     <div class="header">
+        @if(file_exists($logoPath))
+            <img src="{{ $logoPath }}" style="max-width: 140px; display: block; margin: 0 auto 5px auto;" alt="Logo">
+        @endif
         <div class="company-name">{{ $bizName }}</div>
         <div class="company-meta">RUC: {{ $ruc }}</div>
         <div class="company-meta">{{ $address }}</div>
@@ -136,6 +142,10 @@
         <div>¡Gracias por su compra!</div>
         <div style="margin-top: 3px;">Representación impresa de {{ $invoice->type == 'factura' ? 'Factura' : 'Boleta' }}</div>
         <div>Revise en sunat.gob.pe</div>
+    </div>
+
+    <div style="text-align: center; margin-top: 8px;">
+        <img src="data:image/png;base64,{{ $qrCode }}" alt="QR Code">
     </div>
 
 </div>
