@@ -49,7 +49,7 @@
         $phone    = \App\Models\Setting::get('company_phone', '01-234-5678');
         $logoPath = public_path('logo_torre_plas.png');
         $qrData   = $ruc . '|' . $bizName . '|' . $invoice->serie . '-' . $invoice->number;
-        $qrCode   = base64_encode(SimpleSoftwareIO\QrCode\Facades\QrCode::format('png')->size(90)->margin(0)->generate($qrData));
+        $qrCode   = base64_encode(SimpleSoftwareIO\QrCode\Facades\QrCode::format('svg')->size(90)->margin(0)->generate($qrData));
     @endphp
 
     <div class="header">
@@ -145,7 +145,7 @@
     </div>
 
     <div style="text-align: center; margin-top: 8px;">
-        <img src="data:image/png;base64,{{ $qrCode }}" alt="QR Code">
+        <img src="data:image/svg+xml;base64,{{ $qrCode }}" alt="QR Code">
     </div>
 
 </div>

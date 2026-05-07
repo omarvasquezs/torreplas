@@ -166,7 +166,7 @@ export default function InvoicesForm({ clients, orders, series = [] }) {
         if (!seriesOptions.some((row) => row.series === data.serie)) {
             setData('serie', seriesOptions[0].series);
         }
-    }, [seriesOptions, data.serie, setData]);
+    }, [seriesOptions]);
 
     // Auto-rellenar RUC / Nombre / DNI desde el cliente seleccionado
     useEffect(() => {
@@ -227,7 +227,16 @@ export default function InvoicesForm({ clients, orders, series = [] }) {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label className="block text-sm text-gray-600 mb-1">Tipo</label>
-                                <select value={data.type} onChange={e => setData('type', e.target.value)} className={inputCls}>
+                                <select 
+                                    value={data.type} 
+                                    onChange={e => {
+                                        const newType = e.target.value;
+                                        const availableSeries = series.filter(s => s.type === newType);
+                                        const newSerie = availableSeries.length > 0 ? availableSeries[0].series : data.serie;
+                                        setData(data => ({ ...data, type: newType, serie: newSerie }));
+                                    }} 
+                                    className={inputCls}
+                                >
                                     <option value="factura">Factura</option>
                                     <option value="boleta">Boleta</option>
                                     <option value="nota_venta">Nota de Venta</option>
