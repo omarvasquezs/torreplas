@@ -140,7 +140,7 @@ export default function SettingsIndex({ settings = {}, series = [] }) {
                             <label className="block text-gray-600 text-xs mb-1">Serie</label>
                             <input value={addForm.data.series} onChange={e => addForm.setData('series', e.target.value)}
                                 className="w-24 bg-gray-100 border border-gray-200 text-gray-900 rounded-lg px-3 py-2 text-sm font-mono uppercase"
-                                required placeholder="F001" maxLength={4} />
+                                required placeholder="F001" maxLength={5} />
                             {addForm.errors.series && <p className="text-red-500 text-xs mt-1 absolute">{addForm.errors.series}</p>}
                         </div>
                         <div>

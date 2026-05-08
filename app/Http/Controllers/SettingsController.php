@@ -75,7 +75,7 @@ class SettingsController extends Controller
     {
         $data = $request->validate([
             'type'   => 'required|string|max:50',
-            'series' => 'required|string|max:4',
+            'series' => 'required|string|max:5',
         ]);
         DB::table('document_series')->insert([
             'type'        => $data['type'],
