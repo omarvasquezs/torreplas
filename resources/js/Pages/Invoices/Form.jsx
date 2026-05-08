@@ -232,7 +232,7 @@ export default function InvoicesForm({ clients, orders, series = [] }) {
                                     onChange={e => {
                                         const newType = e.target.value;
                                         const availableSeries = series.filter(s => s.type === newType);
-                                        const newSerie = availableSeries.length > 0 ? availableSeries[0].series : data.serie;
+                                        const newSerie = availableSeries.length > 0 ? availableSeries[0].series : '';
                                         setData(data => ({ ...data, type: newType, serie: newSerie }));
                                     }} 
                                     className={inputCls}
@@ -252,9 +252,13 @@ export default function InvoicesForm({ clients, orders, series = [] }) {
                             <div>
                                 <label className="block text-sm text-gray-600 mb-1">Serie</label>
                                 <select value={data.serie} onChange={e => setData('serie', e.target.value)} className={inputCls}>
-                                    {(seriesOptions.length > 0 ? seriesOptions : [{ series: data.serie }]).map((row) => (
-                                        <option key={row.series} value={row.series}>{row.series}</option>
-                                    ))}
+                                    {seriesOptions.length > 0 ? (
+                                        seriesOptions.map((row) => (
+                                            <option key={row.series} value={row.series}>{row.series}</option>
+                                        ))
+                                    ) : (
+                                        <option value="">-- No configurado --</option>
+                                    )}
                                 </select>
                                 {errors.serie && <p className={errorCls}>{errors.serie}</p>}
                             </div>
