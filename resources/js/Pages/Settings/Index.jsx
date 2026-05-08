@@ -3,10 +3,11 @@ import DashboardLayout from '@/Layouts/DashboardLayout';
 import { Save, Plus, Trash2 } from 'lucide-react';
 
 const SERIES_TYPES = [
-    { value: 'invoice',        label: 'Factura' },
-    { value: 'receipt',        label: 'Boleta de Venta' },
-    { value: 'credit_note',    label: 'Nota de Crédito' },
-    { value: 'debit_note',     label: 'Nota de Débito' },
+    { value: 'factura',        label: 'Factura' },
+    { value: 'boleta',         label: 'Boleta de Venta' },
+    { value: 'nota_venta',     label: 'Nota de Venta' },
+    { value: 'nota_credito',   label: 'Nota de Crédito' },
+    { value: 'nota_debito',    label: 'Nota de Débito' },
     { value: 'purchase_order', label: 'Orden de Compra' },
     { value: 'quote',          label: 'Cotización' },
 ];
@@ -14,7 +15,7 @@ const SERIES_TYPES = [
 export default function SettingsIndex({ settings = {}, series = [] }) {
     const { data, setData, post, processing, recentlySuccessful } = useForm({ ...settings });
 
-    const addForm = useForm({ type: 'invoice', series: 'F001', next_number: 1 });
+    const addForm = useForm({ type: 'factura', series: 'F001', next_number: 1 });
 
     function saveSettings(e) {
         e.preventDefault();
