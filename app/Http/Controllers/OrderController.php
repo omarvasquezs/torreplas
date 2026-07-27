@@ -15,7 +15,7 @@ class OrderController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Order::with(['client', 'user']);
+        $query = Order::with(['client', 'user', 'invoice']);
 
         if ($request->search) {
             $query->where('code', 'like', '%' . $request->search . '%')
@@ -26,9 +26,19 @@ class OrderController extends Controller
 
         $orders = $query->latest()->paginate(10)->withQueryString();
 
+        $series = DB::table('document_series')
+            ->where('is_active', true)
+            ->orderBy('type')
+            ->orderBy('series')
+            ->get(['type', 'series', 'next_number']);
+
+        $clients = Client::where('is_active', true)->orderBy('name')->get();
+
         return Inertia::render('Orders/Index', [
             'orders' => $orders,
-            'filters' => $request->only(['search'])
+            'filters' => $request->only(['search']),
+            'series' => $series,
+            'clients' => $clients,
         ]);
     }
 
