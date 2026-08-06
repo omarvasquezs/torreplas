@@ -80,7 +80,7 @@ class OrderController extends Controller
                 'user_id' => auth()->id(),
                 'code' => 'ORD-' . strtoupper(Str::random(8)),
                 'date_issue' => $validated['date_issue'],
-                'status' => 'pending',
+                'status' => 'approved',
                 'subtotal' => $subtotal,
                 'tax' => $tax,
                 'total' => $total,
