@@ -13,6 +13,26 @@ use Inertia\Inertia;
 
 class QuotationController extends Controller
 {
+    public static function generateNextQuoteNumber(): string
+    {
+        $year = date('Y');
+        $prefix = "COT-{$year}-";
+
+        $maxNumber = 0;
+        $quotes = Quotation::where('quote_number', 'like', "{$prefix}%")->get(['quote_number']);
+
+        foreach ($quotes as $q) {
+            $parts = explode('-', $q->quote_number);
+            $num = (int) end($parts);
+            if ($num > $maxNumber) {
+                $maxNumber = $num;
+            }
+        }
+
+        $nextNum = $maxNumber + 1;
+        return $prefix . str_pad((string)$nextNum, 4, '0', STR_PAD_LEFT);
+    }
+
     public function index(Request $request)
     {
         $quotations = Quotation::with(['client', 'user'])
@@ -25,13 +45,20 @@ class QuotationController extends Controller
             ->withQueryString();
 
         return Inertia::render('Quotations/Index', [
-            'quotations' => $quotations,
-            'filters'    => $request->only('search'),
+            'quotations'        => $quotations,
+            'filters'           => $request->only('search'),
+            'next_quote_number' => self::generateNextQuoteNumber(),
         ]);
     }
 
     public function store(Request $request)
     {
+        // Auto-generate quote_number if missing or already taken to prevent collision
+        $requestedQuoteNum = $request->input('quote_number');
+        if (empty($requestedQuoteNum) || Quotation::where('quote_number', $requestedQuoteNum)->exists()) {
+            $request->merge(['quote_number' => self::generateNextQuoteNumber()]);
+        }
+
         $data = $request->validate([
             'client_id'   => 'nullable|exists:clients,id',
             'quote_number' => 'required|string|max:30|unique:quotations,quote_number',
@@ -103,7 +130,7 @@ class QuotationController extends Controller
     {
         $quotation->load(['client', 'user', 'items.product']);
 
-        $company = DB::table('company_settings')->first();
+        $company = (object) \App\Models\Setting::all_flat();
 
         $pdf = Pdf::loadView('pdf.quotation', [
             'quotation' => $quotation,

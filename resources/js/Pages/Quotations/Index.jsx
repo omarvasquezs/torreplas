@@ -24,19 +24,27 @@ function StatusBadge({ status }) {
     );
 }
 
-export default function QuotationsIndex({ quotations, filters = {} }) {
+export default function QuotationsIndex({ quotations, filters = {}, next_quote_number }) {
     const [tab, setTab] = useState('list'); // 'list' | 'new'
     const [search, setSearch] = useState(filters.search ?? '');
 
+    const defaultQuoteNumber = next_quote_number || `COT-${new Date().getFullYear()}-0001`;
+
     // ── NEW QUOTATION FORM ──────────────────────────────────────────
     const [formMeta, setFormMeta] = useState({
-        quote_number: `COT-${new Date().getFullYear()}-${String(Date.now()).slice(-4)}`,
+        quote_number: defaultQuoteNumber,
         issue_date:   new Date().toISOString().slice(0, 10),
         valid_until:  new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10),
         client_id:    '',
         attention:    '',
         notes:        'Precios incluyen IGV. Vigencia sujeta a disponibilidad de stock.',
     });
+
+    React.useEffect(() => {
+        if (next_quote_number) {
+            setFormMeta(prev => ({ ...prev, quote_number: next_quote_number }));
+        }
+    }, [next_quote_number]);
 
     const [items, setItems] = useState([
         { product_id: '', _product: null, description: '', quantity: 1, unit_price: 0 },
@@ -73,7 +81,7 @@ export default function QuotationsIndex({ quotations, filters = {} }) {
 
     function resetForm() {
         setFormMeta({
-            quote_number: `COT-${new Date().getFullYear()}-${String(Date.now()).slice(-4)}`,
+            quote_number: next_quote_number || `COT-${new Date().getFullYear()}-0001`,
             issue_date:   new Date().toISOString().slice(0, 10),
             valid_until:  new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10),
             client_id:    '',
